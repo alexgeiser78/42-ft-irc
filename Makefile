@@ -11,8 +11,8 @@
 # **************************************************************************** #
 
 SRCS = $(wildcard ./src/command/*.c) \
-		$(wildcard ./src/network/*.c)
-
+		$(wildcard ./src/network/*.c) \
+		./src/main.c 
 OBJS = $(SRCS:.c=.o)
 
 NAME = ircserv
