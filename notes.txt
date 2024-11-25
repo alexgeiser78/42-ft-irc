@@ -5,3 +5,150 @@ needs an IRC server and an IRC client
 https://github.com/davisonio/awesome-irc
 
 https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9
+
+IRC = (Internet Relay Chat), is a protocol for real-time text-based communication.
+
+needs an IRC server and an IRC client
+
+https://github.com/davisonio/awesome-irc
+
+https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9
+
+IRC theory
+
+-an IRC client connect to a server via a TCP socket, generaly on port 6667
+
+-message exchange are done in ascii format ended by \r\n
+
+-main command
+	NICK, defines the nickname
+	USER, user identification
+	JOIN, join a channel
+	PRIVMSG, sending  private msg or a message on a channel
+	PING/PONG, maintain an active connection
+
+usefull librairies:
+		<thread> 
+		<sys/socket.h>, <arpa/inet.h>, <unistd.h> to manage socket
+
+What is a socket?
+	programming interface to manage app to communicate with each other on a red
+	sockket is an in/out  used to send and receive data
+	IP adress - port 
+
+type of socket:
+	TCP: used for HTTP, FTP based on TCP protocol, garanties that data arrives in order and without loss
+	UDP: Used for DNS, streaming, no garanties of order or loss
+	UNIX socket: fast communication between process on the same machine
+	
+programm structure:
+	IRC client
+		-manage the connection to the sserver
+		-send and receive messages
+		
+	USER interface
+		-permits to the user to write commands and prints received message
+		
+	THREADS management
+		-one to listen to the server
+		-one for the user entry
+
+Create a Socket: 
+	int sock = socket (AF_INET, SOCK_STREAM, 0);
+
+Connect to Server:
+	int sock = socket (AF_INET, SOCK_STREAM, 0);
+	sockaddr_in serverAddr{};
+	serverAddr.sin_family = AF_INET; // IPv4
+	serverAddr.sin_port = htons(80); // Port 80 (HTTP)
+	if (connect(sock, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) 
+	{
+    std::cerr << "Error" << std::endl;
+    return -1;
+	}
+	std::cout << "Connected." << std::endl;
+	close(sock);
+
+Send IRC command:
+	void sendCommand(int sock, const std::string& command)
+	{
+    std::string cmd = command + "\r\n";
+    send(sock, cmd.c_str(), cmd.size(), 0);
+	}
+
+Loop to listen to the server:
+	void listenToServer(int sock)
+	{
+    	char buffer[2048];
+    	while (true) 
+		{
+        	memset(buffer, 0, sizeof(buffer));
+        	int bytesReceived = recv(sock, buffer, sizeof(buffer) - 1, 0);
+        	if (bytesReceived > 0) 
+			{
+            	std::string response(buffer);
+            	std::cout << response;
+
+            // Answer to Ping to maintain connection
+            	if (response.substr(0, 4) == "PING") 
+				{
+                	std::string pong = "PONG " + response.substr(5);
+                	sendCommand(sock, pong);
+            	}
+        	} 
+			else if (bytesReceived == 0) 
+				{
+        	    	std::cerr << "Disconnected form the server." << std::endl;
+            		break;
+        		}
+			else 
+			{
+            	std::cerr << "Erreur during data reception,." << std::endl;
+        	}
+    	}
+	}
+
+Main function:
+	int main() 
+	{
+    	const std::string server = "irc.libera.chat"; // Exemple of server
+    	const int port = 6667;
+    	const std::string nickname = "MyNickname";
+    	const std::string username = "MyUser";
+
+    // Connection to server
+    int sock = connectToServer(server, port);
+
+    // Authentification
+    sendCommand(sock, "NICK " + nickname);
+    sendCommand(sock, "USER " + username + " 0 * :MyName");
+
+    // Join a channel
+    std::string channel = "#my_channel";
+    sendCommand(sock, "JOIN " + channel);
+
+    // Send a thread to listen to the server
+    std::thread listener(listenToServer, sock);
+
+    // Loop to reaad the messages from the user
+    std::string userInput;
+    while (true) 
+		{
+        std::getline(std::cin, userInput);
+        if (userInput == "/quit") 
+			{
+            sendCommand(sock, "QUIT :BYE!");
+            break;
+        	}
+        sendCommand(sock, "PRIVMSG " + channel + " :" + userInput);
+    	}
+
+    // Nettoyage
+    listener.join();
+    close(sock);
+    return 0;
+}
+
+
+
+
