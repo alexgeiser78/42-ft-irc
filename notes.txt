@@ -33,7 +33,7 @@ usefull librairies:
 
 What is a socket?
 	programming interface to manage app to communicate with each other on a red
-	sockket is an in/out  used to send and receive data
+	sockket is an in/out  used to send and receive data. It can be implemented as a FD file
 	IP adress - port 
 
 type of socket:
@@ -143,7 +143,7 @@ Main function:
         sendCommand(sock, "PRIVMSG " + channel + " :" + userInput);
     	}
 
-    // Nettoyage
+    // clean
     listener.join();
     close(sock);
     return 0;

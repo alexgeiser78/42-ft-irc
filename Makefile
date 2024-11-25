@@ -12,7 +12,7 @@
 
 SRCS = $(wildcard ./src/command/*.c) \
 		$(wildcard ./src/network/*.c) \
-		./src/main.c 
+		./src/main.cpp
 OBJS = $(SRCS:.c=.o)
 
 NAME = ircserv
