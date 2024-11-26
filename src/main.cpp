@@ -6,6 +6,7 @@ int main (int argc, char **argv)
     {
         throw std::invalid_argument("Invalid number of arguments") ;
     }
+
     int port = std::atoi(argv[1]);
     if (port <= 0 || port > 65535) 
     { 
@@ -13,6 +14,8 @@ int main (int argc, char **argv)
         std::cerr << "Common Port for personnal server are between 1024 and 49151" << std::endl;
         return 1;
     }
+
+    
     Server server(port);
     server.ServerInit(port);
 }

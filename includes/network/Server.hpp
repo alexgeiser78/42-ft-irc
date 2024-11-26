@@ -5,6 +5,8 @@
 #include <iostream>
 #include "Client.hpp"
 #include <cstdlib> //std::atoi
+#include <unistd.h> //close()
+
 
 class Server
 {
@@ -17,5 +19,6 @@ class Server
             void SerSocket();
             void ServerInit(int port);
             Server(int port);
+            ~Server();
 
 }; 

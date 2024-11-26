@@ -31,3 +31,10 @@ Server::Server(int port): _Port(port)
     this->_Port = port;
     std::cout << "Server object created" << std::endl;
 }
+
+Server::~Server()
+{
+    close(SerSocketFd);
+    std::cout << "Server object destroyed" << std::endl;
+}
+
