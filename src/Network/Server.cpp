@@ -25,3 +25,9 @@ void Server::ServerInit(int port)
 	std::cout <<"Server " << SerSocketFd << " Connected" << std::endl;
 	std::cout << "Waiting to accept a connection...\n";
 }
+
+Server::Server(int port): Port(port)
+{
+    this->Port = port;
+    std::cout << "Server object created" << std::endl;
+}

@@ -4,6 +4,7 @@
 #include <vector> // std::vector
 #include <iostream>
 #include "Client.hpp"
+#include <cstdlib> //std::atoi
 
 class Server
 {
@@ -15,5 +16,6 @@ class Server
     public:
             void SerSocket();
             void ServerInit(int port);
+            Server(int port);
 
 }; 

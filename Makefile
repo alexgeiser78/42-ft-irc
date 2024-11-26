@@ -10,6 +10,12 @@
 #                                                                              #
 # **************************************************************************** #
 
+BLUE   = \033[0;34m
+GREEN    = \033[0;32m
+RED = \033[0;31m
+YELLOW  = \033[0;33m
+NO_COLOR    = \033[m
+
 SRCS = $(wildcard ./src/command/*.c) \
 		$(wildcard ./src/network/*.c) \
 		./src/main.cpp
@@ -27,21 +33,21 @@ RM = rm -f
 
 $(OBJS): %.o: %.cpp
 	$(CC) $(FLAGS) $(HEADER) -c $< -o $@
-	@echo "Compiled $< to $@"
+	@echo "$(YELLOW)Compiled $< to $@$(NO_COLOR)"
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(HEADER) $(OBJS) -o $(NAME)
-	@echo "Executable $(NAME) generated"
+	@$(CC) $(FLAGS) $(HEADER) $(OBJS) -o $(NAME)
+	@echo "$(GREEN)Executable $(NAME) generated$(NO_COLOR)"
 
 clean:
-	$(RM) $(OBJS)
-	@echo "Objects files removed"
+	@$(RM) $(OBJS)
+	@echo "$(BLUE)Objects files removed$(NO_COLOR)"
 
 fclean: clean
-	$(RM) $(NAME)
-	@echo "Executable $(NAME) removed"
+	@$(RM) $(NAME)
+	@echo "$(RED)Executable $(NAME) removed$(NO_COLOR)"
 
 re: fclean all
 
