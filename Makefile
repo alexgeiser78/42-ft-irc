@@ -13,7 +13,7 @@
 SRCS = $(wildcard ./src/command/*.c) \
 		$(wildcard ./src/network/*.c) \
 		./src/main.cpp
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SRCS:.cpp=.o)
 
 NAME = ircserv
 
@@ -25,7 +25,7 @@ HEADER = -I ./includes
 
 RM = rm -f
 
-$(OBJS): %.o: %.c
+$(OBJS): %.o: %.cpp
 	$(CC) $(FLAGS) $(HEADER) -c $< -o $@
 	@echo "Compiled $< to $@"
 
