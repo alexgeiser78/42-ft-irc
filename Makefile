@@ -32,7 +32,7 @@ HEADER = -I ./includes
 RM = rm -f
 
 $(OBJS): %.o: %.cpp
-	$(CC) $(FLAGS) $(HEADER) -c $< -o $@
+	@$(CC) $(FLAGS) $(HEADER) -c $< -o $@
 	@echo "$(YELLOW)Compiled $< to $@$(NO_COLOR)"
 
 all: $(NAME)

@@ -29,19 +29,19 @@ void Server::ServerInit(int port)
 
 void Server::SerSocket()
 {
-    // Create a socket
-    SerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //create a socket, AF_INET is the address family for IPv4, SOCK_STREAM is the type of socket, 0 is the protocol  
+    struct sockaddr_in addressIPv4;
+    addressIPv4.sin_family = AF_INET;
+    addressIPv4.sin_port = htons(this->_Port); //htons converts the unsigned short integer hostshort from host byte order to network byte order
+    addressIPv4.sin_addr.s_addr = INADDR_ANY; //INADDR_ANY allows the server to accept a client connection on any interface
+    
+    struct pollfd NewPoll; //pollfd structure is used to describe a set of file descriptors to be monitored by the poll() function
+                           //poll() function waits for one of a set of file descriptors to become ready to perform I/O
+    
+    SerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //create a socket, AF_INET is the address family for IPv4, SOCK_STREAM is the type of socket, 0 is the protocol (default protocol related to the chosen type of socket)
     if (SerSocketFd == -1)
     {
         throw std::runtime_error("Failed to create a socket");
     }
-/*
-    sockaddr_in serverAddr{};
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(this->Port);
-    serverAddr.sin_addr.s_addr = INADDR_ANY;
-    std::cout << "Socket created" << std::endl;
-    */
 }
 
 void Server::CloseFDs()

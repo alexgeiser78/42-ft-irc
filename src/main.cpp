@@ -15,18 +15,18 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    Server server(port); //-> create the server object
+    Server server(port); //create the server object
     
     try
     {
-        signal(SIGINT, Server::SignalHandler); //-> catch the signal (ctrl + c)
-		signal(SIGQUIT, Server::SignalHandler); //-> catch the signal (ctrl + \)
+        signal(SIGINT, Server::SignalHandler); //catch the signal (ctrl + c)
+		signal(SIGQUIT, Server::SignalHandler); //catch the signal (ctrl + \)
 		server.ServerInit(port); //initialize the server
     }
 
 	catch(const std::exception& e)
     {
-		server.CloseFDs(); //-> close the file descriptors
+		server.CloseFDs(); //close the file descriptors
 		std::cerr << e.what() << std::endl;
 	}
 
