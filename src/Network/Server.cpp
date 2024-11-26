@@ -1,5 +1,32 @@
 #include "../../includes/network/Server.hpp"
 
+Server::Server(int port): _Port(port)
+{
+    this->_Port = port;
+    std::cout << "Server object created" << std::endl;
+}
+
+Server::~Server()
+{
+    close(SerSocketFd);
+    std::cout << "Server object destroyed" << std::endl;
+}
+
+void Server::SignalHandler(int signum)
+{
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+    exit(signum);
+}
+
+void Server::ServerInit(int port)
+{
+	this->_Port = port;
+	SerSocket(); //-> create the server socket
+
+	std::cout <<"Server " << SerSocketFd << " Connected" << std::endl;
+	std::cout << "Waiting to accept a connection...\n";
+}
+
 void Server::SerSocket()
 {
     // Create a socket
@@ -17,24 +44,9 @@ void Server::SerSocket()
     */
 }
 
-void Server::ServerInit(int port)
-{
-	this->_Port = port;
-	SerSocket(); //-> create the server socket
-
-	std::cout <<"Server " << SerSocketFd << " Connected" << std::endl;
-	std::cout << "Waiting to accept a connection...\n";
-}
-
-Server::Server(int port): _Port(port)
-{
-    this->_Port = port;
-    std::cout << "Server object created" << std::endl;
-}
-
-Server::~Server()
+void Server::CloseFDs()
 {
     close(SerSocketFd);
-    std::cout << "Server object destroyed" << std::endl;
+    std::cout << "Server socket closed" << std::endl;
 }
 

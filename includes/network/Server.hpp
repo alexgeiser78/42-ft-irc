@@ -1,11 +1,12 @@
-#include <stdexcept> // std::runtime_error
-#include <sys/socket.h> // for socket()
-#include <sys/types.h> // for socket()
+#include <stdexcept> //std::runtime_error
+#include <sys/socket.h> //socket()
+#include <sys/types.h> //socket()
 #include <vector> // std::vector
 #include <iostream>
 #include "Client.hpp"
 #include <cstdlib> //std::atoi
 #include <unistd.h> //close()
+#include <csignal> //signal()
 
 
 class Server
@@ -16,9 +17,11 @@ class Server
             int SerSocketFd; //-> server socket file descriptor
     
     public:
-            void SerSocket();
-            void ServerInit(int port);
             Server(int port);
-            ~Server();
+            ~Server();void SerSocket();
+            static void SignalHandler(int signum);
+            void ServerInit(int port);
+            void CloseFDs();
+
 
 }; 
