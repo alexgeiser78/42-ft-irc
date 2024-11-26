@@ -16,8 +16,8 @@ RED = \033[0;31m
 YELLOW  = \033[0;33m
 NO_COLOR    = \033[m
 
-SRCS = $(wildcard ./src/command/*.c) \
-		$(wildcard ./src/network/*.c) \
+SRCS = $(wildcard ./src/Command/*.cpp) \
+		$(wildcard ./src/Network/*.cpp) \
 		./src/main.cpp
 OBJS = $(SRCS:.cpp=.o)
 

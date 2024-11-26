@@ -9,7 +9,7 @@
 class Server
 {
     private:
-            int Port;
+            int _Port;
             std::vector<Client> clients;
             int SerSocketFd; //-> server socket file descriptor
     
