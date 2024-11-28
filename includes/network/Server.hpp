@@ -12,6 +12,7 @@
 #include <csignal> //signal()
 #include <netinet/in.h> //sockaddr_in and in_addr
 #include <poll.h> //poll()
+#include <fcntl.h> //fcntl()
 
 class Server
 {
