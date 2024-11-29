@@ -20,7 +20,8 @@ class Server
             int _Port;
             std::vector<Client> clients;
             int SerSocketFd; //server socket file descriptor
-    
+            std::vector <struct pollfd> FD; //file descriptor structure
+
     public:
             Server(int port);
             ~Server();
@@ -28,6 +29,7 @@ class Server
             static void SignalHandler(int signum);
             void ServerInit(int port);
             void CloseFDs();
+            static bool Signal;
 };
 
 /*HOW WORKS sockaddr_in and in_addr:
