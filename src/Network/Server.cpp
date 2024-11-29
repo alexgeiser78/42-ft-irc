@@ -1,5 +1,7 @@
 #include "../../includes/network/Server.hpp"
 
+bool Server::Signal = false;
+
 Server::Server(int port): _Port(port)
 {
     this->_Port = port;
@@ -15,16 +17,44 @@ Server::~Server()
 void Server::SignalHandler(int signum)
 {
     std::cout << "Interrupt signal (" << signum << ") received.\n";
-    exit(signum);
+    Signal = true; //to stop the main loop
 }
 
 void Server::ServerInit(int port)
 {
-	this->_Port = port;
-	SerSocket(); //-> create the server socket
+	this->_Port = port;   //-*-*-*-*--* to check, maybe has to be fix 
+	SerSocket(); //create the server socket
 
 	std::cout <<"Server " << SerSocketFd << " Connected" << std::endl;
 	std::cout << "Waiting to accept a connection...\n";
+
+    while(Server::Signal == false) //main loop
+    {
+        if ((poll(&FD[0], FD.size(), -1) == -1) && Server::Signal == false)
+        {
+            //&FD[0] is the address of the first element of the vector
+            //-1 means wait indefinitely for an event
+            throw std::runtime_error("poll() failed");
+        }
+
+        for(size_t i =0; i < FD.size(); i++) //iterate through the vector of pollfd structures
+        {
+            if (FD[i].revents & POLLIN) // if there is revents(returned events). Are flags writen in the FD after the call to poll()
+                {
+                if (FD[i].fd == SerSocketFd)  //.fd comes from poll.h
+					{
+                    std::cout << "Accepting new client function" << std::endl;
+                    //AcceptNewClient(); //new connexion
+                    }
+                else
+                    {
+                    std::cout << "Receiving new data function" << std::endl;
+                    //ReceiveNewData(FD[i].fd); //data from a connected client
+                    }
+                }   
+        }
+    }
+    CloseFDs();
 }
 
 void Server::SerSocket()
@@ -78,11 +108,13 @@ void Server::SerSocket()
         throw std::runtime_error("Failed to listen on the socket");
     }
 
-    struct pollfd NewPoll;
+    struct pollfd NewPoll; //pollfd structure is used to describe a set of file descriptors to be monitored by the poll() function
+                           //int poll(struct pollfd fds[], nfds_t nfds, int timeout)
+                           //poll() function waits for one of a set of file descriptors to become ready to perform I/O
     NewPoll.fd = SerSocketFd; //FD to be monitored
     NewPoll.events = POLLIN; //POLLIN set the event to read operation
     NewPoll.revents = 0; // revents is an output parameter, filled by the kernel with the events that actually occurred
-    //fds.push_back(NewPoll); //-> add the server socket to the pollfd
+    FD.push_back(NewPoll); //add the new pollfd structure to the vector of pollfd structures
 }
 
 void Server::CloseFDs()
