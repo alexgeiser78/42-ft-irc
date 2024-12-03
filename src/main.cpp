@@ -1,4 +1,4 @@
-#include "../includes/network/Server.hpp"
+#include "../includes/Network/Server.hpp"
 
 int main (int argc, char **argv)
 {

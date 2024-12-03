@@ -153,7 +153,12 @@ Main function:
 IPv4 adress format:
 https://manpages.ubuntu.com/manpages/jammy/fr/man7/ip.7.html
 
-test
+---------------------------------------------------------------
+
+IRC client possibility: HexChat, Irssi, mIRC, WeeChat
+
+Tried with HexChat which is present on 42's computer and I could connect on the server with
+    localhost:8912 !!!
 
 
 

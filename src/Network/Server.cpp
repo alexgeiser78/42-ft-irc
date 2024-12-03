@@ -1,4 +1,4 @@
-#include "../../includes/network/Server.hpp"
+#include "../../includes/Network/Server.hpp"
 
 bool Server::Signal = false;
 

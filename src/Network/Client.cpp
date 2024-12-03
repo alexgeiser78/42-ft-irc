@@ -1,2 +1,2 @@
-#include "../../includes/network/Client.hpp"
+#include "../../includes/Network/Client.hpp"
 
