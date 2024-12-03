@@ -21,9 +21,9 @@ class Server
             std::vector<Client> clients;
             int SerSocketFd; //server socket file descriptor
             std::vector <struct pollfd> FD; //file descriptor structure
-
+            std::string _Password;
     public:
-            Server(int port);
+            Server(int port, std::string password);
             ~Server();
             void SerSocket();
             static void SignalHandler(int signum);

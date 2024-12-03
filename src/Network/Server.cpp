@@ -2,10 +2,10 @@
 
 bool Server::Signal = false;
 
-Server::Server(int port): _Port(port)
+Server::Server(int port, std::string password): _Port(port), _Password(password)
 {
     this->_Port = port;
-    std::cout << "Server object created" << std::endl;
+    std::cout << "Server object created on port " << port << " with password: " << password << std::endl;
 }
 
 Server::~Server()

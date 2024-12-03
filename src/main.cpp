@@ -8,6 +8,8 @@ int main (int argc, char **argv)
     }
 
     int port = std::atoi(argv[1]);
+    std::string password = argv[2];
+    
     if (port <= 0 || port > 65535) 
     { 
         std::cerr << "Error: Port must be between 1 and 65535." << std::endl;
@@ -15,7 +17,7 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    Server server(port); //create the server object
+    Server server(port, password); //create the server object
     
     try
     {
