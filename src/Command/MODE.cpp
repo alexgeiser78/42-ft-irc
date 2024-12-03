@@ -9,5 +9,6 @@ l = numbers of users limitation */
 
 void handleMode(const std::vector<std::string>& args) 
 { 
+    (void)args;
     std::cout << "Handling MODE\n"; 
 }
