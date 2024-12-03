@@ -160,5 +160,5 @@ IRC client possibility: HexChat, Irssi, mIRC, WeeChat
 Tried with HexChat which is present on 42's computer and I could connect on the server with
     localhost:8912 !!!
 
-
+nc localhost <port number> is also working
 
