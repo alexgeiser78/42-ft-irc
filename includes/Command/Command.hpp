@@ -4,13 +4,14 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include "../Network/Client.hpp"
 
 // command functions declaration
 void handleInvite(const std::vector<std::string>& args);
 void handleJoin(const std::vector<std::string>& args);
 void handleKick(const std::vector<std::string>& args);
 void handleMode(const std::vector<std::string>& args);
-void handleNick(const std::vector<std::string>& args);
+void handleNick(Client &client);
 void handlePrivMsg(const std::vector<std::string>& args);
 void handleTopic(const std::vector<std::string>& args);
 void handleUser(const std::vector<std::string>& args);

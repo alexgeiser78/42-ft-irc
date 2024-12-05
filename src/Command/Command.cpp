@@ -7,7 +7,7 @@ Command::Command() //constructor
     commands["JOIN"] = handleJoin;
     commands["KICK"] = handleKick;
     commands["MODE"] = handleMode;
-    commands["NICK"] = handleNick;           
+    commands["NICK"] = handleNick;
     commands["PART"] = handlePart;
     commands["PRIVMSG"] = handlePrivMsg;
     commands["TOPIC"] = handleTopic;
