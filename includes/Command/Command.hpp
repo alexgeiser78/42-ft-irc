@@ -1,4 +1,6 @@
-#pragma once
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
+
 #include <iostream>
 #include <vector>
 #include <map>
@@ -26,4 +28,6 @@ class Command //assiciate a command to a function
         ~Command();
         void executeCommand(const std::string& commandName, Client &client);
 };
+
+#endif
 
