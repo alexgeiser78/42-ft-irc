@@ -1,7 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 
-void handleKick(const std::vector<std::string>& args) 
+void handleKick(Client &client)  
 { 
-    (void)args;
+    (void)client;
     std::cout << "Handling KICK\n"; 
 }

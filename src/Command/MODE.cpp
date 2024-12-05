@@ -7,8 +7,8 @@ k = channel protected by a password
 o = operators management
 l = numbers of users limitation */
 
-void handleMode(const std::vector<std::string>& args) 
+void handleMode(Client &client)  
 { 
-    (void)args;
+    (void)client;
     std::cout << "Handling MODE\n"; 
 }

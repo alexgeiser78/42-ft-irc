@@ -1,7 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 
-void handleJoin(const std::vector<std::string>& args) 
+void handleJoin(Client &client)  
 { 
-    (void)args;
+    (void)client;
     std::cout << "Handling JOIN\n"; 
 }

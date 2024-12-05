@@ -1,7 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 
-void handleUser(const std::vector<std::string>& args) 
+void handleUser(Client &client) 
 { 
-    (void)args;
+    (void)client;
     std::cout << "Handling USER\n"; 
 }

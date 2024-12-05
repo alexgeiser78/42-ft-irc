@@ -1,8 +1,8 @@
 #include "../../includes/Command/Command.hpp"
 
-void handlePart(const std::vector<std::string>& args)
+void handlePart(Client &client) 
 {
-    (void)args;
+    (void)client;
     std::cout << "Handling PART\n";
 }
 

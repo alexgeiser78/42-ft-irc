@@ -1,7 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 
-void handlePrivMsg(const std::vector<std::string>& args) 
+void handlePrivMsg(Client &client)  
 { 
-    (void)args;
+    (void)client;
     std::cout << "Handling PrivMsg\n"; 
 }

@@ -1,7 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 
-void handleTopic(const std::vector<std::string>& args) 
+void handleTopic(Client &client) 
 { 
-    (void)args;
+    (void)client;
     std::cout << "Handling TOPIC\n"; 
 }

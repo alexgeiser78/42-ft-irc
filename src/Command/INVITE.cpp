@@ -1,7 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 
-void handleInvite(const std::vector<std::string>& args) 
+void handleInvite(Client &client) 
 {
-    (void)args;
+    (void)client;
     std::cout << "Handling INVITE\n"; 
 }

@@ -7,14 +7,13 @@ void handleNick(Client &client)
 	if (client.args.size() != 1)
 	{
 		std::string errorMsg = "ERROR: Invalid NICK command usage.\n";
-		std::cout << errorMSG << std::endl;
-		send(client.socket, errorMsg.c_str(), errorMsg.size(), 0);
-return;
+		std::cout << errorMsg << std::endl;
+		send(client.getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+		return;
 	}
 
-client.nickname = client.args[0];  // Mettre à jour le pseudo
-    std::string successMsg = "NICK changed to " + client.nickname + "\n";
-    send(client.socket, successMsg.c_str(), successMsg.size(), 0);
-    std::cout << "Nickname set to: " << client.nickname << "\n";
-
-
+	client.setNickName(client.args[0]);// reset the NickName
+    std::string successMsg = "NICK changed to " + client.getNickName() + "\n";
+    send(client.getSocket(), successMsg.c_str(), successMsg.size(), 0);
+    std::cout << "Nickname set to: " << client.getNickName() << "\n";
+}
