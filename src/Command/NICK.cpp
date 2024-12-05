@@ -4,7 +4,7 @@
 void handleNick(Client &client) 
 { 
     std::cout << "Handling NICK\n"; 
-	if (client.args.size() != 1)
+	if (client.getArgs().size() != 1)
 	{
 		std::string errorMsg = "ERROR: Invalid NICK command usage.\n";
 		std::cout << errorMsg << std::endl;
@@ -12,7 +12,7 @@ void handleNick(Client &client)
 		return;
 	}
 
-	client.setNickName(client.args[0]);// reset the NickName
+	client.setNickName(client.getArgs()[0]);// reset the NickName
     std::string successMsg = "NICK changed to " + client.getNickName() + "\n";
     send(client.getSocket(), successMsg.c_str(), successMsg.size(), 0);
     std::cout << "Nickname set to: " << client.getNickName() << "\n";
