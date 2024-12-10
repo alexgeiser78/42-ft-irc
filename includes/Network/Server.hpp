@@ -13,6 +13,8 @@
 #include <netinet/in.h> //sockaddr_in and in_addr
 #include <poll.h> //poll()
 #include <fcntl.h> //fcntl()
+#include <arpa/inet.h> //inet_ntoa
+#include <cstring> //memset
 
 class Server
 {
@@ -30,6 +32,9 @@ class Server
             void ServerInit(int port);
             void CloseFDs();
             static bool Signal;
+            void        AcceptNewClient(void);
+            void        RemoveClient(int fd);
+            void        RecieveData(int fd);
 };
 
 /*HOW WORKS sockaddr_in and in_addr:
