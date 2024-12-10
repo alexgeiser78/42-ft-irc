@@ -7,6 +7,7 @@
 #include <vector> // std::vector
 #include <iostream>
 #include "Client.hpp"
+#include "../Command/Command.hpp"
 #include <cstdlib> //std::atoi
 #include <unistd.h> //close()
 #include <csignal> //signal()
@@ -14,6 +15,9 @@
 #include <poll.h> //poll()
 #include <fcntl.h> //fcntl()
 #include <sstream> //istringstream
+#include <map>
+
+class Command;
 
 class Server
 {

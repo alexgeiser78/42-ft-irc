@@ -50,7 +50,7 @@ void Server::ServerInit(int port)
                 else
                     {
                     std::cout << "Receiving new data function" << std::endl;
-                    //ReceiveNewData(FD[i].fd); //data from a connected client
+                    ReceiveNewData(FD[i].fd); //data from a connected client
                     }
                 }   
         }
@@ -76,11 +76,12 @@ void Server::ReceiveNewData(int clientFd)
         {
             std::cerr << "Error reading from client " << clientFd << "\n";
         }
-        auto it = clients2.find(clientFd);
-        if (it != clients2.end()) 
+
+        std::map<int, Client>::iterator clientIt = clients2.find(clientFd);
+        if (clientIt != clients2.end()) 
         {
-            it->second.closeClient(); // Close the client
-            clients2.erase(it);        // Delete the active client
+            clientIt->second.closeClient(); // Close the client
+            clients2.erase(clientIt);        // Delete the active client
         }
         return;
         buffer[bytesRead] = '\0';
@@ -99,10 +100,10 @@ void Server::ReceiveNewData(int clientFd)
             args.push_back(arg); // Ajouter les arguments restants dans un vecteur
         }
         
-        auto it = clients2.find(clientFd);
-        if (it != clients2.end()) 
+        std::map<int, Client>::iterator clientIt2 = clients2.find(clientFd);
+        if (clientIt2 != clients2.end()) 
         {
-            Client& client = it->second;
+            Client& client = clientIt2->second;
             client.setArgs(args); // Définir les arguments pour le client
             this->command2.executeCommand(commandName, client); // Exécuter la commande
         } 

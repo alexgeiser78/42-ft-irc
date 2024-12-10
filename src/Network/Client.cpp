@@ -2,10 +2,15 @@
 
 Client::Client(int sock): _socket(sock)
 {
-	std::cout << "Client object created" <<std::endl;
+	std::cout << "Client object created" << std::endl;
 }
 
-std::string &Client::getNickName() const
+Client::~Client()
+{
+	std::cout << "Client object destroyed" << std::endl;
+}
+
+std::string Client::getNickName() const
 {
 	return(_nickname);
 }
