@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unistd.h> // C librairy !!!!!!
 
 class Client
 {
@@ -12,11 +13,13 @@ class Client
 		std::string _nickname;
 	public:
 		Client(int sock);
+		~Client();
 		int getSocket() const;
 		std::string getNickName() const;
 		void setNickName(const std::string &newNick);
 		std::vector<std::string> getArgs() const;
 		void setArgs(const std::vector <std::string> &arguments);
+		void closeClient();
 };
 
 #endif

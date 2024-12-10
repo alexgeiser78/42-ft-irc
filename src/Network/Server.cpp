@@ -1,4 +1,5 @@
 #include "../../includes/Network/Server.hpp"
+#include "../../includes/Command/Command.hpp"
 
 bool Server::Signal = false;
 
@@ -56,6 +57,67 @@ void Server::ServerInit(int port)
     }
     CloseFDs();
 }
+
+
+//  /*PAULA
+void Server::ReceiveNewData(int clientFd) 
+{
+    char buffer[512]; // Taille arbitraire
+    ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+    //ssize_t recv(int sockfd, void *buf, size_t len, int flags); used to read data comming from the Socket
+
+    if (bytesRead <= 0) 
+    {
+        if (bytesRead == 0) 
+        {
+            std::cout << "Client " << clientFd << " disconnected\n";
+        } 
+        else 
+        {
+            std::cerr << "Error reading from client " << clientFd << "\n";
+        }
+        auto it = clients2.find(clientFd);
+        if (it != clients2.end()) 
+        {
+            it->second.closeClient(); // Close the client
+            clients2.erase(it);        // Delete the active client
+        }
+        return;
+        buffer[bytesRead] = '\0';
+        std::string receivedData(buffer);
+        std::cout << "Received from client " << clientFd << ": " << receivedData << "\n";
+
+        // Extract the command and the args
+        std::istringstream stream(receivedData);
+        std::string commandName;
+        std::vector<std::string> args;
+
+        stream >> commandName; // Le premier mot est le nom de la commande
+        std::string arg;
+        while (stream >> arg) 
+        {
+            args.push_back(arg); // Ajouter les arguments restants dans un vecteur
+        }
+        
+        auto it = clients2.find(clientFd);
+        if (it != clients2.end()) 
+        {
+            Client& client = it->second;
+            client.setArgs(args); // Définir les arguments pour le client
+            this->command2.executeCommand(commandName, client); // Exécuter la commande
+        } 
+        else 
+        {
+            std::cerr << "Client not found for FD: " << clientFd << "\n";
+        }
+    }
+
+    buffer[bytesRead] = '\0'; // Assurez-vous que la chaîne est terminée
+    std::string receivedData(buffer);
+
+    std::cout << "Received from client " << clientFd << ": " << receivedData << "\n";
+}
+//*/PAULA
 
 void Server::SerSocket()
 {
