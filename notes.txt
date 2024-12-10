@@ -1,4 +1,3 @@
-
 IRC = (Internet Relay Chat), is a protocol for real-time text-based communication.
 
 needs an IRC server and an IRC client
