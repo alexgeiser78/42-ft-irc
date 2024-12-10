@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
@@ -8,6 +9,7 @@
 #include <iostream>
 #include "Client.hpp"
 #include "../Command/Command.hpp"
+#include "Channel.hpp"
 #include <cstdlib> //std::atoi
 #include <unistd.h> //close()
 #include <csignal> //signal()
@@ -18,6 +20,7 @@
 #include <map>
 
 class Command;
+class Channel;
 
 class Server
 {
@@ -38,6 +41,8 @@ class Server
             void CloseFDs();
             static bool Signal;
             void ReceiveNewData(int clientFd);
+            Channel* getOrCreateChannel(const std::string& channelName);
+
 };
 
 /*HOW WORKS sockaddr_in and in_addr:
