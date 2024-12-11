@@ -162,3 +162,9 @@ Tried with HexChat which is present on 42's computer and I could connect on the 
 
 nc localhost <port number> is also working
 
+---------------------------------------
+
+to check:
+         Nick: in IRC normally must not contain spaces and 9 char max
+		 JOIN: add a control because the channelName has to begin with a #, maybe also handle the case of a password to enter a chatroom
+
