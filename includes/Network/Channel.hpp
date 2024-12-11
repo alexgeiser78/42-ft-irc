@@ -23,8 +23,9 @@ class Channel
         void removeMember(Client &client);
         void broadcast(const Client &sender, const std::string &message);
 
-        static Channel *getOrCreateChannel(const std::string &channelName);
-        static Channel *getChannel(const std::string &channelName);
+        static Channel *getOrCreateChannel(std::string const &channelName);
+        static Channel *getChannel(std::string const &channelName);
+        bool Channel::isMember(Client const &client) const;
 };
 
 
