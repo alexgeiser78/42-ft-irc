@@ -4,7 +4,6 @@
 
 //PART #channel or PART #channel, #channel2
 
-
 void handlePart(Client &client) 
 {
     std::cout << "Handling PART\n";
