@@ -35,7 +35,7 @@ usefull librairies:
 
 What is a socket?
 	programming interface to manage app to communicate with each other on a red
-	sockket is an in/out  used to send and receive data
+	sockket is an in/out  used to send and receive data. It can be implemented as a FD file
 	IP adress - port 
 
 type of socket:
@@ -145,12 +145,22 @@ Main function:
         sendCommand(sock, "PRIVMSG " + channel + " :" + userInput);
     	}
 
-    // Nettoyage
+    // clean
     listener.join();
     close(sock);
     return 0;
 }
 
 
+IPv4 adress format:
+https://manpages.ubuntu.com/manpages/jammy/fr/man7/ip.7.html
 
+---------------------------------------------------------------
+
+IRC client possibility: HexChat, Irssi, mIRC, WeeChat
+
+Tried with HexChat which is present on 42's computer and I could connect on the server with
+    localhost:8912 !!!
+
+nc localhost <port number> is also working
 

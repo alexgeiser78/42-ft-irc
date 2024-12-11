@@ -10,10 +10,17 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = $(wildcard ./src/command/*.c) \
-		$(wildcard ./src/network/*.c) \
-		./src/main.c 
-OBJS = $(SRCS:.c=.o)
+BLUE     	= \033[0;34m
+GREEN    	= \033[0;32m
+RED      	= \033[0;31m
+YELLOW   	= \033[0;33m
+NO_COLOR    = \033[m
+
+SRCS = 	$(wildcard ./src/Command/*.cpp) \
+		$(wildcard ./src/Network/*.cpp) \
+		./src/main.cpp
+OBJS = $(SRCS:.cpp=.o)
+DEPS = $(OBJS:.o=.d)
 
 NAME = ircserv
 
@@ -25,27 +32,29 @@ HEADER = -I ./includes
 
 RM = rm -f
 
-$(OBJS): %.o: %.c
-	$(CC) $(FLAGS) $(HEADER) -c $< -o $@
-	@echo "Compiled $< to $@"
+%.o: %.cpp
+	@$(CC) $(FLAGS) $(HEADER) -c $< -o $@
+	@echo "$(YELLOW)Compiled $< to $@$(NO_COLOR)"
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(HEADER) $(OBJS) -o $(NAME)
-	@echo "Executable $(NAME) generated"
+	@$(CC) $(FLAGS) $(HEADER) $(OBJS) -o $(NAME)
+	@echo "$(GREEN)Executable $(NAME) generated$(NO_COLOR)"
 
 clean:
-	$(RM) $(OBJS)
-	@echo "Objects files removed"
+	@$(RM) $(OBJS) $(DEPS)
+	@echo "$(BLUE)Objects files removed$(NO_COLOR)"
 
 fclean: clean
-	$(RM) $(NAME)
-	@echo "Executable $(NAME) removed"
+	@$(RM) $(NAME)
+	@echo "$(RED)Executable $(NAME) removed$(NO_COLOR)"
 
 re: fclean all
 
 leaks:
 	valgrind --leak-check=full ./$(NAME)
+
+-include $(DEPS)
 
 .PHONY: all clean fclean re leaks
