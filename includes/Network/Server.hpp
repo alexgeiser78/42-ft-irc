@@ -40,6 +40,7 @@ class Server
             void ServerInit(int port);
             void CloseFDs();
             static bool Signal;
+            void        AcceptNewClient(void);
             void ReceiveNewData(int clientFd);
             Channel* getOrCreateChannel(const std::string& channelName);
 

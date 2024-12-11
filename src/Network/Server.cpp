@@ -44,7 +44,7 @@ void Server::ServerInit(int port)
                 {
                 if (FD[i].fd == SerSocketFd)  //.fd comes from poll.h
 					{
-                    //std::cout << "Accepting new client function" << std::endl;
+                    std::cout << "Accepting new client function" << std::endl;
                     //AcceptNewClient(); //new connexion
                     }
                 else
@@ -60,6 +60,8 @@ void Server::ServerInit(int port)
 
 
 //  /*PAULA
+
+
 void Server::ReceiveNewData(int clientFd) 
 {
     char buffer[512]; // Taille arbitraire
