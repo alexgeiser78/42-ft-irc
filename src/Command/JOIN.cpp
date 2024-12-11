@@ -2,7 +2,7 @@
 #include "../../includes/Network/Channel.hpp"
 #include "../../includes/Network/Client.hpp"
 
-//JOIN #channel oot JOIN #channel1, #channel2 or JOIN #channel passsword
+//JOIN #channel or JOIN #channel1, #channel2 or JOIN #channel passsword
 
 void handleJoin(Client &client)  
 { 
