@@ -1,5 +1,11 @@
 #include "../../includes/Network/Client.hpp"
 
+
+Client::Client(void)
+{
+	std::cout << " Default Client object created" <<std::endl;
+}
+
 Client::Client(int sock): _socket(sock), _isRegistered(false)
 {
 	std::cout << "Client object created" << std::endl;
@@ -15,11 +21,24 @@ int Client::getSocket() const
 	return(_socket);
 }
 
-//-------------------------Nickname
-
 std::string Client::getNickName() const
 {
 	return(_nickname);
+}
+
+void	Client::setSocket(int fd)
+{
+	_socket = fd;
+}
+
+std::string	Client::getAddress(void) const
+{
+	return (_address);
+}
+
+void	Client::setAddress(std::string address)
+{
+	_address = address;
 }
 
 void Client::setNickName(const std::string &newNick)
@@ -87,6 +106,7 @@ std::string  const &Client::getRealname() const
 	return _realname;
 }
 
+
 //------------------------------Register
 
 void Client::setRegistered(bool isRegistered)
@@ -112,5 +132,6 @@ void Client::closeClient()
 	else 
         std::cerr << "Socket already closed or invalid." << std::endl;
 }
+
 
 

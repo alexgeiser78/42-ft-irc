@@ -193,3 +193,95 @@ void Server::CloseFDs()
 //passive socket is the server socket, it waits for the client to initiate the connection
 //when a connection request is received by the server socket, it creates a new socket for the client
 
+void Server::AcceptNewClient(void)
+{
+    Client              client; //Create a new client
+    int                 clientFd; // File description for socket created when accepting conection
+    struct sockaddr_in  clientAddress; //Struc with client address information
+    struct pollfd       NewPoll; //Struct pollfd for new socket information
+    socklen_t           length;
+
+    length = sizeof(clientAddress);
+    //Accept() bloks until receive a conection and return a file descriptor representing
+    //the connection with the client
+    clientFd = accept(this->SerSocketFd, (sockaddr *)&(clientAddress), &length);
+    if (clientFd == -1)
+    {
+        std::cout << "Fail accepting new client"  << std::endl;
+        return ;
+    }
+    //Set the new socket to non-blocking
+    if (fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1)
+    {
+        std::cout << "Fail te set connection socket to non-blocking" << std::endl;
+        return ;
+    }
+    //Set values for NewPoll with connection socket information
+    NewPoll.fd  = clientFd;
+    NewPoll.events = POLLIN;
+    NewPoll.revents = 0;
+
+    //Set the values of client
+    client.setSocket(clientFd);
+    client.setAddress(inet_ntoa(clientAddress.sin_addr));
+
+    //Add the new client to the clients vector
+    clients.push_back(client);
+
+    //Add NewPoll to the FD vector
+    FD.push_back(NewPoll);
+
+    std::cout << "Client with fd: " << clientFd << "has been connectes successfully" << std::endl;
+}
+
+void    Server::RemoveClient(int fd)
+{
+    size_t i;
+
+    i = 0;
+    while(i < FD.size())
+    {
+        if (FD[i].fd == fd)
+        {
+            FD.erase(FD.begin() + i);
+            break ;
+        }
+        i++;
+    }
+    i = 0;
+    while(i < clients.size())
+    {
+        if (clients[i].getSocket() == fd)
+        {
+            clients.erase(clients.begin() + i);
+            break ;
+        }
+        i++;
+    }
+}
+
+void    Server::RecieveData(int fd)
+{
+    char buffer[1024];
+    ssize_t readBytes;
+
+    //Set buffer to 0
+    memset(buffer, 0, sizeof(buffer));
+
+    //Receive a message from a connected socket
+    readBytes = recv(fd, buffer, sizeof(buffer) - 1, 0);
+    //Check if the client has desconnected
+    if (readBytes <= 0)
+    {
+        std::cout << "Client with fd: " << fd << " is desconnected" << std::endl;
+        RemoveClient(fd);
+        close(fd);
+    }
+    else
+    {
+        readBytes[buffer] = '\0';
+        std::cout << "Client with fd: " << fd << " sent the message: "  << buffer << std::endl;
+    }
+    return ;
+}
+

@@ -9,6 +9,7 @@ class Client
 {
 	private:
 		int _socket;
+		std::string	_address;
 		std::vector<std::string>_args; 
 		std::string _nickname;
 		std::string _username;
@@ -18,11 +19,14 @@ class Client
 		bool 		_isRegistered;
 
 	public:
+		Client(void);
 		Client(int sock);
-		~Client();
-		int getSocket() const;
-		void closeClient();
-		
+
+		int 		getSocket() const;
+		void		setSocket(int fd);
+		std::string	getAddress(void) const;
+		void		setAddress(std::string address);
+
 		std::string getNickName() const;
 		void setNickName(const std::string &newNick);
 		
