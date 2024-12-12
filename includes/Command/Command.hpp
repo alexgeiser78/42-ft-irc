@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <sys/socket.h> //send()
+#include <sys/socket.h> //send() recv()
 #include "../Network/Client.hpp"
 
 // command functions declaration

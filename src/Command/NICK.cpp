@@ -1,10 +1,12 @@
 #include "../../includes/Command/Command.hpp"
 #include "../../includes/Network/Client.hpp"
 
+//NICK <nickname>
+
 void handleNick(Client &client) 
 { 
     std::cout << "Handling NICK\n"; 
-	if (client.getArgs().size() != 1)
+	if (client.getArgs().size() != 1) // Nick receives only one arg 
 	{
 		std::string errorMsg = "ERROR: Invalid NICK command usage.\n";
 		std::cout << errorMsg << std::endl;

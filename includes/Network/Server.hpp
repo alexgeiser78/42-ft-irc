@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
@@ -7,23 +8,35 @@
 #include <vector> // std::vector
 #include <iostream>
 #include "Client.hpp"
+#include "../Command/Command.hpp"
+#include "Channel.hpp"
 #include <cstdlib> //std::atoi
 #include <unistd.h> //close()
 #include <csignal> //signal()
 #include <netinet/in.h> //sockaddr_in and in_addr
 #include <poll.h> //poll()
 #include <fcntl.h> //fcntl()
+
+#include <sstream> //istringstream
+#include <map>
+
+class Command;
+class Channel;
+
 #include <arpa/inet.h> //inet_ntoa
 #include <cstring> //memset
+
 
 class Server
 {
     private:
             int _Port;
             std::vector<Client> clients;
+            std::map<int, Client> clients2;
             int SerSocketFd; //server socket file descriptor
             std::vector <struct pollfd> FD; //file descriptor structure
             std::string _Password;
+            Command command2;
     public:
             Server(int port, std::string password);
             ~Server();
@@ -33,8 +46,14 @@ class Server
             void CloseFDs();
             static bool Signal;
             void        AcceptNewClient(void);
+
+            void ReceiveNewData(int clientFd);
+            Channel* getOrCreateChannel(const std::string& channelName);
+
+
             void        RemoveClient(int fd);
             void        RecieveData(int fd);
+
 };
 
 /*HOW WORKS sockaddr_in and in_addr:
