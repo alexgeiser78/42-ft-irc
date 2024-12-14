@@ -14,13 +14,13 @@ class Channel
 		// std::string		_type;
 		std::string			_topic;
 		std::set<Client*>	_members;
-		Client*				_operator;
-		bool				_inviteOnlyMode;
-		bool				_clientLimitMode;
-		bool				_keyMode;
-		bool				_protectedTopicMode;
-		int					_clientLimit;
-		std::string			_key;
+		// Client*				_operator;
+		// bool				_inviteOnlyMode;
+		// bool				_clientLimitMode;
+		// bool				_keyMode;
+		// bool				_protectedTopicMode;
+		// int					_clientLimit;
+		// std::string			_key;
 
 		static std::map<std::string, Channel*> _channels;
 	

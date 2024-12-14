@@ -220,13 +220,16 @@ void    Server::RecieveData(int fd)
         buffer[readBytes] = '\0';
         std::cout << "Client with fd: " << fd << " sent the message: "  << buffer << std::endl;
         std::istringstream stream(buffer);
-        std::string commandName;
-        stream >> commandName;
+        // std::string commandName;
+        // stream >> commandName;
+        // std::cout << "Command: " << commandName << std::endl;
         std::string line;
 
         while(std::getline(stream, line, '\n'))
         {
-
+            // std::cout << "*******Command: " << commandName << std::endl;
+            if (!line.empty() && line[line.length() - 1] == '\r')
+                line.erase(line.length() - 1);
             ProccessCommand(fd, line);
         }
     }
@@ -240,6 +243,7 @@ void    Server::ProccessCommand(int fd, std::string line)
     std::istringstream stream(line);
 
     stream >> commandName;
+    std::cout << "*******Command: " << commandName << std::endl;
     if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
     && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
     && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
