@@ -2,7 +2,8 @@
 
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
-Channel::Channel(const std::string& name) : _name(name) 
+Channel::Channel(const std::string& name): _name(name) //, _inviteOnlyMode(0),
+// _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1), _clientLimit(0)
 {
     std::cout << "Channel object created" << std::endl;
 }
