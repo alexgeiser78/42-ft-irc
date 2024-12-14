@@ -27,6 +27,6 @@ void Command::executeCommand(const std::string& commandName, Client& client)
     }
     else
     {
-        std::cerr << "Command not found" << std::endl;
+        std::cerr << commandName << ": Command not found" << std::endl;
     }
 }
