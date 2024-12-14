@@ -17,12 +17,33 @@ void handleJoin(Client &client)
         return;
     }
 
-    for (size_t i = 0; i < args.size(); ++i) //for multiple args, 
+    std::vector<std::string> channelNames; //vector of args
+    std::stringstream ss(args[0]); // takes the first args, meaning the channels
+    std::string channelName; //string of separated channnel
+
+    //multiple channels args cut
+    while (std::getline(ss, channelName, ',')) // cut the ss at the "," and put it in channelName 
     {
-        std::string const &channelName = args[i]; //extract the channel name from args[i]
+        if (!channelName.empty())
+        {
+            channelNames.push_back(channelName);
+        }
+    }
+    
+    for (size_t i = 0; i < channelName.size(); ++i) //for every channelName extracted 
+    {
+        std::string const &channelName = channelNames[i]; //access to the channel name from channelNames[i]
+
+        if (channelName[0] != '#') // "#" check 
+        {
+            std::string errorMsg = "ERROR: Channel name must start with '#'. Invalid channel: " + channelName + "\n";
+            send(client.getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+            std::cerr << "Client " << client.getSocket() << ": Invalid channel name " << channelName << "\n";
+            continue;
+        }
 
         Channel* channel = Channel::getOrCreateChannel(channelName); //if the channnel already exist, it returns a pointer to it or it creates it
-    
+        
         if (channel == NULL)
         {
             std::string errorMsg = "ERROR: Unable to join channel " + channelName + ".\n";

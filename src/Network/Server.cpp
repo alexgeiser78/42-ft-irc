@@ -86,8 +86,7 @@ void Server::ReceiveNewData(int clientFd)
             clientIt->second.closeClient(); // Close the client
             clients2.erase(clientIt);        // Delete the active client
         }
-        return;
-    
+
         buffer[bytesRead] = '\0';
         std::string receivedData(buffer);
         

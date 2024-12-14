@@ -6,6 +6,7 @@
 #include <map>
 #include <sys/socket.h> //send() recv()
 #include "../Network/Client.hpp"
+#include <sstream>
 
 // command functions declaration
 void handleInvite(Client &client);
