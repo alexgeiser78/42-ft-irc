@@ -45,12 +45,13 @@ void Server::ServerInit(int port)
                 if (FD[i].fd == SerSocketFd)  //.fd comes from poll.h
 					{
                     std::cout << "Accepting new client function" << std::endl;
-                    //AcceptNewClient(); //new connexion
+                    AcceptNewClient(); //new connexion
                     }
                 else
                     {
                     std::cout << "Receiving new data function" << std::endl;
-                    ReceiveNewData(FD[i].fd); //data from a connected client
+                    // ReceiveNewData(FD[i].fd); //data from a connected client
+                    RecieveData(FD[i].fd);
                     }
                 }   
         }
@@ -78,16 +79,17 @@ void Server::ReceiveNewData(int clientFd)
         {
             std::cerr << "Error reading from client " << clientFd << "\n";
         }
-
+    
         std::map<int, Client>::iterator clientIt = clients2.find(clientFd);
         if (clientIt != clients2.end()) 
         {
             clientIt->second.closeClient(); // Close the client
             clients2.erase(clientIt);        // Delete the active client
         }
-        //return;
+
         buffer[bytesRead] = '\0';
         std::string receivedData(buffer);
+        
         std::cout << "Received from client " << clientFd << ": " << receivedData << "\n";
 
         // Extract the command and the args
@@ -114,7 +116,6 @@ void Server::ReceiveNewData(int clientFd)
             std::cerr << "Client not found for FD: " << clientFd << "\n";
         }
     }
-
     buffer[bytesRead] = '\0'; // Assurez-vous que la chaîne est terminée
     std::string receivedData(buffer);
 
@@ -231,7 +232,7 @@ void Server::AcceptNewClient(void)
     //Add NewPoll to the FD vector
     FD.push_back(NewPoll);
 
-    std::cout << "Client with fd: " << clientFd << "has been connectes successfully" << std::endl;
+    std::cout << "Client with fd: " << clientFd << " has been connected successfully" << std::endl;
 }
 
 void    Server::RemoveClient(int fd)
@@ -279,9 +280,66 @@ void    Server::RecieveData(int fd)
     }
     else
     {
-        readBytes[buffer] = '\0';
+        buffer[readBytes] = '\0';
         std::cout << "Client with fd: " << fd << " sent the message: "  << buffer << std::endl;
+        std::istringstream stream(buffer);
+        std::string commandName;
+        stream >> commandName;
+        // if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
+        // && commandName != "MODE" && commandName != "NICK" && commandName != "PART" && commandName != "PRIVMSG"
+        // && commandName != "TOPIC" && commandName != "USER")
+        // {
+        //     std::cerr << "Command not found" << std::endl;
+        //     return ;
+        // }
+        std::string line;
+
+        while(std::getline(stream, line, '\n'))
+        {
+
+            ProccessCommand(fd, line);
+        }
     }
     return ;
 }
 
+void    Server::ProccessCommand(int fd, std::string line)
+{
+    Command     command;
+    std::string commandName;
+    std::istringstream stream(line);
+
+    stream >> commandName;
+    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
+    && commandName != "MODE" && commandName != "NICK" && commandName != "PART" && commandName != "PRIVMSG"
+    && commandName != "TOPIC" && commandName != "USER")
+    {
+        std::cerr << "Command not found" << std::endl;
+        return ;
+    }
+    std::vector<std::string> args;
+    std::string arg;
+    while(stream >> arg)
+    {
+        args.push_back(arg);
+    }
+
+    std::cout << "Proccessed command: " << commandName << std::endl;
+    std::cout << "Arguments: ";
+    for (size_t i = 0; i < args.size(); i++)
+    {
+        std::cout << args[i] << " ";
+    }
+    std::cout << std::endl;
+    Client client;
+    for (size_t i = 0; i < clients.size(); i++)
+    {
+        if (clients[i].getSocket() == fd)
+        {
+            client = clients[i];
+            break ;
+        }
+    }
+    client.setArgs(args);
+    command.executeCommand(commandName, client);
+}

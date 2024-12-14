@@ -55,6 +55,7 @@ class Server
 
             void        RemoveClient(int fd);
             void        RecieveData(int fd);
+            void        ProccessCommand(int fd, std::string line);
 
 };
 
