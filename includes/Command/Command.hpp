@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <sys/socket.h> //send()
+#include <sys/socket.h> //send() recv()
 #include "../Network/Client.hpp"
 
 // command functions declaration
@@ -22,11 +22,15 @@ class Command //assiciate a command to a function
 {
     private:
         std::map<std::string, void(*)(Client&)> commands;
+        // std::vector<std::string>_args;
         //assoc container, key is the command given by the user [INVITE], value is a pointer to the function that will handle the command
     public:
         Command(); //constructor to initiate the map
         ~Command();
+
         void executeCommand(const std::string& commandName, Client &client);
+
+        std::vector<std::string>    args;
 };
 
 #endif
