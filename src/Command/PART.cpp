@@ -17,11 +17,32 @@ void handlePart(Client &client)
         return;
     }
 
-    for (size_t i = 0; i < args.size(); ++i) //multiple args
+    std::vector<std::string> channelNames;
+    std::stringstream ss(args[0]);
+    std::string channelName;
+
+    while (std::getline(ss, channelName, ','))
     {
-        std::string const &channelName = args[i];
+        if (!channelName.empty())
+        {
+            channelNames.push_back(channelName);
+        }
+    }
+
+    for (size_t i = 0; i < channelNames.size(); ++i) //loop through the parsed channel names
+    {
+        std::string const &channelName = channelNames[i];
+        
+        if (channelName[0] != '#') 
+        {
+            std::string errorMsg = "ERROR: Channel name must start with '#'. Invalid channel: " + channelName + "\n";
+            send(client.getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+            std::cerr << "Client " << client.getSocket() << ": Invalid channel name " << channelName << "\n";
+            continue;
+        }
 
         Channel *channel = Channel::getChannel(channelName);
+        
         if (channel == NULL)
         {
             std::string errorMsg = "ERROR: Channel " + channelName + " does not exist.\n";
