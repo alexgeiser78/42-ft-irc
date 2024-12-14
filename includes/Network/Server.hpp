@@ -46,6 +46,8 @@ class Server
             static void SignalHandler(int signum);
             void ServerInit(int port);
             void CloseFDs();
+
+            
             static bool Signal;
             void        AcceptNewClient(void);
 
