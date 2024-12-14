@@ -21,6 +21,7 @@ class Client
 	public:
 		Client(void);
 		Client(int sock);
+		~Client(); 
 
 		int 		getSocket() const;
 		void		setSocket(int fd);
@@ -47,6 +48,8 @@ class Client
 
 		void setRegistered(bool isRegistered);
     	bool isRegistered() const;
+
+		void closeClient();
 };
 
 #endif
