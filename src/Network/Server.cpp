@@ -60,70 +60,6 @@ void Server::ServerInit(int port)
 }
 
 
-//  /*PAULA
-
-
-void Server::ReceiveNewData(int clientFd) 
-{
-    char buffer[512]; // Taille arbitraire
-    ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
-    //ssize_t recv(int sockfd, void *buf, size_t len, int flags); used to read data comming from the Socket
-
-    if (bytesRead <= 0) 
-    {
-        if (bytesRead == 0) 
-        {
-            std::cout << "Client " << clientFd << " disconnected\n";
-        } 
-        else 
-        {
-            std::cerr << "Error reading from client " << clientFd << "\n";
-        }
-    
-        std::map<int, Client>::iterator clientIt = clients2.find(clientFd);
-        if (clientIt != clients2.end()) 
-        {
-            clientIt->second.closeClient(); // Close the client
-            clients2.erase(clientIt);        // Delete the active client
-        }
-        return;
-    
-        buffer[bytesRead] = '\0';
-        std::string receivedData(buffer);
-        
-        std::cout << "Received from client " << clientFd << ": " << receivedData << "\n";
-
-        // Extract the command and the args
-        std::istringstream stream(receivedData);
-        std::string commandName;
-        std::vector<std::string> args;
-
-        stream >> commandName; // Le premier mot est le nom de la commande
-        std::string arg;
-        while (stream >> arg) 
-        {
-            args.push_back(arg); // Ajouter les arguments restants dans un vecteur
-        }
-        
-        std::map<int, Client>::iterator clientIt2 = clients2.find(clientFd);
-        if (clientIt2 != clients2.end()) 
-        {
-            Client& client = clientIt2->second;
-            client.setArgs(args); // Définir les arguments pour le client
-            this->command2.executeCommand(commandName, client); // Exécuter la commande
-        } 
-        else 
-        {
-            std::cerr << "Client not found for FD: " << clientFd << "\n";
-        }
-    }
-    buffer[bytesRead] = '\0'; // Assurez-vous que la chaîne est terminée
-    std::string receivedData(buffer);
-
-    std::cout << "Received from client " << clientFd << ": " << receivedData << "\n";
-}
-//*/PAULA
-
 void Server::SerSocket()
 {
     struct sockaddr_in addressIPv4;
@@ -286,13 +222,6 @@ void    Server::RecieveData(int fd)
         std::istringstream stream(buffer);
         std::string commandName;
         stream >> commandName;
-        // if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
-        // && commandName != "MODE" && commandName != "NICK" && commandName != "PART" && commandName != "PRIVMSG"
-        // && commandName != "TOPIC" && commandName != "USER")
-        // {
-        //     std::cerr << "Command not found" << std::endl;
-        //     return ;
-        // }
         std::string line;
 
         while(std::getline(stream, line, '\n'))
@@ -312,8 +241,8 @@ void    Server::ProccessCommand(int fd, std::string line)
 
     stream >> commandName;
     if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
-    && commandName != "MODE" && commandName != "NICK" && commandName != "PART" && commandName != "PRIVMSG"
-    && commandName != "TOPIC" && commandName != "USER")
+    && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
+    && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
     {
         std::cerr << "Command not found" << std::endl;
         return ;
