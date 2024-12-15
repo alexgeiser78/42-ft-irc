@@ -9,11 +9,11 @@ void handleJoin(Client *client)
     std::cout << "Handling JOIN\n";
     const std::vector<std::string> &args = client->getArgs(); //catch the args provided by the client in a vector called &args
 
-    if (args.empty()) //if no args, error msg to client and server
+    if (args.empty() || args[0][0] != '#' || args[0].size() == 1) //if no args, error msg to client and server
     {
-        std::string errorMsg = "ERROR: JOIN command requires a channel name\n";
+        std::string errorMsg = "ERROR: JOIN command requires a channel name with #\n";
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cerr << "Client " << client->getSocket() << ": JOIN command missing channel name\n";
+        std::cerr << "Client " << client->getSocket() << ": JOIN command missing channel name or #\n";
         return;
     }
 

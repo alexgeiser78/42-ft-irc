@@ -2,7 +2,7 @@
 
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
-Channel::Channel(const std::string& name): _name(name) //, _inviteOnlyMode(0),
+Channel::Channel(const std::string& name): _name(name), _topic(), _members() //, _inviteOnlyMode(0),
 // _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1), _clientLimit(0)
 {
     std::cout << "Channel object created" << std::endl;
@@ -55,6 +55,7 @@ Channel *Channel::getOrCreateChannel(const std::string& channelName)
     // Create a new channel if necessary
     Channel *newChannel = new Channel(channelName);
     _channels[channelName] = newChannel;
+    std::cout << "Created new channel: " << channelName << std::endl;  // Debugging message
     return newChannel;
 }
 
@@ -95,9 +96,15 @@ void Channel::sendNamesList(Client &client)
     std::string response = ":" + client.getNickName() + " 353 " + client.getNickName() + " = " + this->_name + " :";
 
     // Append all nicknames of members in the channel
-    for (std::set<Client *>::iterator it = this->_members.begin(); it != this->_members.end(); ++it)
+    for (std::set<Client*>::iterator it = this->_members.begin(); it != this->_members.end(); ++it)
     {
         response += (*it)->getNickName() + " ";
+    }
+
+    // Trim the trailing space from the list manually (C++98 way)
+    if (!response.empty() && response[response.size() - 1] == ' ')
+    {
+        response.resize(response.size() - 1);  // Remove the last space
     }
 
     response += "\r\n";
@@ -107,6 +114,7 @@ void Channel::sendNamesList(Client &client)
 
     send(client.getSocket(), response.c_str(), response.size(), 0);
 }
+
 
 
 
