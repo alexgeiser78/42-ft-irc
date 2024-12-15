@@ -9,6 +9,13 @@ void handleJoin(Client *client)
     std::cout << "Handling JOIN\n";
     const std::vector<std::string> &args = client->getArgs(); //catch the args provided by the client in a vector called &args
 
+    for (size_t i = 0; i < args.size(); ++i) 
+    {
+        const std::string& arg = args[i];
+        std::cout << arg << " ";
+    }
+        std::cout << std::endl;
+    
     if (args.empty() || args[0][0] != '#' || args[0].size() == 1) //if no args, error msg to client and server
     {
         std::string errorMsg = "ERROR: JOIN command requires a channel name with #\n";
