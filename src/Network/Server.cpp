@@ -220,9 +220,6 @@ void    Server::RecieveData(int fd)
         buffer[readBytes] = '\0';
         std::cout << "Client with fd: " << fd << " sent the message: "  << buffer << std::endl;
         std::istringstream stream(buffer);
-        // std::string commandName;
-        // stream >> commandName;
-        // std::cout << "Command: " << commandName << std::endl;
         std::string line;
 
         while(std::getline(stream, line, '\n'))
@@ -238,7 +235,7 @@ void    Server::RecieveData(int fd)
 
 void    Server::ProccessCommand(int fd, std::string line)
 {
-    Command     command;
+    Command command;
     std::string commandName;
     std::istringstream stream(line);
 
@@ -265,15 +262,18 @@ void    Server::ProccessCommand(int fd, std::string line)
         std::cout << args[i] << " ";
     }
     std::cout << std::endl;
-    Client client;
+    // Client *client = new Client();
+    // client.setArgs(args);
+    Client *client = NULL;
     for (size_t i = 0; i < clients.size(); i++)
     {
         if (clients[i].getSocket() == fd)
         {
-            client = clients[i];
+            clients[i].setArgs(args);
+            client = &clients[i];
             break ;
         }
     }
-    client.setArgs(args);
     command.executeCommand(commandName, client);
+    // delete client;
 }

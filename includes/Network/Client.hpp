@@ -21,7 +21,9 @@ class Client
 	public:
 		Client(void);
 		Client(int sock);
-   ~Client();
+		~Client();
+
+		Client & operator=(Client const & src);
 
 		int 		getSocket() const;
 		void		setSocket(int fd);

@@ -7,7 +7,7 @@ k = channel protected by a password
 o = operators management
 l = numbers of users limitation */
 
-void handleMode(Client &client)  
+void handleMode(Client *client)  
 { 
     (void)client;
     std::cout << "Handling MODE\n"; 
