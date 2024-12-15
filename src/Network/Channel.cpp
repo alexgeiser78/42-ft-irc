@@ -82,3 +82,7 @@ bool Channel::isMember(Client const &client) const
     return false;
 }
 
+const std::set<Client*>& Channel::getMembers() const
+{
+    return _members;
+}

@@ -35,6 +35,7 @@ class Channel
 		static Channel *getOrCreateChannel(std::string const &channelName);
 		static Channel *getChannel(std::string const &channelName);
 		bool isMember(Client const &client) const;
+		const std::set<Client*>& getMembers() const;
 };
 
 
