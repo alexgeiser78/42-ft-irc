@@ -15,6 +15,20 @@ Server::~Server()
     std::cout << "Server object destroyed" << std::endl;
 }
 
+void    Server::setServerCreationTime(void)
+{
+    std::time_t now = std::time(0);
+    struct std::tm *timeinfo = std::localtime(&now);
+    char buffer[80];
+    std::strftime(buffer, 80, "%a %b %d %H:%M:%S %Y", timeinfo);
+    _ServerCreationTime = std::string(buffer);
+}
+
+std::string  Server::getServerCreationTime(void) const
+{
+    return _ServerCreationTime;
+}
+
 void Server::SignalHandler(int signum)
 {
     std::cout << "Interrupt signal (" << signum << ") received.\n";
@@ -25,6 +39,7 @@ void Server::ServerInit(int port)
 {
 	this->_Port = port;   //-*-*-*-*--* to check, maybe has to be fix 
 	SerSocket(); //create the server socket
+    setServerCreationTime();
 
 	std::cout <<"Server " << SerSocketFd << " Connected" << std::endl;
 	std::cout << "Waiting to accept a connection...\n";
@@ -240,14 +255,6 @@ void    Server::ProccessCommand(int fd, std::string line)
     std::istringstream stream(line);
 
     stream >> commandName;
-    std::cout << "*******Command: " << commandName << std::endl;
-    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
-    && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
-    && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
-    {
-        std::cerr << "Command not found" << std::endl;
-        return ;
-    }
     std::vector<std::string> args;
     std::string arg;
     while(stream >> arg)
@@ -262,8 +269,6 @@ void    Server::ProccessCommand(int fd, std::string line)
         std::cout << args[i] << " ";
     }
     std::cout << std::endl;
-    // Client *client = new Client();
-    // client.setArgs(args);
     Client *client = NULL;
     for (size_t i = 0; i < clients.size(); i++)
     {
@@ -274,6 +279,19 @@ void    Server::ProccessCommand(int fd, std::string line)
             break ;
         }
     }
-    command.executeCommand(commandName, client);
-    // delete client;
+    client->setServerCreationTime(_ServerCreationTime);
+    std::vector<Client> allClients = clients;
+    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
+    && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
+    && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
+    {
+        std::cerr << "Command not found" << std::endl;
+        return ;
+    }
+    if (!client->isRegistered() && commandName != "NICK" && commandName != "USER")
+    {
+        std::cerr << "Client not registered" << std::endl;
+        return ;
+    }
+    command.executeCommand(commandName, client, this);
 }

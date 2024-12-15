@@ -4,8 +4,9 @@
 
 //JOIN #channel or JOIN #channel1, #channel2 or JOIN #channel passsword
 
-void handleJoin(Client *client)  
-{ 
+void handleJoin(Client *client, Server * server)  
+{
+    (void)server; 
     std::cout << "Handling JOIN\n";
     const std::vector<std::string> &args = client->getArgs(); //catch the args provided by the client in a vector called &args
 
