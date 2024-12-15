@@ -5,3 +5,4 @@ void handleTopic(Client *client)
     (void)client;
     std::cout << "Handling TOPIC\n"; 
 }
+

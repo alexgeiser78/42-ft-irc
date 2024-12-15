@@ -33,8 +33,8 @@ class Server
 {
     private:
             int _Port;
-            std::vector<Client> clients;
-            std::map<int, Client> clients2;
+            //std::vector<Client> clients;
+            std::map<int, Client> clients;
             int SerSocketFd; //server socket file descriptor
             std::vector <struct pollfd> FD; //file descriptor structure
             std::string _Password;

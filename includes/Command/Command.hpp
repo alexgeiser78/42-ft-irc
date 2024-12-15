@@ -31,6 +31,7 @@ class Command //assiciate a command to a function
         void executeCommand(const std::string& commandName, Client *client);
 
         std::vector<std::string>    args;
+        
 };
 
 #endif

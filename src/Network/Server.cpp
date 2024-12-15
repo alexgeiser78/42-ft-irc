@@ -163,8 +163,8 @@ void Server::AcceptNewClient(void)
     client.setSocket(clientFd);
     client.setAddress(inet_ntoa(clientAddress.sin_addr));
 
-    //Add the new client to the clients vector
-    clients.push_back(client);
+    //Add the new client to the client map
+    clients.insert(std::make_pair(clientFd, client));
 
     //Add NewPoll to the FD vector
     FD.push_back(NewPoll);
@@ -191,7 +191,7 @@ void    Server::RemoveClient(int fd)
     {
         if (clients[i].getSocket() == fd)
         {
-            clients.erase(clients.begin() + i);
+            clients.erase(fd);
             break ;
         }
         i++;
@@ -240,7 +240,7 @@ void    Server::ProccessCommand(int fd, std::string line)
     std::istringstream stream(line);
 
     stream >> commandName;
-    std::cout << "*******Command: " << commandName << std::endl;
+    std::cout << "Command: " << commandName << std::endl;
     if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
     && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
     && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
