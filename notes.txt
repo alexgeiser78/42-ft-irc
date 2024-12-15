@@ -16,9 +16,6 @@ https://github.com/davisonio/awesome-irc
 
 https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9
 
-https://modern.ircdocs.horse/
-
-
 IRC theory
 
 -an IRC client connect to a server via a TCP socket, generaly on port 6667

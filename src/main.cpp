@@ -5,9 +5,7 @@ int main (int argc, char **argv)
 {
     if(argc != 3)
     {
-        std::cerr << "Error: Invalid arguments." << std::endl;
-        std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
-        return 1;
+        throw std::invalid_argument("Invalid number of arguments") ;
     }
 
     int port = std::atoi(argv[1]);

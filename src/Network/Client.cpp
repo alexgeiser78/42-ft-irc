@@ -1,7 +1,7 @@
 #include "../../includes/Network/Client.hpp"
 
 
-Client::Client(void)
+Client::Client(void): _socket(-1), _isRegistered(false)
 {
 	std::cout << " Default Client object created" <<std::endl;
 }
@@ -14,6 +14,23 @@ Client::Client(int sock): _socket(sock), _isRegistered(false)
 Client::~Client()
 {
 	std::cout << "Client object destroyed" << std::endl;
+}
+
+Client & Client::operator=(Client const & src)
+{
+	if (this != &src)
+	{
+		_socket = src._socket;
+		_address = src._address;
+		_args = src._args;
+		_nickname = src._nickname;
+		_username = src._username;
+		_hostname = src._hostname;
+		_servername = src._servername;
+		_realname = src._realname;
+		_isRegistered = src._isRegistered;
+	}
+	return *this;
 }
 
 int Client::getSocket() const

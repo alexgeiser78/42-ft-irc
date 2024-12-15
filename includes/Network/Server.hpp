@@ -38,7 +38,7 @@ class Server
             int SerSocketFd; //server socket file descriptor
             std::vector <struct pollfd> FD; //file descriptor structure
             std::string _Password;
-            Command command2;
+            Command command;
     public:
             Server(int port, std::string password);
             ~Server();
@@ -46,8 +46,6 @@ class Server
             static void SignalHandler(int signum);
             void ServerInit(int port);
             void CloseFDs();
-
-            
             static bool Signal;
             void        AcceptNewClient(void);
 
