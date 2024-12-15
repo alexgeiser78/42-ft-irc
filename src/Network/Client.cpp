@@ -1,12 +1,12 @@
 #include "../../includes/Network/Client.hpp"
 
 
-Client::Client(void): _socket(-1), _isRegistered(false)
+Client::Client(void): _socket(-1), _isRegistered(false), _currentChannel(NULL)
 {
-	std::cout << " Default Client object created" <<std::endl;
+	std::cout << "Default Client object created" <<std::endl;
 }
 
-Client::Client(int sock): _socket(sock), _isRegistered(false)
+Client::Client(int sock): _socket(sock), _isRegistered(false), _currentChannel(NULL)
 {
 	std::cout << "Client object created" << std::endl;
 }
@@ -29,6 +29,7 @@ Client & Client::operator=(Client const & src)
 		_servername = src._servername;
 		_realname = src._realname;
 		_isRegistered = src._isRegistered;
+		_currentChannel = src._currentChannel;
 	}
 	return *this;
 }
@@ -134,6 +135,22 @@ void Client::setRegistered(bool isRegistered)
 bool Client::isRegistered() const 
 {
 	return _isRegistered;
+}
+
+//--------------------------Currnt Channel
+
+void Client::setCurrentChannel(Channel* channel)
+{
+    _currentChannel = channel;
+	if (channel)
+        std::cout << "Client's current channel is now: " << channel->getName() << "\n";
+    else
+        std::cout << "Client's current channel is now: NULL\n";
+}
+
+Channel* Client::getCurrentChannel() const
+{
+    return _currentChannel;
 }
 
 //--------------------------Close

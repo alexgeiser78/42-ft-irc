@@ -36,6 +36,12 @@ void handleJoin(Client *client)
             send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
             std::cout << "Client " << client->getSocket() << " joined channel " << channelName << "\n";
 
+            client->setCurrentChannel(channel);  // Update the client's current channel
+            std::cout << "Client " << client->getSocket() << " current channel set to " << channel->getName() << "\n";
+            
+            channel->sendTopic(*client);       // Send RPL_TOPIC
+            channel->sendNamesList(*client);  // Send RPL_NAMREPLY
+            
             channel->broadcast(*client, "User " + client->getNickName() + " has joined the channel.\n");//send messages to the others clients
         }
         else //if the client is already member, send msg to client and server
