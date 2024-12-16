@@ -28,13 +28,15 @@ void handleJoin(Client *client, Server *server)
     (void)server;
     const std::vector<std::string> &args = client->getArgs();
 
-    if (args.empty()) {
+    if (args.empty() || args[0][0] != '#' || args[0].size() == 1) 
+    {
         std::string errorMsg = "ERROR: JOIN command requires a channel name.\r\n";
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
 
-    for (size_t i = 0; i < args.size(); ++i) {
+    for (size_t i = 0; i < args.size(); ++i) 
+    {
         const std::string &channelName = args[i];
 
         // Obtener o crear el canal

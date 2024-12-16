@@ -58,12 +58,15 @@ class Server
 	    static bool Signal;
 	    void        AcceptNewClient(void);
 
-	    Channel* getOrCreateChannel(const std::string& channelName);
+	    Channel		*getOrCreateChannel(const std::string& channelName);
 
 
 	    void        RemoveClient(int fd);
 	    void        RecieveData(int fd);
 	    void        ProccessCommand(int fd, std::string line);
+
+		Channel 	*findChannel(const std::string &channelName);
+		
 
 };
 

@@ -10,11 +10,11 @@ void handlePart(Client *client, Server * server) //function to handle the PART c
     std::cout << "Handling PART\n";
     const std::vector<std::string> &args = client->getArgs(); //retrieves the args
 
-    if (args.empty())
+    if (args.empty() || args[0][0] != '#' || args[0].size() == 1)
     {
-        std::string errorMsg = "ERROR: PART command requires a channel name\n";
+        std::string errorMsg = "ERROR: PART command requires a channel name and #\n";
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cerr << "Client " << client->getSocket() << ": PART command missing channel name\n";
+        std::cerr << "Client " << client->getSocket() << ": PART command missing channel name or #\n";
         return;
     }
 

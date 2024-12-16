@@ -2,8 +2,8 @@
 
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
-Channel::Channel(const std::string& name): _name(name) //, _inviteOnlyMode(0),
-// _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1), _clientLimit(0)
+Channel::Channel(const std::string& name): _name(name), _protectedTopicMode(0)//, _inviteOnlyMode(0),
+// _clientLimitMode(0), _keyMode(0), , _clientLimit(0)
 {
     std::cout << "Channel object created" << std::endl;
 }
@@ -85,4 +85,32 @@ bool Channel::isMember(Client const &client) const
 const std::set<Client*>& Channel::getMembers() const
 {
     return _members;
+}
+
+void Channel::sendTopic(Client &client) 
+{
+    std::string response;
+
+    if (this->_topic.empty()) 
+    { // if no topic is tefined
+        response = ":" + client.getNickName() + " 331 " + client.getNickName() + " " + this->_name + " :No topic is set\r\n";
+    } else { // if topic is defined
+        response = ":" + client.getNickName() + " 332 " + client.getNickName() + " " + this->_name + " :" + this->_topic + "\r\n";
+    }
+    send(client.getSocket(), response.c_str(), response.size(), 0);
+}
+
+void Channel::addOperator(Client &client) 
+{
+    this->_operators.insert(&client); // Add the client pointer
+}
+
+void Channel::removeOperator(Client &client) 
+{
+    this->_operators.erase(&client); // Remove the client pointer
+}
+
+std::map<std::string, Channel*> &Channel::getChannels() 
+{
+    return _channels;
 }

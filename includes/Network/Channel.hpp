@@ -14,15 +14,16 @@ class Channel
 		// std::string		_type;
 		std::string			_topic;
 		std::set<Client*>	_members;
-		// Client*				_operator;
+		std::set<Client*>	_operators;
 		// bool				_inviteOnlyMode;
 		// bool				_clientLimitMode;
 		// bool				_keyMode;
-		// bool				_protectedTopicMode;
+		bool				_protectedTopicMode;
 		// int					_clientLimit;
 		// std::string			_key;
 
 		static std::map<std::string, Channel*> _channels;
+
 	
 	public:
 		Channel(const std::string& name);
@@ -34,9 +35,19 @@ class Channel
 
 		static Channel *getOrCreateChannel(std::string const &channelName);
 		static Channel *getChannel(std::string const &channelName);
-		bool isMember(Client const &client) const;
-		const std::set<Client*>& getMembers() const;
+		bool 	isMember(Client const &client) const;
+		const 	std::set<Client*>& getMembers() const;
+		void 	setTopic(Client &client, const std::string &newTopic);
+		bool 	isOperator(const Client &client) const;
+		void 	sendTopic(Client &client);
+		void	addOperator(Client &client);
+		void	removeOperator(Client &client);
+		static std::map<std::string, Channel*>& getChannels();
 };
+
+
+//std::map<std::string, Channel*> Channel::_channels;
+
 
 
 #endif
