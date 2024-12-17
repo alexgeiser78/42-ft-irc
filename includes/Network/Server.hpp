@@ -44,9 +44,11 @@ class Server
 	    std::vector <struct pollfd> FD; //file descriptor structure
 	    std::string _Password;
 	    std::string _ServerCreationTime;
-	    Command command;
+		// std::vector<Channel> channels;
+	    // Command command;
     public:
 		std::vector<Client> clients;
+		std::vector<Channel> channels;
 	    Server(int port, std::string password);
 	    ~Server();
 		void setServerCreationTime(void);

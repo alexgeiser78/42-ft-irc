@@ -2,7 +2,7 @@
 
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
-Channel::Channel(const std::string& name): _name(name) //, _inviteOnlyMode(0),
+Channel::Channel(const std::string& name): _name(name), _clientLimitMode(0), _clientLimit(0), _key("") //, _inviteOnlyMode(0),
 // _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1), _clientLimit(0)
 {
     std::cout << "Channel object created" << std::endl;
@@ -85,4 +85,39 @@ bool Channel::isMember(Client const &client) const
 const std::set<Client*>& Channel::getMembers() const
 {
     return _members;
+}
+
+void Channel::setKey(std::string const &key)
+{
+    _key = key;
+}
+
+std::string const &Channel::getKey() const
+{
+    return _key;
+}
+
+void Channel::setClienLimitMode(bool mode)
+{
+    _clientLimitMode = mode;
+}
+
+bool Channel::getClientLimitMode() const
+{
+    return _clientLimitMode;
+}
+
+// std::set<Client*> &Channel::getMembers() const
+// {
+//     return _members;
+// }
+
+void Channel::setClientLimit(size_t limit)
+{
+    _clientLimit = limit;
+}
+
+size_t Channel::getClientLimit() const
+{
+    return _clientLimit;
 }

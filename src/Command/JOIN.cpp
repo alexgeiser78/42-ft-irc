@@ -1,6 +1,8 @@
 #include "../../includes/Command/Command.hpp"
+#include "../../includes/Command/Messages.hpp"
 #include "../../includes/Network/Channel.hpp"
 #include "../../includes/Network/Client.hpp"
+#include "../../includes/Network/Server.hpp"
 
 #include <iostream>
 #include <string>
@@ -13,68 +15,112 @@
 
 //JOIN #channel or JOIN #channel1, #channel2 or JOIN #channel passsword
 
-#include "../../includes/Command/Command.hpp"
-#include "../../includes/Network/Channel.hpp"
-#include "../../includes/Network/Client.hpp"
-#include <iostream>
+
 #include <vector>
-#include <string>
-#include <cstring>  // Para `strerror`
-#include <errno.h>   // Para `errno`
 
-// Manejo del comando JOIN
-void handleJoin(Client *client, Server *server)
+
+static  void  splitParams(Client *client, std::map<std::string, std::string> &params)
 {
-    (void)server;
-    const std::vector<std::string> &args = client->getArgs();
+    // std::map<std::string, std::string> params;
+    if (client->getArgs()[0].empty())
+    {
+		std::string errorMsg = "JOIN :Not enough parameters\r\n";
+		std::cout << errorMsg;
+		send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+		return;         
+    }
+    std::stringstream streamChannels(client->getArgs()[0]);
+    std::string channel;
+    if (client->getArgs().size() == 1)
+    {
+        while(std::getline(streamChannels, channel, ','))
+        {
+            params.insert(std::pair<std::string, std::string>(channel, ""));
+        }
+    }
+    if (client->getArgs().size() > 1)
+    {
+        std::stringstream streamKeys(client->getArgs()[1]);
+        std::string key;
+        while(std::getline(streamChannels, channel, ','))
+        {
+            if (std::getline(streamKeys, key, ','))
+                params.insert(std::pair<std::string, std::string>(channel, key));
+            else
+            params.insert(std::pair<std::string, std::string>(channel, ""));
+        }
+    }
+    return;
+}
 
-    if (args.empty()) {
-        std::string errorMsg = "ERROR: JOIN command requires a channel name.\r\n";
+void    joinChannel(Client *client, Channel *channel)
+{
+    std::cout << "Joining channel\n";
+    if (channel->isMember(*client))
+    {
+        std::string errorMsg = "JOIN :Already in channel\r\n";
+        std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
+    channel->addMember(*client);
+    std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
+    client->getHostname(), channel->getName());
+    std::cout << successMsg;
+    send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
+    return;
+}
 
-    for (size_t i = 0; i < args.size(); ++i) {
-        const std::string &channelName = args[i];
+void    joinNewChannel(Client *client, Channel *channel, std::map<std::string, std::string>::iterator it)
+{
+    (void)it;
+    // (void)client;
+    // (void)channel;
 
-        // Obtener o crear el canal
-        Channel* channel = Channel::getOrCreateChannel(channelName);
+    std::cout << "Joining new channel\n";
+    channel->addMember(*client);
+    std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
+    client->getHostname(), channel->getName());
+    std::cout << successMsg;
+    send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
+    return ;
+}
 
-        if (channel == NULL) {
-            std::string errorMsg = "ERROR: Unable to join channel " + channelName + ".\r\n";
-            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-            continue;
-        }
-
-        if (channel->addMember(*client)) {
-            // Confirmar que el cliente se unió al canal
-            std::string successMsg = ":irc.myserver.com JOIN #" + channelName + "\r\n";
-            send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
-
-            // Enviar mensaje RPL_NAMES para informar a HexChat sobre los usuarios en el canal
-// En tu método handleJoin después de agregar al cliente al canal
-            std::ostringstream namesStream;
-            namesStream << ":irc.myserver.com 353 " << client->getNickName()
-                        << " = #" << channelName << " :";
-
-            const std::set<Client*>& members = channel->getMembers();
-            for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); ++it) {
-                namesStream << (*it)->getNickName() << " ";
+void handleJoin(Client *client, Server *server)
+{
+    std::map<std::string, std::string> params;
+    splitParams(client, params);
+    for (std::map<std::string, std::string>::iterator it = params.begin(); it != params.end(); it++)
+    {
+        std::cout << "Channel: " << it->first << " Key: " << it->second << std::endl;
+        for (size_t i = 0; i < server->channels.size(); i++)
+        {
+            if (server->channels[i].getName() == it->first)
+            {
+                if ((server->channels[i].getKey().empty() || server->channels[i].getKey() == it->second)
+                && (!server->channels[i].getClientLimitMode()
+                    || server->channels[i].getMembers().size() < server->channels[i].getClientLimit()))
+                {
+                    joinChannel(client, &server->channels[i]);
+                    return ;
+                }
+                if (server->channels[i].getKey() != it->second)
+                {
+                    std::string errorMsg = ERR_BADCHANNELKEY(server->channels[i].getName());
+                    std::cout << errorMsg;
+                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                }
+                if (server->channels[i].getMembers().size() >= server->channels[i].getClientLimit())
+                {
+                    std::string errorMsg = "JOIN :Channel is full\r\n";
+                    std::cout << errorMsg;
+                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);}
+                return ;
             }
-
-            std::string rplNamesMsg = namesStream.str();
-            send(client->getSocket(), rplNamesMsg.c_str(), rplNamesMsg.size(), 0);
-
-            // Mensaje opcional para finalizar la lista de nombres
-            std::string endOfNamesMsg = ":irc.myserver.com 366 " + client->getNickName() +
-                                        " #" + channelName + " :End of NAMES list.\r\n";
-            send(client->getSocket(), endOfNamesMsg.c_str(), endOfNamesMsg.size(), 0);
-
-
-        } else {
-            std::string errorMsg = "ERROR: You are already in the channel " + channelName + ".\r\n";
-            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         }
+        Channel *newChannel = new Channel(it->first);
+        server->channels.push_back(*newChannel);
+        joinNewChannel(client, newChannel, it);
     }
 }
 
