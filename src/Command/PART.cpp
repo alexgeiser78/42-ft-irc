@@ -4,8 +4,9 @@
 
 //PART #channel or PART #channel, #channel2
 
-void handlePart(Client *client) 
+void handlePart(Client *client, Server * server) //function to handle the PART command
 {
+    (void)server;
     std::cout << "Handling PART\n";
     const std::vector<std::string> &args = client->getArgs(); //retrieves the args
 

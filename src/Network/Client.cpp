@@ -124,6 +124,15 @@ std::string  const &Client::getRealname() const
 	return _realname;
 }
 
+void        Client::setServerCreationTime(std::string time)
+{
+    _ServerCreationTime = time;
+}
+
+std::string Client::getServerCreationTime(void) const
+{
+    return _ServerCreationTime;
+}
 
 //------------------------------Register
 

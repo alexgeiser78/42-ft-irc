@@ -21,7 +21,12 @@ class Client
 		std::string _servername;
 		std::string _realname;
 		bool 		_isRegistered;
+
+		std::string  _ServerCreationTime;
+
+
 		Channel*	_currentChannel; // Pointer to the current channel
+
 
 	public:
 		Client(void);
@@ -52,6 +57,9 @@ class Client
 
     	void setRealname(const std::string &realname);
     	std::string const &getRealname() const;
+
+        void        setServerCreationTime(std::string  time);
+        std::string  getServerCreationTime(void) const;
 
 		void setRegistered(bool isRegistered);
     	bool isRegistered() const;

@@ -19,11 +19,11 @@ class Channel
 		std::set<Client*>	_members;
 		// Client*				_operator;
 		// bool				_inviteOnlyMode;
-		// bool				_clientLimitMode;
+		bool				_clientLimitMode;
 		// bool				_keyMode;
 		// bool				_protectedTopicMode;
-		// int					_clientLimit;
-		// std::string			_key;
+		size_t					_clientLimit;
+		std::string			_key;
 
 		static std::map<std::string, Channel*> _channels;
 	
@@ -37,8 +37,23 @@ class Channel
 		static Channel *getOrCreateChannel(std::string const &channelName);
 		static Channel *getChannel(std::string const &channelName);
 		bool isMember(Client const &client) const;
+
+		const std::set<Client*>& getMembers() const;
+
+		void setKey(std::string const &key);
+		std::string const &getKey() const;
+
+		void setClienLimitMode(bool mode);
+		bool getClientLimitMode() const;
+
+		// std::set<Client*> &getMembers() const;
+
+		void setClientLimit(size_t limit);
+		size_t getClientLimit() const;
+
 		void sendTopic(Client &client);       // Sends RPL_TOPIC (332)
     	void sendNamesList(Client &client);   // Sends RPL_NAMREPLY (353)
+
 };
 
 
