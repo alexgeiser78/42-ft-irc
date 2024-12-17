@@ -37,15 +37,16 @@ class Channel;
 class Server
 {
     private:
+
 		int _Port;
-		// std::vector<Client> clients;
+
 		std::map<int, Client> clients2;
 		int SerSocketFd; //server socket file descriptor
 	    std::vector <struct pollfd> FD; //file descriptor structure
 	    std::string _Password;
 	    std::string _ServerCreationTime;
-		// std::vector<Channel> channels;
-	    // Command command;
+      Command command;
+
     public:
 		std::vector<Client> clients;
 		std::vector<Channel> channels;

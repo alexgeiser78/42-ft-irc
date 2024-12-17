@@ -1,9 +1,13 @@
+#pragma once
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
 #include <iostream>
 #include <vector>
 #include <unistd.h> // C librairy !!!!!!
+#include "Channel.hpp"
+
+class Channel;
 
 class Client
 {
@@ -17,7 +21,11 @@ class Client
 		std::string _servername;
 		std::string _realname;
 		bool 		_isRegistered;
+
 		std::string  _ServerCreationTime;
+
+
+		Channel*	_currentChannel; // Pointer to the current channel
 
 
 	public:
@@ -38,16 +46,16 @@ class Client
 		std::vector<std::string> getArgs() const;
 		void setArgs(const std::vector <std::string> &arguments);
 		
-		void setUsername(const std::string& username);
+		void setUsername(const std::string &username);
     	 std::string const &getUsername() const;
 
-    	void setHostname(const std::string& hostname);
+    	void setHostname(const std::string &hostname);
     	std::string const &getHostname() const;
 
-    	void setServername(const std::string& servername);
+    	void setServername(const std::string &servername);
     	std::string const &getServername() const;
 
-    	void setRealname(const std::string& realname);
+    	void setRealname(const std::string &realname);
     	std::string const &getRealname() const;
 
         void        setServerCreationTime(std::string  time);
@@ -55,6 +63,10 @@ class Client
 
 		void setRegistered(bool isRegistered);
     	bool isRegistered() const;
+
+		void setCurrentChannel(Channel *channel);  // Set current channel
+    	Channel *getCurrentChannel() const;        // Get current channel
+
 		void closeClient();
 };
 

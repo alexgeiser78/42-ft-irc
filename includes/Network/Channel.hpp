@@ -1,3 +1,4 @@
+#pragma once
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
@@ -5,6 +6,8 @@
 #include <set>
 #include <map>
 #include <sys/socket.h>
+
+class Client;
 
 
 class Channel
@@ -31,10 +34,10 @@ class Channel
 		bool addMember(Client &client);
 		void removeMember(Client &client);
 		void broadcast(const Client &sender, const std::string &message);
-
 		static Channel *getOrCreateChannel(std::string const &channelName);
 		static Channel *getChannel(std::string const &channelName);
 		bool isMember(Client const &client) const;
+
 		const std::set<Client*>& getMembers() const;
 
 		void setKey(std::string const &key);
@@ -47,6 +50,10 @@ class Channel
 
 		void setClientLimit(size_t limit);
 		size_t getClientLimit() const;
+
+		void sendTopic(Client &client);       // Sends RPL_TOPIC (332)
+    	void sendNamesList(Client &client);   // Sends RPL_NAMREPLY (353)
+
 };
 
 
