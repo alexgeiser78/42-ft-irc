@@ -37,6 +37,14 @@ void handleTopic(Client *client, Server * server)
         return;
     }
 
+    // Check if the client is a member of the channel
+    if (!channel->isMember(*client)) {
+        std::string errorMsg = "442 " + client->getNickName() + " " + channelName + " :You're not on that channel\r\n";
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        std::cout << "Error: Client is not a member of the channel\n";
+        return;
+    }
+
     if (args.size() == 1)
     {
         channel->sendTopic(*client);
