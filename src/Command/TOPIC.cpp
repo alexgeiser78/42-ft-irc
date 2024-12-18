@@ -58,7 +58,7 @@ void handleTopic(Client *client, Server * server)
     // Ensure that there is no space between ':' and the topic content
     if (newTopic.empty() || newTopic[0] != ':') 
     {
-        std::string errorMsg = "ERROR: Topic must start with a ':'\r\n";
+        std::string errorMsg = "461 " + client->getNickName() + " TOPIC :Not enough parameters\r\n";
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         std::cout << "Error: Topic must start with a ':'\n";
         return;
