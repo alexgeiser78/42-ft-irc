@@ -29,26 +29,20 @@ class Channel;
 #include <arpa/inet.h> //inet_ntoa
 #include <cstring> //memset
 
-// #define SERVER_VERSION "ircserv-1.0"
-// #define NETWORK_NAME "MyIRCNetwork"
-// #define SERVER_NAME "irc.myserver.com"
-
 
 class Server
 {
     private:
 		int _Port;
-		// std::vector<Client> clients;
 		std::map<int, Client> clients2;
 		int SerSocketFd; //server socket file descriptor
 	    std::vector <struct pollfd> FD; //file descriptor structure
 	    std::string _Password;
 	    std::string _ServerCreationTime;
-		// std::vector<Channel> channels;
-	    // Command command;
+
     public:
-		std::vector<Client> clients;
-		std::vector<Channel> channels;
+		std::vector<Client > clients;
+		std::vector<Channel *> channels;
 	    Server(int port, std::string password);
 	    ~Server();
 		void setServerCreationTime(void);
@@ -60,7 +54,7 @@ class Server
 	    static bool Signal;
 	    void        AcceptNewClient(void);
 
-	    Channel* getOrCreateChannel(const std::string& channelName);
+	    // Channel* getOrCreateChannel(const std::string& channelName);
 
 
 	    void        RemoveClient(int fd);

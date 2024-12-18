@@ -13,20 +13,20 @@ Channel::~Channel()
     std::cout << "Channel object destroyed" << std::endl;
 }
 
- std::string const &Channel::getName() const 
+ std::string const &Channel::getName()
 {
     return _name;
 }
 
-bool Channel::addMember(Client &client)
-{
-    if (_members.find(&client) != _members.end())
-    {
-        return false; //already member
-    }
-    _members.insert(&client);
-    return true;
-}
+// bool Channel::addMember(Client &client)
+// {
+//     if (_members.find(&client) != _members.end())
+//     {
+//         return false; //already member
+//     }
+//     _members.insert(&client);
+//     return true;
+// }
 
 void Channel::removeMember(Client &client)
 {
@@ -44,19 +44,19 @@ void Channel::broadcast(const Client &sender, const std::string &message)
     }
 }
 
-Channel *Channel::getOrCreateChannel(const std::string& channelName)
-{
-    std::map<std::string, Channel*>::iterator it = _channels.find(channelName);
-    if (it != _channels.end())
-    {
-        return (it->second);  // existing channel
-    }
+// Channel *Channel::getOrCreateChannel(const std::string& channelName)
+// {
+//     std::map<std::string, Channel*>::iterator it = _channels.find(channelName);
+//     if (it != _channels.end())
+//     {
+//         return (it->second);  // existing channel
+//     }
 
-    // Create a new channel if necessary
-    Channel *newChannel = new Channel(channelName);
-    _channels[channelName] = newChannel;
-    return newChannel;
-}
+//     // Create a new channel if necessary
+//     Channel *newChannel = new Channel(channelName);
+//     _channels[channelName] = newChannel;
+//     return newChannel;
+// }
 
 // catch an existing channel
 Channel* Channel::getChannel(const std::string& channelName)
@@ -82,7 +82,7 @@ bool Channel::isMember(Client const &client) const
     return false;
 }
 
-std::set<Client*> &Channel::getMembers() const
+std::set<Client*> &Channel::getMembers()
 {
     return _members;
 }
@@ -170,4 +170,14 @@ void Channel::setInviteOnlyMode(bool mode)
 bool Channel::getInviteOnlyMode() const
 {
     return _inviteOnlyMode;
+}
+
+std::string Channel::stringMembers(void)
+{
+    std::ostringstream names;
+    for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); it++)
+    {
+        names << (*it)->getNickName() << " ";
+    }
+    return names.str();
 }

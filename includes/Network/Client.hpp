@@ -55,7 +55,7 @@ class Client
 
 		void setRegistered(bool isRegistered);
     	bool isRegistered() const;
-		void closeClient();
+		// void closeClient();
 };
 
 #endif

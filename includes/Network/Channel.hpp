@@ -5,6 +5,7 @@
 #include <set>
 #include <map>
 #include <sys/socket.h>
+#include <sstream>
 
 
 class Channel
@@ -13,13 +14,14 @@ class Channel
 		std::string			_name;
 		std::string			_topic;
 		std::set<Client*>	_members;
+
 		std::set<Client*>	_invited;
 		Client*				_operator;
 		bool				_inviteOnlyMode;
 		bool				_clientLimitMode;
 		bool				_keyMode;
 		// bool				_protectedTopicMode;
-		size_t					_clientLimit;
+		size_t				_clientLimit;
 		std::string			_key;
 
 		static std::map<std::string, Channel*> _channels;
@@ -27,23 +29,21 @@ class Channel
 	public:
 		Channel(const std::string& name);
 		~Channel();
-		std::string const &getName() const;
-		bool addMember(Client &client);
+		std::string const &getName();
+		// bool addMember(Client &client);
 		void removeMember(Client &client);
 		void broadcast(const Client &sender, const std::string &message);
 
-		static Channel *getOrCreateChannel(std::string const &channelName);
+		// static Channel *getOrCreateChannel(std::string const &channelName);
 		static Channel *getChannel(std::string const &channelName);
 		bool isMember(Client const &client) const;
-		std::set<Client*> &getMembers() const;
+		std::set<Client*> &getMembers();
 
 		void setKey(std::string const &key);
 		std::string const &getKey() const;
 
 		void setClienLimitMode(bool mode);
 		bool getClientLimitMode() const;
-
-		// std::set<Client*> &getMembers() const;
 
 		void setClientLimit(size_t limit);
 		size_t getClientLimit() const;
@@ -62,6 +62,7 @@ class Channel
 
 		void setInviteOnlyMode(bool mode);
 		bool getInviteOnlyMode() const;
+		std::string stringMembers(void);
 };
 
 

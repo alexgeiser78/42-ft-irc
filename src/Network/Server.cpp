@@ -148,7 +148,7 @@ void Server::CloseFDs()
 
 void Server::AcceptNewClient(void)
 {
-    Client              client; //Create a new client
+    Client              client ; //Create a new client
     int                 clientFd; // File description for socket created when accepting conection
     struct sockaddr_in  clientAddress; //Struc with client address information
     struct pollfd       NewPoll; //Struct pollfd for new socket information
@@ -262,8 +262,8 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    std::cout << "Proccessed command: " << commandName << std::endl;
-    std::cout << "Arguments: ";
+    // std::cout << "Proccessed command: " << commandName << std::endl;
+    // std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
         std::cout << args[i] << " ";
