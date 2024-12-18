@@ -6,4 +6,3 @@ void handleTopic(Client *client, Server * server)
     (void)client;
     std::cout << "Handling TOPIC\n"; 
 }
-

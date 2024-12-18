@@ -14,6 +14,7 @@
 #define SERVER_NAME "irc.myserver.com"
 #define CHANNEL_MODES "oitkl"
 #define PARAM_MODES "o,k"
+#define PREFIX_SERVER ":irc.myserver.com"
 
 class Server;
 
@@ -41,9 +42,7 @@ class Command //assiciate a command to a function
 
         void        executeCommand(const std::string& commandName, Client *client, Server *server); //execute the command
 
-
-        std::vector<std::string>    args;
-        
+        // std::vector<std::string>    args;
 };
 
 #endif
