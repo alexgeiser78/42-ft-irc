@@ -31,7 +31,7 @@ void handleNick(Client *client, Server * server)
 	}
 	for (size_t i = 0; i < server->clients.size(); i++)
 	{
-		if (server->clients[i].getNickName() == client->getArgs()[0]) // if the nickname is already taken
+		if (server->clients[i]->getNickName() == client->getArgs()[0]) // if the nickname is already taken
 		{
 		std::string errorMsg = ERR_NICKNAMEINUSE(client->getNickName(), client->getArgs()[0]);
 			std::cout << errorMsg;

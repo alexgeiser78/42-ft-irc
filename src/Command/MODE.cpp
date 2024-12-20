@@ -11,5 +11,7 @@ void handleMode(Client *client, Server * server)
 {
     (void)server; 
     (void)client;
-    std::cout << "Handling MODE\n"; 
+    std::cout << "Handling MODE\n";
+    // std::vector<std::striing> args = client->getArgs();
+    // std::map<std::string, void(*)(Client *, Server *)> modes;
 }
