@@ -3,7 +3,8 @@
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
 Channel::Channel(const std::string& name): _name(name), _topic(""), _operator(NULL),
-_inviteOnlyMode(0), _clientLimitMode(0), _keyMode(0), _clientLimit(0), _key("")
+_inviteOnlyMode(0), _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1),
+_clientLimit(0), _key("")
 {
     std::cout << "Channel object created" << std::endl;
 }
@@ -107,14 +108,36 @@ size_t Channel::getClientLimit() const
     return _clientLimit;
 }
 
-void Channel::setOperator(Client *client)
+void Channel::addOperator(Client *client)
 {
-    _operator = client;
+    if (_operators.find(client) != _operators.end())
+    {
+        return false; //already member
+    }
+    _operators.insert(client);
+    return true;
 }
 
-Client *Channel::getOperator() const
+bool *Channel::isOperator(Client *client) const
 {
-    return _operator;
+    for (std::set<Client*>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
+    {
+        if (*it == client)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Channel::removeOperator(Client *client)
+{
+    if (_operators.find(client) == _operators.end())
+    {
+        return false; //not operator
+    }
+    _operators.erase(client);
+    return true;
 }
 
 void Channel::setKeyMode(bool mode)
@@ -165,4 +188,14 @@ std::string Channel::stringMembers(void)
         names << (*it)->getNickName() << " ";
     }
     return names.str();
+}
+
+void Channel::setProtectedTopicMode(bool mode)
+{
+    _protectedTopicMode = mode;
+}
+
+bool Channel::getProtectedTopicMode() const
+{
+    return _protectedTopicMode;
 }

@@ -96,7 +96,7 @@ void    joinNewChannel(Client *client, Channel *channel)
     std::cout << "*****Joining new channel\n";
     std::cout << "Channel poniter: " << channel << std::endl;
     channel->getMembers().insert(client);
-    channel->setOperator(client);
+    channel->addOperator(client);
     std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
     client->getHostname(), channel->getName());
     std::cout << successMsg;

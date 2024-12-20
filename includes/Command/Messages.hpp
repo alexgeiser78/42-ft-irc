@@ -1,6 +1,7 @@
 #define once
 
 #define ENDL "\r\n"
+#define PREFIX_SERVER ":irc.myserver.com"
 
 #define ERR_NEEDMOREPARAMS(commmand) (command + " :Not enough parameters" + ENDL)
 
@@ -20,3 +21,12 @@
 #define RPL_TOPIC(nick, channel, topic) (" 332 " + nick + " " + channel + " :" + topic + ENDL)
 #define RPL_NOTOPIC(nick, channel) (" 331 " + nick + " " + channel + " :No topic is set" + ENDL)
 #define RPL_NAMREPLY(channel, nick, names) (" 353 " + nick + " = " + channel + " :" + names + ENDL)
+
+//MODE
+#define ERR_NEEDMOREPARAMS_MODE(nick) (" 461 " + nick + "MODE :Not enough parameters" + ENDL)
+#define ERR_CHANOPRIVSNEEDED(nick, channel) (" 482 " + nick + " " +  channel + " :You're not channel operator" + ENDL)
+#define ERR_UNKNOWNMODE() (":<server> 472 <nickname> <char> :is unknown mode char to me")
+#define ERR_NOSUCHNICK(nickname, nick) (" 401 " + nickname + " " + nick + " :No such nick/channel" + ENDL)
+#define ERR_KEYSET() (":<server> 467 <nickname> <channel> :Channel key already set")
+#define ERR_NOSUCHCHANNEL(nick, channel) (" 403 " + nick + " " + channel + " :No such channel" + ENDL)
+#define RPL_CHANNELMODEIS(nick, channel, modes) (" 324 " + nick + " " + channel + " " + modes + ENDL)
