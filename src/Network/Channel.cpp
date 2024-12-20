@@ -142,7 +142,7 @@ bool Channel::getKeyMode() const
     return _keyMode;
 }
 
-void Channel::setTopic(std::string const &topic)
+void 	setTopic(Client &client, const std::string &newTopic)
 {
     _topic = topic;
 }
@@ -180,4 +180,17 @@ std::string Channel::stringMembers(void)
         names << (*it)->getNickName() << " ";
     }
     return names.str();
+}
+
+void Channel::sendTopic(Client &client) 
+{
+    std::string response;
+
+    if (this->_topic.empty()) 
+    { // if no topic is tefined
+        response = ":" + client.getNickName() + " 331 " + client.getNickName() + " " + this->_name + " :No topic is set\r\n";
+    } else { // if topic is defined
+        response = ":" + client.getNickName() + " 332 " + client.getNickName() + " " + this->_name + " :" + this->_topic + "\r\n";
+    }
+    send(client.getSocket(), response.c_str(), response.size(), 0);
 }

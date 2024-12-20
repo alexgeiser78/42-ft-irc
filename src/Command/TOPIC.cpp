@@ -109,5 +109,5 @@ void Channel::setTopic(Client &client, const std::string &newTopic)
 
 bool Channel::isOperator(const Client &client) const
 {
-    return this->_operators.find(const_cast<Client*>(&client)) != this->_operators.end();
+    return this->_operator.find(const_cast<Client*>(&client)) != this->_operator.end();
 }
