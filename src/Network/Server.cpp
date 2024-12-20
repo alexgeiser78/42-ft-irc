@@ -15,6 +15,20 @@ Server::~Server()
     std::cout << "Server object destroyed" << std::endl;
 }
 
+void    Server::setServerCreationTime(void)
+{
+    std::time_t now = std::time(0);
+    struct std::tm *timeinfo = std::localtime(&now);
+    char buffer[80];
+    std::strftime(buffer, 80, "%a %b %d %H:%M:%S %Y", timeinfo);
+    _ServerCreationTime = std::string(buffer);
+}
+
+std::string  Server::getServerCreationTime(void) const
+{
+    return _ServerCreationTime;
+}
+
 void Server::SignalHandler(int signum)
 {
     std::cout << "Interrupt signal (" << signum << ") received.\n";
@@ -25,6 +39,7 @@ void Server::ServerInit(int port)
 {
 	this->_Port = port;   //-*-*-*-*--* to check, maybe has to be fix 
 	SerSocket(); //create the server socket
+    setServerCreationTime();
 
 	std::cout <<"Server " << SerSocketFd << " Connected" << std::endl;
 	std::cout << "Waiting to accept a connection...\n";
@@ -133,7 +148,7 @@ void Server::CloseFDs()
 
 void Server::AcceptNewClient(void)
 {
-    Client              client; //Create a new client
+    Client              client ; //Create a new client
     int                 clientFd; // File description for socket created when accepting conection
     struct sockaddr_in  clientAddress; //Struc with client address information
     struct pollfd       NewPoll; //Struct pollfd for new socket information
@@ -163,8 +178,8 @@ void Server::AcceptNewClient(void)
     client.setSocket(clientFd);
     client.setAddress(inet_ntoa(clientAddress.sin_addr));
 
-    //Add the new client to the client map
-    clients.insert(std::make_pair(clientFd, client));
+    //Add the new client to the clients vector
+    clients.push_back(client);
 
     //Add NewPoll to the FD vector
     FD.push_back(NewPoll);
@@ -191,7 +206,7 @@ void    Server::RemoveClient(int fd)
     {
         if (clients[i].getSocket() == fd)
         {
-            clients.erase(fd);
+            clients.erase(clients.begin() + i);
             break ;
         }
         i++;
@@ -240,14 +255,6 @@ void    Server::ProccessCommand(int fd, std::string line)
     std::istringstream stream(line);
 
     stream >> commandName;
-    std::cout << "Command: " << commandName << std::endl;
-    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
-    && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
-    && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
-    {
-        std::cerr << "Command not found" << std::endl;
-        return ;
-    }
     std::vector<std::string> args;
     std::string arg;
     while(stream >> arg)
@@ -255,15 +262,13 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    std::cout << "Proccessed command: " << commandName << std::endl;
-    std::cout << "Arguments: ";
+    // std::cout << "Proccessed command: " << commandName << std::endl;
+    // std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
         std::cout << args[i] << " ";
     }
     std::cout << std::endl;
-    // Client *client = new Client();
-    // client.setArgs(args);
     Client *client = NULL;
     for (size_t i = 0; i < clients.size(); i++)
     {
@@ -274,6 +279,19 @@ void    Server::ProccessCommand(int fd, std::string line)
             break ;
         }
     }
-    command.executeCommand(commandName, client);
-    // delete client;
+    client->setServerCreationTime(_ServerCreationTime);
+    std::vector<Client> allClients = clients;
+    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
+    && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
+    && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
+    {
+        std::cerr << "Command not found" << std::endl;
+        return ;
+    }
+    if (!client->isRegistered() && commandName != "NICK" && commandName != "USER")
+    {
+        std::cerr << "Client not registered" << std::endl;
+        return ;
+    }
+    command.executeCommand(commandName, client, this);
 }

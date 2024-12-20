@@ -19,11 +19,13 @@ Command::~Command() //destructor
     std::cout << "Command object destroyed" << std::endl;
 }
 
-void Command::executeCommand(const std::string& commandName, Client *client)
+
+void Command::executeCommand(const std::string& commandName, Client *client, Server *server)
 {
+
     if (commands.find(commandName) != commands.end()) //if the command is in the map
     {
-        commands[commandName](client); //execute the function associated with the command
+        commands[commandName](client, server); //execute the function associated with the command
     }
     else
     {
