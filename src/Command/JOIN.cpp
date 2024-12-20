@@ -54,9 +54,7 @@ static  void  splitParams(Client *client, std::map<std::string, std::string> &pa
 
 void    joinChannel(Client *client, Channel *channel)
 {
-    std::cout << "******Joining channel\n";
-    std::cout << "Channel poniter: " << channel << std::endl;
-    if (channel->isMember(*client))
+    if (channel->isMember(client))
     {
         std::string errorMsg = "JOIN :Already in channel\r\n";
         std::cout << errorMsg;
@@ -73,35 +71,23 @@ void    joinChannel(Client *client, Channel *channel)
             return;
         }
     }
-     channel->getMembers().insert(client);
+    channel->getMembers().insert(client);
     std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
     client->getHostname(), channel->getName());
     std::cout << successMsg;
     send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
     std::string topicMsg;
     if (channel->getTopic().empty())
-    {
         topicMsg = PREFIX_SERVER + RPL_NOTOPIC(client->getNickName(), channel->getName());
-    }
     else
-    {
         topicMsg = PREFIX_SERVER + RPL_TOPIC(client->getNickName(), channel->getName(), channel->getTopic());
-    }
     std::cout << topicMsg;
     send(client->getSocket(), topicMsg.c_str(), topicMsg.size(), 0);
-    // std::ostringstream names;
-    // std::cout << "Saco los nombres de los usuarios del canal: ";
-    // for (std::set<Client*>::iterator it = channel->getMembers().begin(); it != channel->getMembers().end(); it++)
-    // {
-    //     names << (*it)->getNickName() << " ";
-    //     std::cout << (*it)->getNickName() << " ";
-    // }
-    // // std::string names = names.str();
     std::string names = channel->stringMembers();
-    std::cout << "Members in the channel: " <<names << std::endl;
     std::string namesMsg = PREFIX_SERVER +  RPL_NAMREPLY(channel->getName(), client->getNickName(), names);
     std::cout << namesMsg;
-    send(client->getSocket(), namesMsg.c_str(), topicMsg.size(), 0);
+    send(client->getSocket(), namesMsg.c_str(), namesMsg.size(), 0);
+    channel->broadcast(client, namesMsg);
     return;
 }
 
@@ -119,18 +105,11 @@ void    joinNewChannel(Client *client, Channel *channel)
     topicMsg = PREFIX_SERVER + RPL_NOTOPIC(client->getNickName(), channel->getName());
     std::cout << topicMsg;
     send(client->getSocket(), topicMsg.c_str(), topicMsg.size(), 0);
-    // std::ostringstream names;
-    // std::cout << "Saco los nombres de los usuarios del canal: ";
-    // for (std::set<Client*>::iterator it = channel->getMembers().begin(); it != channel->getMembers().end(); it++)
-    // {
-    //     names << (*it)->getNickName() << " ";
-    //     std::cout << (*it)->getNickName() << " ";
-    // }
     std::string names = channel->stringMembers();
     std::cout << "Members in the channel: " <<names << std::endl;
     std::string namesMsg = PREFIX_SERVER +  RPL_NAMREPLY(channel->getName(), client->getNickName(), names);
     std::cout << namesMsg;
-    send(client->getSocket(), namesMsg.c_str(), topicMsg.size(), 0);
+    send(client->getSocket(), namesMsg.c_str(), namesMsg.size(), 0);
     return ;
 }
 

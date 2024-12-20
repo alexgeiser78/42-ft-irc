@@ -148,7 +148,7 @@ void Server::CloseFDs()
 
 void Server::AcceptNewClient(void)
 {
-    Client              client ; //Create a new client
+    Client              *client = new Client() ; //Create a new client
     int                 clientFd; // File description for socket created when accepting conection
     struct sockaddr_in  clientAddress; //Struc with client address information
     struct pollfd       NewPoll; //Struct pollfd for new socket information
@@ -175,8 +175,8 @@ void Server::AcceptNewClient(void)
     NewPoll.revents = 0;
 
     //Set the values of client
-    client.setSocket(clientFd);
-    client.setAddress(inet_ntoa(clientAddress.sin_addr));
+    client->setSocket(clientFd);
+    client->setAddress(inet_ntoa(clientAddress.sin_addr));
 
     //Add the new client to the clients vector
     clients.push_back(client);
@@ -204,7 +204,7 @@ void    Server::RemoveClient(int fd)
     i = 0;
     while(i < clients.size())
     {
-        if (clients[i].getSocket() == fd)
+        if (clients[i]->getSocket() == fd)
         {
             clients.erase(clients.begin() + i);
             break ;
@@ -272,15 +272,14 @@ void    Server::ProccessCommand(int fd, std::string line)
     Client *client = NULL;
     for (size_t i = 0; i < clients.size(); i++)
     {
-        if (clients[i].getSocket() == fd)
+        if (clients[i]->getSocket() == fd)
         {
-            clients[i].setArgs(args);
-            client = &clients[i];
+            clients[i]->setArgs(args);
+            client = clients[i];
             break ;
         }
     }
     client->setServerCreationTime(_ServerCreationTime);
-    std::vector<Client> allClients = clients;
     if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
     && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
     && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")

@@ -14,7 +14,6 @@ class Channel
 		std::string			_name;
 		std::string			_topic;
 		std::set<Client*>	_members;
-
 		std::set<Client*>	_invited;
 		Client*				_operator;
 		bool				_inviteOnlyMode;
@@ -30,13 +29,13 @@ class Channel
 		Channel(const std::string& name);
 		~Channel();
 		std::string const &getName();
-		// bool addMember(Client &client);
-		void removeMember(Client &client);
-		void broadcast(const Client &sender, const std::string &message);
+		bool addMember(Client *client);
+		void removeMember(Client *client);
+		void broadcast(Client *sender, const std::string &message);
 
 		// static Channel *getOrCreateChannel(std::string const &channelName);
 		static Channel *getChannel(std::string const &channelName);
-		bool isMember(Client const &client) const;
+		bool isMember(Client *client) const;
 		std::set<Client*> &getMembers();
 
 		void setKey(std::string const &key);
