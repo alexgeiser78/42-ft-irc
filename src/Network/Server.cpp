@@ -263,8 +263,8 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    // std::cout << "Proccessed command: " << commandName << std::endl;
-    // std::cout << "Arguments: ";
+    std::cout << "Proccessed command: " << commandName << std::endl;
+    std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
         std::cout << args[i] << " ";
@@ -296,7 +296,17 @@ void    Server::ProccessCommand(int fd, std::string line)
     command.executeCommand(commandName, client, this);
 }
 
-Channel* Server::findChannel(const std::string &channelName)
-{
-    return Channel::getChannel(channelName);
+Channel* Server::findChannel(const std::string &channelName) {
+    // On suppose que _channels est un std::vector<Channel*> ou similaire
+    for (size_t i = 0; i < this->channels.size(); ++i) 
+    {
+        Channel* channel = this->channels[i];
+        if (channel->getName() == channelName) 
+        {
+            return channel; // Le canal a été trouvé
+        }
+    }
+    return NULL; // Aucun canal trouvé
 }
+
+

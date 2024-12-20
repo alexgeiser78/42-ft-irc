@@ -18,15 +18,16 @@ void handleTopic(Client *client, Server * server)
      
      const std::vector<std::string> &args = client->getArgs();
 
-    if (args.empty() || args[0].empty())
-    {
-        std::string errorMsg = "ERROR: TOPIC command requires a channel name.\r\n";
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cout << errorMsg << std::endl;
-        return;
-    }
+    if (args.size() < 1 || args[0].empty()) {
+    std::string errorMsg = "ERROR: TOPIC command requires a channel name.\r\n";
+    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+    std::cout << errorMsg << std::endl;
+    return;
+}
+
 
     const std::string &channelName = args[0];
+    std::cout << channelName <<std::endl;
 
     // search the channel via the server
     Channel *channel = server->findChannel(channelName);
@@ -34,6 +35,7 @@ void handleTopic(Client *client, Server * server)
     {
         std::string errorMsg = "403 " + client->getNickName() + " " + channelName + " :No such channel\r\n";
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        std::cout << "Error: No such channel" << std::endl;
         return;
     }
 
