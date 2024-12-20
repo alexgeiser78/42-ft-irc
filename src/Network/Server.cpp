@@ -299,8 +299,5 @@ void    Server::ProccessCommand(int fd, std::string line)
 
 Channel* Server::findChannel(const std::string &channelName)
 {
-    std::map<std::string, Channel*>::iterator it = Channel::getChannels().find(channelName);
-    if (it != Channel::getChannels().end())
-        return it->second;
-    return NULL;
+    return Channel::getChannel(channelName);
 }

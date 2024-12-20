@@ -16,7 +16,7 @@ class Channel
 		std::set<Client*>	_members;
 
 		std::set<Client*>	_invited;
-		Client*				_operator;
+		std::set<Client*>	_operator;
 		bool				_inviteOnlyMode;
 		bool				_clientLimitMode;
 		bool				_keyMode;
@@ -35,7 +35,7 @@ class Channel
 		void broadcast(const Client &sender, const std::string &message);
 
 		// static Channel *getOrCreateChannel(std::string const &channelName);
-		static Channel *getChannel(std::string const &channelName);
+		static Channel *getChannel(const std::string &channelName);
 		bool isMember(Client const &client) const;
 		std::set<Client*> &getMembers();
 

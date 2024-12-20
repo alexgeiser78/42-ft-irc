@@ -84,7 +84,7 @@ void handleTopic(Client *client, Server * server)
     std::cout << "Topic chandeg to " << newTopic << std::endl;
 
 }
-
+/*
 void Channel::setTopic(Client &client, const std::string &newTopic)
 {
     // Check if the channel is protected (+t) and if the client is an operator
@@ -106,7 +106,7 @@ void Channel::setTopic(Client &client, const std::string &newTopic)
     }
     std::cout << "Topic changed" << std::endl;
 }
-
+*/
 bool Channel::isOperator(const Client &client) const
 {
     return this->_operator.find(const_cast<Client*>(&client)) != this->_operator.end();
