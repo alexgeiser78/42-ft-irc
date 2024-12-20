@@ -18,7 +18,7 @@ void handleTopic(Client *client, Server * server)
      
      const std::vector<std::string> &args = client->getArgs();
 
-    if (args.empty())
+    if (args.empty() || args[0].empty())
     {
         std::string errorMsg = "ERROR: TOPIC command requires a channel name.\r\n";
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
@@ -38,7 +38,8 @@ void handleTopic(Client *client, Server * server)
     }
 
     // Check if the client is a member of the channel
-    if (!channel->isMember(*client)) {
+    if (!channel->isMember(client)) 
+    {
         std::string errorMsg = "442 " + client->getNickName() + " " + channelName + " :You're not on that channel\r\n";
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         std::cout << "Error: Client is not a member of the channel\n";
