@@ -1,60 +1,183 @@
 #include "../../includes/Command/Command.hpp"
+#include "../../includes/Command/Messages.hpp"
 #include "../../includes/Network/Channel.hpp"
 #include "../../includes/Network/Client.hpp"
+#include "../../includes/Network/Server.hpp"
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <iomanip>   // Para std::setw y std::setfill
+#include <unistd.h>  // Para el envío de sockets y error handling
+#include <cstring>
+#include <errno.h>  // Para errno y strerror
+
 
 //JOIN #channel or JOIN #channel1, #channel2 or JOIN #channel passsword
 
-void handleJoin(Client *client)  
-{ 
-    std::cout << "Handling JOIN\n";
-    const std::vector<std::string> &args = client->getArgs(); //catch the args provided by the client in a vector called &args
 
-    for (size_t i = 0; i < args.size(); ++i) 
+#include <vector>
+
+
+static  void  splitParams(Client *client, std::map<std::string, std::string> &params)
+{
+    if (client->getArgs()[0].empty())
     {
-        const std::string& arg = args[i];
-        std::cout << arg << " ";
+		std::string errorMsg = "JOIN :Not enough parameters\r\n";
+		std::cout << errorMsg;
+		send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+		return;         
     }
-        std::cout << std::endl;
-    
-    if (args.empty() || args[0][0] != '#' || args[0].size() == 1) //if no args, error msg to client and server
+    std::stringstream streamChannels(client->getArgs()[0]);
+    std::string channel;
+    if (client->getArgs().size() == 1)
     {
-        std::string errorMsg = "ERROR: JOIN command requires a channel name with #\n";
+        while(std::getline(streamChannels, channel, ','))
+        {
+            params.insert(std::pair<std::string, std::string>(channel, ""));
+        }
+    }
+    if (client->getArgs().size() > 1)
+    {
+        std::stringstream streamKeys(client->getArgs()[1]);
+        std::string key;
+        while(std::getline(streamChannels, channel, ','))
+        {
+            if (std::getline(streamKeys, key, ','))
+                params.insert(std::pair<std::string, std::string>(channel, key));
+            else
+            params.insert(std::pair<std::string, std::string>(channel, ""));
+        }
+    }
+    return;
+}
+
+void    joinChannel(Client *client, Channel *channel)
+{
+    std::cout << "******Joining channel\n";
+    std::cout << "Channel poniter: " << channel << std::endl;
+    if (channel->isMember(*client))
+    {
+        std::string errorMsg = "JOIN :Already in channel\r\n";
+        std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cerr << "Client " << client->getSocket() << ": JOIN command missing channel name or #\n";
         return;
     }
-
-    for (size_t i = 0; i < args.size(); ++i) //for multiple args, 
+    if (channel->getInviteOnlyMode())
     {
-        std::string const &channelName = args[i]; //extract the channel name from args[i]
-
-        Channel* channel = Channel::getOrCreateChannel(channelName); //if the channnel already exist, it returns a pointer to it or it creates it
-    
-        if (channel == NULL)
+        if (channel->getInvited().find(client) == channel->getInvited().end())
         {
-            std::string errorMsg = "ERROR: Unable to join channel " + channelName + ".\n";
+            std::string errorMsg = ERR_INVITEONLYCHAN(channel->getName());
+            std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-            continue;
-        }
-
-        if (channel->addMember(*client)) //if the client isn't member of the channel, it is added 
-        {
-            std::string successMsg = "Joined " + channelName + "\n";
-            send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
-            std::cout << "Client " << client->getSocket() << " joined channel " << channelName << "\n";
-
-            client->setCurrentChannel(channel);  // Update the client's current channel
-            std::cout << "Client " << client->getSocket() << " current channel set to " << channel->getName() << "\n";
-            
-            channel->sendTopic(*client);       // Send RPL_TOPIC
-            channel->sendNamesList(*client);  // Send RPL_NAMREPLY
-            
-            channel->broadcast(*client, "User " + client->getNickName() + " has joined the channel.\n");//send messages to the others clients
-        }
-        else //if the client is already member, send msg to client and server
-        {
-            std::string errorMsg = "ERROR: Already in channel " + channelName + "\n";
-            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+            return;
         }
     }
+     channel->getMembers().insert(client);
+    std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
+    client->getHostname(), channel->getName());
+    std::cout << successMsg;
+    send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
+    std::string topicMsg;
+    if (channel->getTopic().empty())
+    {
+        topicMsg = PREFIX_SERVER + RPL_NOTOPIC(client->getNickName(), channel->getName());
+    }
+    else
+    {
+        topicMsg = PREFIX_SERVER + RPL_TOPIC(client->getNickName(), channel->getName(), channel->getTopic());
+    }
+    std::cout << topicMsg;
+    send(client->getSocket(), topicMsg.c_str(), topicMsg.size(), 0);
+    // std::ostringstream names;
+    // std::cout << "Saco los nombres de los usuarios del canal: ";
+    // for (std::set<Client*>::iterator it = channel->getMembers().begin(); it != channel->getMembers().end(); it++)
+    // {
+    //     names << (*it)->getNickName() << " ";
+    //     std::cout << (*it)->getNickName() << " ";
+    // }
+    // // std::string names = names.str();
+    std::string names = channel->stringMembers();
+    std::cout << "Members in the channel: " <<names << std::endl;
+    std::string namesMsg = PREFIX_SERVER +  RPL_NAMREPLY(channel->getName(), client->getNickName(), names);
+    std::cout << namesMsg;
+    send(client->getSocket(), namesMsg.c_str(), topicMsg.size(), 0);
+    return;
 }
+
+void    joinNewChannel(Client *client, Channel *channel)
+{
+    std::cout << "*****Joining new channel\n";
+    std::cout << "Channel poniter: " << channel << std::endl;
+    channel->getMembers().insert(client);
+    channel->setOperator(client);
+    std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
+    client->getHostname(), channel->getName());
+    std::cout << successMsg;
+    send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
+    std::string topicMsg;
+    topicMsg = PREFIX_SERVER + RPL_NOTOPIC(client->getNickName(), channel->getName());
+    std::cout << topicMsg;
+    send(client->getSocket(), topicMsg.c_str(), topicMsg.size(), 0);
+    // std::ostringstream names;
+    // std::cout << "Saco los nombres de los usuarios del canal: ";
+    // for (std::set<Client*>::iterator it = channel->getMembers().begin(); it != channel->getMembers().end(); it++)
+    // {
+    //     names << (*it)->getNickName() << " ";
+    //     std::cout << (*it)->getNickName() << " ";
+    // }
+    std::string names = channel->stringMembers();
+    std::cout << "Members in the channel: " <<names << std::endl;
+    std::string namesMsg = PREFIX_SERVER +  RPL_NAMREPLY(channel->getName(), client->getNickName(), names);
+    std::cout << namesMsg;
+    send(client->getSocket(), namesMsg.c_str(), topicMsg.size(), 0);
+    return ;
+}
+
+void handleJoin(Client *client, Server *server)
+{
+    std::cout << "*****Handling JOIN command\n";
+    std::cout << server << std::endl;
+    int flag = 0;
+    std::map<std::string, std::string> params;
+    splitParams(client, params);
+    for (std::map<std::string, std::string>::iterator it = params.begin(); it != params.end(); it++)
+    {
+        for (size_t i = 0; i < server->channels.size(); i++)
+        {
+            if (server->channels[i]->getName() == it->first)
+            {
+                flag = 1;
+                if ((!server->channels[i]->getKeyMode() || server->channels[i]->getKey() == it->second)
+                && (!server->channels[i]->getClientLimitMode()
+                    || server->channels[i]->getMembers().size() < server->channels[i]->getClientLimit()))
+                {
+                    joinChannel(client, server->channels[i]);
+                    break ;
+                }
+                if (server->channels[i]->getKey() != it->second)
+                {
+                    std::string errorMsg = ERR_BADCHANNELKEY(server->channels[i]->getName());
+                    std::cout << errorMsg;
+                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                }
+                if (server->channels[i]->getMembers().size() >= server->channels[i]->getClientLimit())
+                {
+                    std::string errorMsg = ERR_CHANNELISFULL(server->channels[i]->getName());
+                    std::cout << errorMsg;
+                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);}
+                break ;
+            }
+        }
+        if (flag == 0)
+        {
+            Channel *newChannel = new Channel(it->first);
+            newChannel->setKey(it->second);
+            server->channels.push_back(newChannel);
+            joinNewChannel(client, newChannel);
+        }
+        std::cout << "Channels size: " << server->channels.size() << std::endl;
+    }
+}
+
+

@@ -1,12 +1,12 @@
 #include "../../includes/Network/Client.hpp"
 
 
-Client::Client(void): _socket(-1), _isRegistered(false), _currentChannel(NULL)
+Client::Client(void): _socket(-1), _isRegistered(false)
 {
-	std::cout << "Default Client object created" <<std::endl;
+	std::cout << " Default Client object created" <<std::endl;
 }
 
-Client::Client(int sock): _socket(sock), _isRegistered(false), _currentChannel(NULL)
+Client::Client(int sock): _socket(sock), _isRegistered(false)
 {
 	std::cout << "Client object created" << std::endl;
 }
@@ -29,7 +29,6 @@ Client & Client::operator=(Client const & src)
 		_servername = src._servername;
 		_realname = src._realname;
 		_isRegistered = src._isRegistered;
-		_currentChannel = src._currentChannel;
 	}
 	return *this;
 }
@@ -124,6 +123,15 @@ std::string  const &Client::getRealname() const
 	return _realname;
 }
 
+void        Client::setServerCreationTime(std::string time)
+{
+    _ServerCreationTime = time;
+}
+
+std::string Client::getServerCreationTime(void) const
+{
+    return _ServerCreationTime;
+}
 
 //------------------------------Register
 
@@ -137,35 +145,19 @@ bool Client::isRegistered() const
 	return _isRegistered;
 }
 
-//--------------------------Currnt Channel
-
-void Client::setCurrentChannel(Channel* channel)
-{
-    _currentChannel = channel;
-	if (channel)
-        std::cout << "Client's current channel is now: " << channel->getName() << "\n";
-    else
-        std::cout << "Client's current channel is now: NULL\n";
-}
-
-Channel* Client::getCurrentChannel() const
-{
-    return _currentChannel;
-}
-
 //--------------------------Close
 
-void Client::closeClient()
-{
-    if (_socket >= 0) 
-	{
-        std::cout << "Closing client socket: " << _socket << std::endl;
-        close(_socket); // Close the socket using the system call
-        _socket = -1; // Set the socket to an invalid value after closing
-    }
-	else 
-        std::cerr << "Socket already closed or invalid." << std::endl;
-}
+// void Client::closeClient()
+// {
+//     if (_socket >= 0) 
+// 	{
+//         std::cout << "Closing client socket: " << _socket << std::endl;
+//         close(_socket); // Close the socket using the system call
+//         _socket = -1; // Set the socket to an invalid value after closing
+//     }
+// 	else 
+//         std::cerr << "Socket already closed or invalid." << std::endl;
+// }
 
 
 

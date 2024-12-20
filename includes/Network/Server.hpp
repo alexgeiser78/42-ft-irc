@@ -17,6 +17,7 @@
 #include <poll.h> //poll()
 #include <fcntl.h> //fcntl()
 #include <string> //std::string
+#include <ctime> //time()
 
 
 #include <sstream> //istringstream
@@ -32,30 +33,33 @@ class Channel;
 class Server
 {
     private:
-            int _Port;
-            //std::vector<Client> clients;
-            std::map<int, Client> clients;
-            int SerSocketFd; //server socket file descriptor
-            std::vector <struct pollfd> FD; //file descriptor structure
-            std::string _Password;
-            Command command;
+		int _Port;
+		std::map<int, Client> clients2;
+		int SerSocketFd; //server socket file descriptor
+	    std::vector <struct pollfd> FD; //file descriptor structure
+	    std::string _Password;
+	    std::string _ServerCreationTime;
+
     public:
-            Server(int port, std::string password);
-            ~Server();
-            void SerSocket();
-            static void SignalHandler(int signum);
-            void ServerInit(int port);
-            void CloseFDs();
-            static bool Signal;
-            void        AcceptNewClient(void);
+		std::vector<Client > clients;
+		std::vector<Channel *> channels;
+	    Server(int port, std::string password);
+	    ~Server();
+		void setServerCreationTime(void);
+	    std::string getServerCreationTime(void) const;
+	    void 		SerSocket();
+	    static void SignalHandler(int signum);
+	    void 		ServerInit(int port);
+	    void 		CloseFDs();
+	    static bool Signal;
+	    void        AcceptNewClient(void);
 
-            void ReceiveNewData(int clientFd);
-            Channel* getOrCreateChannel(const std::string& channelName);
+	    // Channel* getOrCreateChannel(const std::string& channelName);
 
 
-            void        RemoveClient(int fd);
-            void        RecieveData(int fd);
-            void        ProccessCommand(int fd, std::string line);
+	    void        RemoveClient(int fd);
+	    void        RecieveData(int fd);
+	    void        ProccessCommand(int fd, std::string line);
 
 };
 
@@ -63,24 +67,24 @@ class Server
 
 struct sockaddr_in //adress struct for IPv4
 {
-        sa_family_t     sin_family; //address family (always AF_INET for IPv4), used to determine the format of the address
-        in_port_t       sin_port; //16 bit integer representing the port number, must be converted to network byte order using htons() function, (big endian)
-        struct  in_addr sin_addr; //32 bit integer representing the IP address, must be converted to network byte order using inet_addr() function, INADDR_ANY is used for binding to all local interfaces
-        char            sin_zero[8]; //Not used, must be zero, used for mainting structure size
+	sa_family_t     sin_family; //address family (always AF_INET for IPv4), used to determine the format of the address
+	in_port_t       sin_port; //16 bit integer representing the port number, must be converted to network byte order using htons() function, (big endian)
+	struct  in_addr sin_addr; //32 bit integer representing the IP address, must be converted to network byte order using inet_addr() function, INADDR_ANY is used for binding to all local interfaces
+	char            sin_zero[8]; //Not used, must be zero, used for mainting structure size
 };
 
 struct in_addr //structure representing the IP address
 {
-        uint32_t s_addr; //32 bit integer representing the IP address, network byte order
+	uint32_t s_addr; //32 bit integer representing the IP address, network byte order
 };
 */
 
 /*HOW WORKS pollfd:
 struct pollfd //structure is used to describe a set of file descriptors to be monitored by the poll() function
 {
-        int fd; //file descriptor to be monitored (socket)
-        short events; //monitored events, pollin, pollout, pollerr, pollhup, pollnval
-        short revents; //detected events (results)
+	int fd; //file descriptor to be monitored (socket)
+	short events; //monitored events, pollin, pollout, pollerr, pollhup, pollnval
+	short revents; //detected events (results)
 };*/
 
 //poll() function: waits for one of a set of file descriptors to become ready to perform I/O 
