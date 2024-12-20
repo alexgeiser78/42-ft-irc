@@ -1,5 +1,6 @@
 #include "../../includes/Network/Server.hpp"
 #include "../../includes/Command/Command.hpp"
+#include "../../includes/Network/Channel.hpp"
 
 bool Server::Signal = false;
 
@@ -293,4 +294,9 @@ void    Server::ProccessCommand(int fd, std::string line)
         return ;
     }
     command.executeCommand(commandName, client, this);
+}
+
+Channel* Server::findChannel(const std::string &channelName)
+{
+    return Channel::getChannel(channelName);
 }

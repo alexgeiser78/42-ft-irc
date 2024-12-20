@@ -15,11 +15,11 @@ class Channel
 		std::string			_topic;
 		std::set<Client*>	_members;
 		std::set<Client*>	_invited;
-		Client*				_operator;
+		std::set<Client*>	_operator;
 		bool				_inviteOnlyMode;
 		bool				_clientLimitMode;
 		bool				_keyMode;
-		// bool				_protectedTopicMode;
+		bool				_protectedTopicMode;
 		size_t				_clientLimit;
 		std::string			_key;
 
@@ -34,8 +34,10 @@ class Channel
 		void broadcast(Client *sender, const std::string &message);
 
 		// static Channel *getOrCreateChannel(std::string const &channelName);
+
 		static Channel *getChannel(std::string const &channelName);
 		bool isMember(Client *client) const;
+
 		std::set<Client*> &getMembers();
 
 		void setKey(std::string const &key);
@@ -53,7 +55,7 @@ class Channel
 		void setKeyMode(bool mode);
 		bool getKeyMode() const;
 
-		void setTopic(std::string const &topic);
+		void 	setTopic(Client &client, const std::string &newTopic);
 		std::string const &getTopic() const;
 
 		void addInvited(Client *client);
@@ -62,6 +64,9 @@ class Channel
 		void setInviteOnlyMode(bool mode);
 		bool getInviteOnlyMode() const;
 		std::string stringMembers(void);
+
+		void sendTopic(Client &client);
+		bool 	isOperator(const Client &client) const;
 };
 
 
