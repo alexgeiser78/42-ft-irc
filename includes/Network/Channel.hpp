@@ -47,7 +47,7 @@ class Channel
 		void setClientLimit(size_t limit);
 		size_t getClientLimit() const;
 
-		void addOperator(Client *client);
+		bool addOperator(Client *client);
 		bool isOperator(Client *client) const;
 		bool removeOperator(Client *client);
 

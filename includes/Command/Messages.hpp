@@ -23,10 +23,11 @@
 #define RPL_NAMREPLY(channel, nick, names) (" 353 " + nick + " = " + channel + " :" + names + ENDL)
 
 //MODE
-#define ERR_NEEDMOREPARAMS_MODE(nick) (" 461 " + nick + "MODE :Not enough parameters" + ENDL)
+#define ERR_NEEDMOREPARAMS_MODE(nick, channel) (" 461 " + nick + " " + channel + " :Not enough parameters" + ENDL)
 #define ERR_CHANOPRIVSNEEDED(nick, channel) (" 482 " + nick + " " +  channel + " :You're not channel operator" + ENDL)
-#define ERR_UNKNOWNMODE() (":<server> 472 <nickname> <char> :is unknown mode char to me")
-#define ERR_NOSUCHNICK(nickname, nick) (" 401 " + nickname + " " + nick + " :No such nick/channel" + ENDL)
-#define ERR_KEYSET() (":<server> 467 <nickname> <channel> :Channel key already set")
+#define ERR_UNKNOWNMODE(nick, channel, char) (" 472 " + nick + " " + " " +  channel + " " + char + " :is unknown mode char to me" + ENDL)
+#define ERR_UNKNOWNMODE_PARAM(nick, channel, param) (" 472 " + nick + " " + channel + " " + param + " :Invalid mode parameter" + ENDL)
+#define ERR_NOSUCHNICK(nick, channel, nickname) (" 401 " + nick + " " +  channel + " " + nickname + " :No such nick/channel" + ENDL)
+#define ERR_KEYSET(nick, channel) (" 467 " + nick + " " + channel + " :Channel key already set" + ENDL)
 #define ERR_NOSUCHCHANNEL(nick, channel) (" 403 " + nick + " " + channel + " :No such channel" + ENDL)
 #define RPL_CHANNELMODEIS(nick, channel, modes) (" 324 " + nick + " " + channel + " " + modes + ENDL)

@@ -134,13 +134,14 @@ void handleJoin(Client *client, Server *server)
                     joinChannel(client, server->channels[i]);
                     break ;
                 }
-                if (server->channels[i]->getKey() != it->second)
+                if (server->channels[i]->getKeyMode() && server->channels[i]->getKey() != it->second)
                 {
                     std::string errorMsg = ERR_BADCHANNELKEY(server->channels[i]->getName());
                     std::cout << errorMsg;
                     send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
                 }
-                if (server->channels[i]->getMembers().size() >= server->channels[i]->getClientLimit())
+                if (server->channels[i]->getClientLimitMode()
+                && server->channels[i]->getMembers().size() >= server->channels[i]->getClientLimit())
                 {
                     std::string errorMsg = ERR_CHANNELISFULL(server->channels[i]->getName());
                     std::cout << errorMsg;

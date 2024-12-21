@@ -2,7 +2,7 @@
 
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
-Channel::Channel(const std::string& name): _name(name), _topic(""), _operator(NULL),
+Channel::Channel(const std::string& name): _name(name), _topic(""),
 _inviteOnlyMode(0), _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1),
 _clientLimit(0), _key("")
 {
@@ -108,7 +108,7 @@ size_t Channel::getClientLimit() const
     return _clientLimit;
 }
 
-void Channel::addOperator(Client *client)
+bool Channel::addOperator(Client *client)
 {
     if (_operators.find(client) != _operators.end())
     {
@@ -118,7 +118,7 @@ void Channel::addOperator(Client *client)
     return true;
 }
 
-bool *Channel::isOperator(Client *client) const
+bool Channel::isOperator(Client *client) const
 {
     for (std::set<Client*>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
     {

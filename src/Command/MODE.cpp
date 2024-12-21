@@ -110,87 +110,136 @@ static size_t getNeededParams(std::string mode)
     return (neededParams);
 }
 
-// void handleMode(Client *client, Server * server)  
-// {
-//     std::cout << "Handling MODE\n";
-//     Channel *channel = NULL;
-//     std::vector<std::string> args = client->getArgs();
-//     if (args.size() == 0)
-//     {
-//         std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_MODE(client->getNickName());
-//         std::cout << errorMsg;
-//         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-//         return;
-//     }
-//     channel = getChannel(server, client, args[0]);
-//     if (channel == NULL)
-//         return;
-//     if (args.size() == 1)
-//     {
-//         std::string modes = getModesString(channel, client);
-//         std::string rplMsg = PREFIX_SERVER + RPL_CHANNELMODEIS(client->getNickName(), channel->getName(), modes);
-//         std::cout << rplMsg;
-//         send(client->getSocket(), rplMsg.c_str(), rplMsg.size(), 0);
-//         return;
-//     }
-//     size_t neededParams = getNeededParams(args[1]);
-//     if (args.size() - 2 < neededParams)
-//     {
-//         std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_MODE(client->getNickName());
-//         std::cout << errorMsg;
-//         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-//         return;
-//     }
-//     if (!channel->isOperator(client))
-//     {
-//         std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channel->getName());
-//         std::cout << errorMsg;
-//         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-//         return;
-//     }
-//     changeModes(channel, client, args);
-// }
-
 void    setOperator(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
 {
     std::cout << "Setting operator, param: " << *itParams << std::endl;
-    // if (operation)
-    //     channel->setOperator(client);
-    // else
-    //     channel->setOperator(NULL);
+    Client *newOperator = NULL;
+    for (std::set<Client*>::iterator it = channel->getMembers().begin(); it != channel->getMembers().end(); it++)
+    {
+        if ((*it)->getNickName() == *itParams)
+            newOperator = *it;
+    }
+    if (newOperator == NULL)
+    {
+        std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK(client->getNickName(), channel->getName(), *itParams);
+        std::cout << errorMsg;
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        return;
+    }
+    if (operation)
+    {
+        if (channel->isOperator(newOperator))
+            return;
+        channel->addOperator(newOperator);
+    }
+    else
+    {
+        if (!channel->isOperator(newOperator))
+            return;
+        channel->removeOperator(newOperator);
+    }
+}
+
+void    setKey(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
+{
+    std::cout << "Setting key, param: " << *itParams << std::endl;
+    if (operation)
+    {
+        if (channel->getKeyMode())
+        {
+            std::string errorMsg = PREFIX_SERVER + ERR_KEYSET(client->getNickName(), channel->getName());
+            std::cout << errorMsg;
+            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+            return;
+        }
+        channel->setKey(*itParams);
+        channel->setKeyMode(true);
+    }
+    else
+    {
+        channel->setKey("");
+        channel->setKeyMode(false);
+    }
+}
+
+void    setClientLimit(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
+{
+    std::cout << "Setting client limit, param: " << *itParams << std::endl;
+    size_t limit = 0;
+    std::stringstream ss(*itParams);
+    ss >> limit;
+    if (ss.fail())
+    {
+        std::string errorMsg = PREFIX_SERVER + ERR_UNKNOWNMODE_PARAM(client->getNickName(), channel->getName(), *itParams);
+        std::cout << errorMsg;
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        return;
+    }
+    if (operation)
+    {
+        channel->setClientLimit(limit);
+        channel->setClienLimitMode(true);
+    }
+    else
+    {
+        channel->setClientLimit(0);
+        channel->setClienLimitMode(false);
+    }
+}
+
+void    setProtectedTopicMode(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
+{
+    (void)itParams;
+    (void)client;
+    (void)channel;
+    std::cout << "Setting protected topic mode, param: " << *itParams << std::endl;
+    if (operation)
+        channel->setProtectedTopicMode(true);
+    else
+        channel->setProtectedTopicMode(false);
+}
+
+void    setInviteOnlyMode(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
+{
+    (void)itParams;
+    (void)client;
+    (void)channel;
+    std::cout << "Setting invite only mode, param: " << *itParams << std::endl;
+    if (operation)
+        channel->setInviteOnlyMode(true);
+    else
+        channel->setInviteOnlyMode(false);
 }
 
 void    changeModes(Channel *channel, Client *client, std::vector<std::string> args)
 {
-    // std::string modes = args[1];
+    std::string entry = args[1];
     std::map<std::string, void(*)(Client *, Channel *, std::vector<std::string>::iterator, int)> modes;
     modes["o"] = setOperator;
-    // modes["k"] = setKey;
-    // modes["l"] = setClientLimit;
-    // modes["t"] = setProtectedTopicMode;
-    // modes["i"] = setInviteOnlyMode;
+    modes["k"] = setKey;
+    modes["l"] = setClientLimit;
+    modes["t"] = setProtectedTopicMode;
+    modes["i"] = setInviteOnlyMode;
     int operation = 1;
     std::vector<std::string>::iterator itParams = args.begin() + 2;
-    for (size_t i = 0; i < args[1].size(); i++)
+    for (size_t i = 0; i < entry.size(); i++)
     {
-        if (args[1][i] == '+' || args[1][i] == '-')
-            operation = (args[1][i] == '+') ? 1 : 0;
-        else if (args[1].find(modes[i]) != args[1].end())
+        std::string key(1, entry[i]);
+        if (entry[i] == '+' || entry[i] == '-')
+            operation = (entry[i] == '+') ? 1 : 0;
+        else if (modes.find(key) != modes.end())
         {
-            modes[modes[i]](client, channel, itParams, operation);
+            modes[key](client, channel, itParams, operation);
             itParams++;
+        }
+        else
+        {
+            std::string errorMsg = PREFIX_SERVER + ERR_UNKNOWNMODE(client->getNickName(), channel->getName(), key);
+            std::cout << errorMsg;
+            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         }
     }
 }
-
-// void    setOperator(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
-// {
-//     std::cout << "Setting operator, param: " << *itParams << std::endl;
-//     // if (operation)
-//     //     channel->setOperator(client);
-//     // else
-//     //     channel->setOperator(NULL);
-// }
 
 void handleMode(Client *client, Server * server)  
 {
@@ -199,7 +248,7 @@ void handleMode(Client *client, Server * server)
     std::vector<std::string> args = client->getArgs();
     if (args.size() == 0)
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_MODE(client->getNickName());
+        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_MODE(client->getNickName(), channel->getName());
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
@@ -218,9 +267,14 @@ void handleMode(Client *client, Server * server)
     size_t neededParams = getNeededParams(args[1]);
     if (args.size() - 2 < neededParams)
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_MODE(client->getNickName());
+        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_MODE(client->getNickName(), channel->getName());
         std::cout << errorMsg;
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        // send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        ssize_t bytesSent = send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
+        if (bytesSent != (ssize_t)errorMsg.size())
+        {
+            std::cerr << "Error al enviar el mensaje completo al cliente." << std::endl;
+        }
         return;
     }
     if (!channel->isOperator(client))
