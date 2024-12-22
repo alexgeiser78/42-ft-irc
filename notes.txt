@@ -170,3 +170,21 @@ to check:
          Nick: in IRC normally must not contain spaces and 9 char max
 		 JOIN: add a control because the channelName has to begin with a #, maybe also handle the case of a password to enter a chatroom
 
+
+---------------------------------------
+
+tester: https://github.com/opsec-infosec/ft_irc-tester
+eval: https://42evals.me/Cursus/Ft_irc/
+
+---------------------------------------
+
+https://phoenixnap.com/kb/nc-command
+using NC(Netcat):
+	-to connect:
+		nc localhost 8912
+Netcat has two working modes:
+    Connect mode. In connect mode, Netcat works as a client. The utility requires the <host> and <port> parameters.
+    Listen mode. In listen mode, Netcat works as a server. When <host> is omitted, Netcat listens on all available addresses for the specified port.
+
+
+	-man netcat
