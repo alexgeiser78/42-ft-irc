@@ -17,6 +17,14 @@ void handleUser(Client *client, Server * server)
         std::cout << args[i] << " ";
     }
     std::cout << std::endl;
+
+    if (client->isRegistered())
+    {
+        std::string errorMsg = PREFIX_SERVER + ERR_ALREADYREGISTERED(client->getNickName());
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        std::cerr << "Client " << client->getSocket() << errorMsg << std::endl;
+        return;
+    }
     
     if (args.size() < 4)
     {
@@ -26,13 +34,7 @@ void handleUser(Client *client, Server * server)
         return;
     }
 
-    if (client->isRegistered())
-    {
-        std::string errorMsg = PREFIX_SERVER + ERR_ALREADYREGISTERED(client->getNickName());
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cerr << "Client " << client->getSocket() << errorMsg << std::endl;
-        return;
-    }
+    
 
     std::string username = args[0];
     std::string hostname = args[1];
