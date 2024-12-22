@@ -263,7 +263,7 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    std::cout << "Proccessed command: " << commandName << std::endl;
+    std::cout << "Processed command: " << commandName << std::endl;
     std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
