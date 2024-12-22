@@ -8,6 +8,7 @@
 #include "../Network/Client.hpp"
 // #include "../Network/Server.hpp"
 #include <cctype> //std::isalnum
+#include <algorithm>
 
 #define SERVER_VERSION "ircserv-1.0"
 #define NETWORK_NAME "MyIRCNetwork"

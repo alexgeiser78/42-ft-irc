@@ -4,6 +4,16 @@
 
 bool Server::Signal = false;
 
+std::string toUpperCase(const std::string& str) 
+{
+    std::string result = str;
+    for (size_t i = 0; i < result.size(); ++i) {
+        result[i] = std::toupper(result[i]);
+    }
+    return result;
+}
+
+
 Server::Server(int port, std::string password): _Port(port), _Password(password)
 {
     this->_Port = port;
@@ -263,7 +273,8 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    std::cout << "Proccessed command: " << commandName << std::endl;
+    commandName = toUpperCase(commandName); // test
+    std::cout << "Processed command: " << commandName << std::endl;
     std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
