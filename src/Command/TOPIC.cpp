@@ -1,5 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 #include "../../includes/Network/Server.hpp"
+#include "../../includes/Command/Messages.hpp"
+
 
 //TO SEE THE TOPIC:
 //-request to server: TOPIC <channel>
@@ -18,12 +20,14 @@ void handleTopic(Client *client, Server * server)
      
      const std::vector<std::string> &args = client->getArgs();
 
-    if (args.size() < 1 || args[0].empty()) {
-    std::string errorMsg = "ERROR: TOPIC command requires a channel name.\r\n";
-    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-    std::cout << errorMsg << std::endl;
-    return;
-}
+    // Check the args
+    if (args.size() < 1 || args[0].empty()) 
+    {
+        std::string errorMsg = ERR_NEEDMOREPARAMS("TOPIC");
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        std::cout << "Error: Missing channel name for TOPIC command\n";
+        return;
+    }
 
 
     const std::string &channelName = args[0];
@@ -33,7 +37,7 @@ void handleTopic(Client *client, Server * server)
     Channel *channel = server->findChannel(channelName);
     if (channel == NULL)
     {
-        std::string errorMsg = "403 " + client->getNickName() + " " + channelName + " :No such channel\r\n";
+        std::string errorMsg = ERR_NOSUCHCHANNEL(client->getNickName(), channelName);
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         std::cout << "Error: No such channel" << std::endl;
         return;
@@ -42,12 +46,13 @@ void handleTopic(Client *client, Server * server)
     // Check if the client is a member of the channel
     if (!channel->isMember(client)) 
     {
-        std::string errorMsg = "442 " + client->getNickName() + " " + channelName + " :You're not on that channel\r\n";
+        std::string errorMsg = ERR_NOTONCHANNEL(client->getNickName(), channelName);
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         std::cout << "Error: Client is not a member of the channel\n";
         return;
     }
 
+    //sendig topic
     if (args.size() == 1)
     {
         channel->sendTopic(*client);
@@ -61,7 +66,7 @@ void handleTopic(Client *client, Server * server)
     // Ensure that there is no space between ':' and the topic content
     if (newTopic.empty() || newTopic[0] != ':') 
     {
-        std::string errorMsg = "461 " + client->getNickName() + " TOPIC :Not enough parameters\r\n";
+        std::string errorMsg = ERR_TOPICNEEDSCOLON(client->getNickName());
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         std::cout << "Error: Topic must start with a ':'\n";
         return;
@@ -71,13 +76,13 @@ void handleTopic(Client *client, Server * server)
     newTopic = newTopic.substr(1); // Remove the ':' character
 
     // Optionally, trim any leading or trailing spaces from the topic string
-    newTopic.erase(0, newTopic.find_first_not_of(" \t")); // Trim leading spaces
-    newTopic.erase(newTopic.find_last_not_of(" \t") + 1); // Trim trailing spaces
+    newTopic.erase(0, newTopic.find_first_not_of(" \t")); // Trim the spaces at the beginning
+    newTopic.erase(newTopic.find_last_not_of(" \t") + 1); // Trim the spaces at the end
 
-    // Check if the topic is empty after trimming spaces
+    // Check if the topic is empty after trimming spacess
     if (newTopic.empty()) 
     {
-        std::string errorMsg = "ERROR: Topic cannot be empty.\r\n";
+        std::string errorMsg = ERR_EMPTYTOPIC(client->getNickName());
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         std::cout << "Error: Topic cannot be empty\n";
         return;
