@@ -3,7 +3,7 @@
 #define ENDL "\r\n"
 #define PREFIX_SERVER ":irc.myserver.com"
 
-#define ERR_NEEDMOREPARAMS(nick, channel) (" 461 " + nick + " " + channel + " :Not enough parameters" + ENDL)
+#define ERR_NEEDMOREPARAMS(nick, command) (" 461 " + nick + " " + command + " :Not enough parameters" + ENDL)
 #define ERR_CHANOPRIVSNEEDED(nick, channel) (" 482 " + nick + " " +  channel + " :You're not channel operator" + ENDL)
 #define ERR_NOSUCHNICK(nick, channel, nickname) (" 401 " + nick + " " +  channel + " " + nickname + " :No such nick" + ENDL)
 

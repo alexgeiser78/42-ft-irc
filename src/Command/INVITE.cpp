@@ -8,6 +8,7 @@ static  Channel *getChannel(Server *server, Client *client, std::string args)
 {
     std::cout << "Entro en getChannel" << std::endl;
     Channel *channel = NULL;
+    std::cout << "Llego aqui" << std::endl;
     if (server->channels.size() == 0)
     {
         return (NULL);
@@ -57,7 +58,7 @@ void handleInvite(Client *client, Server * server)
     }
     if (args.size() == 1)
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS(client->getNickName(), channel->getName());
+        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS(client->getNickName(), "INVITE");
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;

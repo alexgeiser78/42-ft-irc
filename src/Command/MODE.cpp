@@ -248,7 +248,7 @@ void handleMode(Client *client, Server * server)
     std::vector<std::string> args = client->getArgs();
     if (args.size() == 0)
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS(client->getNickName(), channel->getName());
+        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS(client->getNickName(), "MODE");
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
@@ -267,7 +267,7 @@ void handleMode(Client *client, Server * server)
     size_t neededParams = getNeededParams(args[1]);
     if (args.size() - 2 < neededParams)
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS(client->getNickName(), channel->getName());
+        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS(client->getNickName(), "MODE");
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
