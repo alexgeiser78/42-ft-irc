@@ -8,6 +8,10 @@ static  Channel *getChannel(Server *server, Client *client, std::string args)
 {
     std::cout << "Entro en getChannel" << std::endl;
     Channel *channel = NULL;
+    if (server->channels.size() == 0)
+    {
+        return (NULL);
+    }
     for (std::vector<Channel *>::iterator it = server->channels.begin(); it != server->channels.end(); it++)
     {
         if ((*it)->getName() == args)
@@ -28,14 +32,18 @@ void handleInvite(Client *client, Server * server)
     std::vector<std::string> args = client->getArgs();
     if (args.size() == 0)
         return ;
-    std::cout <<"Llego aqui" << std::endl;
     Channel *channel = NULL;
     channel = getChannel(server, client, args[args.size() - 1]);
     if (channel == NULL)
+    {
+        std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(client->getNickName(), args[args.size() - 1]);
+        std::cout << errorMsg;
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
+    }
     if (!channel->isMember(client))
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(client->getNickName(), channel->getName());
+        std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(client->getNickName(), args[args.size() - 1]);
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
