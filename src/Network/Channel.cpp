@@ -248,4 +248,7 @@ void Channel::sendTopic(Client &client)
     send(client.getSocket(), response.c_str(), response.size(), 0);
 }
 
-
+bool Channel::isOperator(const Client &client) const
+{
+    return this->_operators.find(const_cast<Client*>(&client)) != this->_operators.end();
+}

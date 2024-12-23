@@ -58,7 +58,7 @@ void handleInvite(Client *client, Server * server)
     }
     if (args.size() == 1)
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS(client->getNickName(), "INVITE");
+        std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_P(client->getNickName(), "INVITE");
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
@@ -77,7 +77,7 @@ void handleInvite(Client *client, Server * server)
         if (invitee == NULL)
         {
             std::cout << "Entra a n ha encontrado el nick" << std::endl;
-            std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK(client->getNickName(), channel->getName(), *it);
+            std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK_P(client->getNickName(), channel->getName(), *it);
             std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
