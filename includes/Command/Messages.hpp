@@ -45,11 +45,11 @@
 #define ERR_EMPTYTOPIC(nickname) (" 461 " + nickname + " TOPIC :Topic cannot be empty" + ENDL)
 
 //USER
-#define ERR_ALREADYREGISTERED(nickname) ( " " + nickname + " :You may not reregister" + ENDL)
-#define RPL_WELCOME(nickname, username, hostname) (" " + nickname + " :Welcome to the " + NETWORK_NAME + " Network, " + nickname + "[!" + username + "@" + hostname + "]" + ENDL)
-#define RPL_YOURHOST(nickname) (" " + nickname + " :Your host is " + SERVER_NAME + ", running version " + SERVER_VERSION + ENDL)
-#define RPL_CREATED(nickname) (" " + nickname + " :This server was created " + client->getServerCreationTime() + ENDL)
-#define RPL_MYINFO(nickname) (" " + nickname + " " + SERVER_VERSION + " " + CHANNEL_MODES + " " + PARAM_MODES + ENDL)
+#define ERR_ALREADYREGISTERED(nickname) ( nickname + " :You may not reregister" + ENDL)
+#define RPL_WELCOME(nickname, username, hostname) (nickname + " :Welcome to the " + NETWORK_NAME + " Network, " + nickname + "[!" + username + "@" + hostname + "]" + ENDL)
+#define RPL_YOURHOST(nickname) (nickname + " :Your host is " + SERVER_NAME + ", running version " + SERVER_VERSION + ENDL)
+#define RPL_CREATED(nickname) (nickname + " :This server was created " + client->getServerCreationTime() + ENDL)
+#define RPL_MYINFO(nickname) (nickname + " " + SERVER_VERSION + " " + CHANNEL_MODES + " " + PARAM_MODES + ENDL)
 //#define ERR_UNKNOWNCOMMAND(nickname, command) (" 421 " + nickname + " " + command + " :Unknown command" + ENDL)
 
 //PRIVMSG

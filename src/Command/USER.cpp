@@ -53,16 +53,16 @@ void handleUser(Client *client, Server * server)
     if (!client->isRegistered() && !client->getNickName().empty())
     {
         client->setRegistered(true);
-        std::string successMsg1 = PREFIX_SERVER + RPL_WELCOME(client->getNickName(), client->getUsername(), client->getHostname());
+        std::string successMsg1 = RPL_WELCOME(client->getNickName(), client->getUsername(), client->getHostname());
         send(client->getSocket(), successMsg1.c_str(), successMsg1.size(), 0);
         std::cout << successMsg1;
-        std::string successMsg2 = PREFIX_SERVER + RPL_YOURHOST(client->getNickName());
+        std::string successMsg2 = RPL_YOURHOST(client->getNickName());
         std::cout << successMsg2;
         send(client->getSocket(), successMsg2.c_str(), successMsg2.size(), 0);
-        std::string successMsg3 = PREFIX_SERVER + RPL_CREATED(client->getNickName());
+        std::string successMsg3 = RPL_CREATED(client->getNickName());
         std::cout << successMsg3;
         send(client->getSocket(), successMsg3.c_str(), successMsg3.size(), 0);
-        std::string successMsg4 = PREFIX_SERVER + RPL_MYINFO(client->getNickName());
+        std::string successMsg4 = RPL_MYINFO(client->getNickName());
         std::cout << successMsg4;
         send(client->getSocket(), successMsg4.c_str(), successMsg4.size(), 0);
     }
