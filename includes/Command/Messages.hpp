@@ -35,3 +35,12 @@
 #define RPL_CREATED(nickname) (" " + nickname + " :This server was created " + client->getServerCreationTime() + ENDL)
 #define RPL_MYINFO(nickname) (" " + nickname + " " + SERVER_VERSION + " " + CHANNEL_MODES + " " + PARAM_MODES + ENDL)
 //#define ERR_UNKNOWNCOMMAND(nickname, command) (" 421 " + nickname + " " + command + " :Unknown command" + ENDL)
+
+//PRIVMSG
+#define ERR_NORECIPIENT(command) (std::string(" 411 ") + command + " :No recipient given" + ENDL)
+#define ERR_NOTEXTTOSEND (std::string(" 412 :No text to send") + ENDL)
+#define ERR_CANNOTSENDTOCHAN(channel) (" 404 " + channel + " :Cannot send to channel" + ENDL)
+#define ERR_NOSUCHNICK(receiver) (" 401 " + receiver + " :No such nick/channel" + ENDL)
+
+
+
