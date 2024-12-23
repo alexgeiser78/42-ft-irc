@@ -63,8 +63,10 @@ void    joinChannel(Client *client, Channel *channel)
     }
     if (channel->getInviteOnlyMode())
     {
-        if (channel->getInvited().find(client) == channel->getInvited().end())
+        std::cout << " entro en Channel is invite only\n";
+        if (channel->isInvited(client) == false)
         {
+            std::cout << "Client not invited\n";
             std::string errorMsg = ERR_INVITEONLYCHAN(channel->getName());
             std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
@@ -96,7 +98,7 @@ void    joinNewChannel(Client *client, Channel *channel)
     std::cout << "*****Joining new channel\n";
     std::cout << "Channel poniter: " << channel << std::endl;
     channel->getMembers().insert(client);
-    channel->setOperator(client);
+    channel->addOperator(client);
     std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
     client->getHostname(), channel->getName());
     std::cout << successMsg;
@@ -134,13 +136,14 @@ void handleJoin(Client *client, Server *server)
                     joinChannel(client, server->channels[i]);
                     break ;
                 }
-                if (server->channels[i]->getKey() != it->second)
+                if (server->channels[i]->getKeyMode() && server->channels[i]->getKey() != it->second)
                 {
                     std::string errorMsg = ERR_BADCHANNELKEY(server->channels[i]->getName());
                     std::cout << errorMsg;
                     send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
                 }
-                if (server->channels[i]->getMembers().size() >= server->channels[i]->getClientLimit())
+                if (server->channels[i]->getClientLimitMode()
+                && server->channels[i]->getMembers().size() >= server->channels[i]->getClientLimit())
                 {
                     std::string errorMsg = ERR_CHANNELISFULL(server->channels[i]->getName());
                     std::cout << errorMsg;

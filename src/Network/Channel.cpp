@@ -2,8 +2,11 @@
 
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
-Channel::Channel(const std::string& name): _name(name), _topic(""), _operator(),
-_inviteOnlyMode(0), _clientLimitMode(0), _keyMode(0), _clientLimit(0), _key("")
+
+Channel::Channel(const std::string& name): _name(name), _topic(""),
+_inviteOnlyMode(0), _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1),
+_clientLimit(0), _key("")
+
 {
     std::cout << "Channel object created" << std::endl;
 }
@@ -108,17 +111,38 @@ size_t Channel::getClientLimit() const
     return _clientLimit;
 }
 
-void Channel::setOperator(Client *client)
+bool Channel::addOperator(Client *client)
 {
-    _operator.insert(client);
+
+    if (_operators.find(client) != _operators.end())
+    {
+        return false; //already member
+    }
+    _operators.insert(client);
+    return true;
 }
 
-Client *Channel::getOperator() const
+bool Channel::isOperator(Client *client) const
 {
-    if (!_operator.empty()) {
-        return *(_operator.begin()); // Retourne le premier opérateur
+    for (std::set<Client*>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
+    {
+        if (*it == client)
+        {
+            return true;
+        }
     }
-    return NULL; // Pas d'opérateur
+    return false;
+}
+
+bool Channel::removeOperator(Client *client)
+{
+
+    if (_operators.find(client) == _operators.end())
+    {
+        return false; //not operator
+    }
+    _operators.erase(client);
+    return true;
 }
 
 void Channel::setKeyMode(bool mode)
@@ -163,6 +187,18 @@ void Channel::addInvited(Client *client)
     _invited.insert(client);
 }
 
+bool Channel::isInvited(Client *client) const
+{
+    for (std::set<Client*>::const_iterator it = _invited.begin(); it != _invited.end(); ++it)
+    {
+        if (*it == client)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::set<Client *> Channel::getInvited(void) const
 {
     return _invited;
@@ -188,6 +224,17 @@ std::string Channel::stringMembers(void)
     return names.str();
 }
 
+
+void Channel::setProtectedTopicMode(bool mode)
+{
+    _protectedTopicMode = mode;
+}
+
+bool Channel::getProtectedTopicMode() const
+{
+    return _protectedTopicMode;
+}
+
 void Channel::sendTopic(Client &client) 
 {
     std::string response;
@@ -201,3 +248,7 @@ void Channel::sendTopic(Client &client)
     send(client.getSocket(), response.c_str(), response.size(), 0);
 }
 
+bool Channel::isOperator(const Client &client) const
+{
+    return this->_operators.find(const_cast<Client*>(&client)) != this->_operators.end();
+}

@@ -1,8 +1,11 @@
 #define once
 
 #define ENDL "\r\n"
+#define PREFIX_SERVER ":irc.myserver.com"
 
-//#define ERR_NEEDMOREPARAMS(commmand) (command + " :Not enough parameters" + ENDL)
+#define ERR_NEEDMOREPARAMS_P(nick, command) (" 461 " + nick + " " + command + " :Not enough parameters" + ENDL)
+#define ERR_CHANOPRIVSNEEDED(nick, channel) (" 482 " + nick + " " +  channel + " :You're not channel operator" + ENDL)
+#define ERR_NOSUCHNICK_P(nick, channel, nickname) (" 401 " + nick + " " +  channel + " " + nickname + " :No such nick" + ENDL)
 
 //NICK
 #define ERR_NONICKNAMEGIVEN(nickname) (nickname + " :No nickname given" + ENDL)
@@ -20,6 +23,19 @@
 #define RPL_TOPIC(nick, channel, topic) (" 332 " + nick + " " + channel + " :" + topic + ENDL)
 #define RPL_NOTOPIC(nick, channel) (" 331 " + nick + " " + channel + " :No topic is set" + ENDL)
 #define RPL_NAMREPLY(channel, nick, names) (" 353 " + nick + " = " + channel + " :" + names + ENDL)
+
+
+//MODE
+#define ERR_UNKNOWNMODE(nick, channel, char) (" 472 " + nick + " " + " " +  channel + " " + char + " :is unknown mode char to me" + ENDL)
+#define ERR_UNKNOWNMODE_PARAM(nick, channel, param) (" 472 " + nick + " " + channel + " " + param + " :Invalid mode parameter" + ENDL)
+#define ERR_KEYSET(nick, channel) (" 467 " + nick + " " + channel + " :Channel key already set" + ENDL)
+#define RPL_CHANNELMODEIS(nick, channel, modes) (" 324 " + nick + " " + channel + " " + modes + ENDL)
+
+//INVITE
+
+#define ERR_USERONCHANNEL(nick, nickname, channel) (" 443 " + nick + " " + nickname + " " + channel + " :is already on channel" + ENDL)
+#define RPL_INVITING(nick, nickname, channel) (" 341 " + nick + " " + nickname + " " + channel + ENDL)
+#define RPL_INVITED(nick, nickname, channel) (nick + " :" + nickname + " INVITE to " + channel + ENDL)
 
 //TOPIC
 #define ERR_NEEDMOREPARAMS(command) (std::string(" 461 ") + command + " :Not enough parameters" + ENDL)
@@ -41,6 +57,7 @@
 #define ERR_NOTEXTTOSEND (std::string(" 412 :No text to send") + ENDL)
 #define ERR_CANNOTSENDTOCHAN(channel) (" 404 " + channel + " :Cannot send to channel" + ENDL)
 #define ERR_NOSUCHNICK(receiver) (" 401 " + receiver + " :No such nick/channel" + ENDL)
+
 
 
 
