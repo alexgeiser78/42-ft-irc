@@ -14,6 +14,19 @@ void handlePrivMsg(Client *client, Server * server)
     (void)server; 
     std::cout << "Handling PrivMsg\n";
 
+    // Print all users on the server
+    std::cout << "Checking clients in server:\n";
+    
+    
+    std::map<int, Client>& clients = server->getClients();  // Get the client2 map
+    
+    std::cout << "Number of clients in server: " << clients.size() << "\n";
+    
+    for (std::map<int, Client>::iterator it = clients.begin(); it != clients.end(); ++it) 
+    {
+        std::cout << "Client Nickname: " << it->second.getNickName() << "\n";
+    }
+
     //check args
     if (args.size() < 2) 
     {
@@ -26,8 +39,8 @@ void handlePrivMsg(Client *client, Server * server)
     //cath args
     std::string receiver = args[0];
     std::string message = args[1];
-    std::cout << "receiver" << receiver << std::endl;
-    std::cout << "message" << message << std::endl;
+    std::cout << "receiver " << receiver << std::endl;
+    std::cout << "message " << message << std::endl;
 
     //check msg
     if (message.empty()) 
@@ -78,6 +91,11 @@ void handlePrivMsg(Client *client, Server * server)
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             std::cerr << "Error: No such nick " << receiver << "\n";
             return;
+        }
+
+        else 
+        {
+            std::cout << "Found user " << receiver << " to send the message to.\n";
         }
 
         // Send MSG to User

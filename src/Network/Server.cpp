@@ -335,5 +335,10 @@ Client* Server::findClient(const std::string& nickname)
     return NULL; // No client found
 }
 
+std::map<int, Client> &Server::getClients()
+{
+    return clients2;
+}
+
 
 
