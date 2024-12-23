@@ -3,7 +3,9 @@
 #define ENDL "\r\n"
 #define PREFIX_SERVER ":irc.myserver.com"
 
-#define ERR_NEEDMOREPARAMS(commmand) (command + " :Not enough parameters" + ENDL)
+#define ERR_NEEDMOREPARAMS(nick, channel) (" 461 " + nick + " " + channel + " :Not enough parameters" + ENDL)
+#define ERR_CHANOPRIVSNEEDED(nick, channel) (" 482 " + nick + " " +  channel + " :You're not channel operator" + ENDL)
+#define ERR_NOSUCHNICK(nick, channel, nickname) (" 401 " + nick + " " +  channel + " " + nickname + " :No such nick" + ENDL)
 
 //NICK
 #define ERR_NONICKNAMEGIVEN(nickname) (nickname + " :No nickname given" + ENDL)
@@ -23,11 +25,15 @@
 #define RPL_NAMREPLY(channel, nick, names) (" 353 " + nick + " = " + channel + " :" + names + ENDL)
 
 //MODE
-#define ERR_NEEDMOREPARAMS_MODE(nick, channel) (" 461 " + nick + " " + channel + " :Not enough parameters" + ENDL)
-#define ERR_CHANOPRIVSNEEDED(nick, channel) (" 482 " + nick + " " +  channel + " :You're not channel operator" + ENDL)
 #define ERR_UNKNOWNMODE(nick, channel, char) (" 472 " + nick + " " + " " +  channel + " " + char + " :is unknown mode char to me" + ENDL)
 #define ERR_UNKNOWNMODE_PARAM(nick, channel, param) (" 472 " + nick + " " + channel + " " + param + " :Invalid mode parameter" + ENDL)
-#define ERR_NOSUCHNICK(nick, channel, nickname) (" 401 " + nick + " " +  channel + " " + nickname + " :No such nick/channel" + ENDL)
 #define ERR_KEYSET(nick, channel) (" 467 " + nick + " " + channel + " :Channel key already set" + ENDL)
 #define ERR_NOSUCHCHANNEL(nick, channel) (" 403 " + nick + " " + channel + " :No such channel" + ENDL)
 #define RPL_CHANNELMODEIS(nick, channel, modes) (" 324 " + nick + " " + channel + " " + modes + ENDL)
+
+//INVITE
+
+#define ERR_NOTONCHANNEL(nick, channel) (" 442 " + nick + " " + channel + " :You're not on that channel" + ENDL)
+#define ERR_USERONCHANNEL(nick, nickname, channel) (" 443 " + nick + " " + nickname + " " + channel + " :is already on channel" + ENDL)
+#define RPL_INVITING(nick, nickname, channel) (" 341 " + nick + " " + nickname + " " + channel + ENDL)
+#define RPL_INVITED(nick, nickname, channel) (nick + " :" + nickname + " INVITE to " + channel + ENDL)

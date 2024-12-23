@@ -58,6 +58,7 @@ class Channel
 		std::string const &getTopic() const;
 
 		void addInvited(Client *client);
+		bool isInvited(Client *client) const;
 		std::set<Client *> getInvited(void) const;
 
 		void setInviteOnlyMode(bool mode);

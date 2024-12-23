@@ -71,6 +71,14 @@ void Server::ServerInit(int port)
                 }   
         }
     }
+    for (std::vector<Client *>::iterator it = this->clients.begin(); it != this->clients.end(); it++)
+    {
+        delete *it;
+    }
+    for (std::vector<Channel *>::iterator it = this->channels.begin(); it != this->channels.end(); it++)
+    {
+        delete *it;
+    }
     CloseFDs();
 }
 
@@ -262,8 +270,8 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    // std::cout << "Proccessed command: " << commandName << std::endl;
-    // std::cout << "Arguments: ";
+    std::cout << "Proccessed command: " << commandName << std::endl;
+    std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
         std::cout << args[i] << " ";

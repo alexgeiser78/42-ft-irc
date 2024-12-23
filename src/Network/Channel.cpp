@@ -165,6 +165,18 @@ void Channel::addInvited(Client *client)
     _invited.insert(client);
 }
 
+bool Channel::isInvited(Client *client) const
+{
+    for (std::set<Client*>::const_iterator it = _invited.begin(); it != _invited.end(); ++it)
+    {
+        if (*it == client)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::set<Client *> Channel::getInvited(void) const
 {
     return _invited;

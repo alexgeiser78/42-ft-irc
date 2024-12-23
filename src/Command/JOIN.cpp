@@ -63,8 +63,10 @@ void    joinChannel(Client *client, Channel *channel)
     }
     if (channel->getInviteOnlyMode())
     {
-        if (channel->getInvited().find(client) == channel->getInvited().end())
+        std::cout << " entro en Channel is invite only\n";
+        if (channel->isInvited(client) == false)
         {
+            std::cout << "Client not invited\n";
             std::string errorMsg = ERR_INVITEONLYCHAN(channel->getName());
             std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
