@@ -1,7 +1,18 @@
 #include "../../includes/Network/Server.hpp"
 #include "../../includes/Command/Command.hpp"
+#include "../../includes/Network/Channel.hpp"
 
 bool Server::Signal = false;
+
+std::string toUpperCase(const std::string& str) 
+{
+    std::string result = str;
+    for (size_t i = 0; i < result.size(); ++i) {
+        result[i] = std::toupper(result[i]);
+    }
+    return result;
+}
+
 
 Server::Server(int port, std::string password): _Port(port), _Password(password)
 {
@@ -270,7 +281,9 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    std::cout << "Proccessed command: " << commandName << std::endl;
+    commandName = toUpperCase(commandName); // test
+    std::cout << "Processed command: " << commandName << std::endl;
+
     std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
@@ -302,3 +315,34 @@ void    Server::ProccessCommand(int fd, std::string line)
     }
     command.executeCommand(commandName, client, this);
 }
+
+Channel* Server::findChannel(const std::string &channelName) {
+    // On suppose que _channels est un std::vector<Channel*> ou similaire
+    for (size_t i = 0; i < this->channels.size(); ++i) 
+    {
+        Channel* channel = this->channels[i];
+        if (channel->getName() == channelName) 
+        {
+            return channel; // Le canal a été trouvé
+        }
+    }
+    return NULL; // Aucun canal trouvé
+}
+
+Client* Server::findClient(const std::string& nickname) 
+{
+    std::map<int, Client>::iterator it;
+
+    // walk in the map 
+    for (it = clients2.begin(); it != clients2.end(); ++it) 
+    {
+        if (it->second.getNickName() == nickname) 
+        {
+            return &(it->second); // returns a pointer to the Client
+        }
+    }
+    return NULL; // No client found
+}
+
+
+

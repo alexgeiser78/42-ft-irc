@@ -61,6 +61,9 @@ class Server
 	    void        RecieveData(int fd);
 	    void        ProccessCommand(int fd, std::string line);
 
+		Channel 	*findChannel(const std::string &channelName);
+		Client*		findClient(const std::string& nickname);
+
 };
 
 /*HOW WORKS sockaddr_in and in_addr:

@@ -2,9 +2,11 @@
 
 std::map<std::string, Channel*> Channel::_channels; // to check why
 
+
 Channel::Channel(const std::string& name): _name(name), _topic(""),
 _inviteOnlyMode(0), _clientLimitMode(0), _keyMode(0), _protectedTopicMode(1),
 _clientLimit(0), _key("")
+
 {
     std::cout << "Channel object created" << std::endl;
 }
@@ -47,6 +49,7 @@ void Channel::broadcast(Client *sender, const std::string &message)
 
 Channel* Channel::getChannel(const std::string& channelName)
 {
+    static std::map<std::string, Channel*> channels;
     std::map<std::string, Channel*>::iterator it = _channels.find(channelName);
     if (it != _channels.end())
     {
@@ -110,6 +113,7 @@ size_t Channel::getClientLimit() const
 
 bool Channel::addOperator(Client *client)
 {
+
     if (_operators.find(client) != _operators.end())
     {
         return false; //already member
@@ -132,6 +136,7 @@ bool Channel::isOperator(Client *client) const
 
 bool Channel::removeOperator(Client *client)
 {
+
     if (_operators.find(client) == _operators.end())
     {
         return false; //not operator
@@ -150,9 +155,26 @@ bool Channel::getKeyMode() const
     return _keyMode;
 }
 
-void Channel::setTopic(std::string const &topic)
+void Channel::setTopic(Client &client, const std::string &newTopic)
 {
-    _topic = topic;
+    // Check if the channel is protected (+t) and if the client is an operator
+    if (this->_protectedTopicMode && !this->isOperator(client))
+    {
+        std::string errorMsg = "482 " + client.getNickName() + " " + this->_name + " :You're not a channel operator\r\n";
+        send(client.getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        return;
+    }
+
+    // Define the topic
+    this->_topic = newTopic;
+
+    // Notify all users
+    std::string notification = ":" + client.getNickName() + " TOPIC " + this->_name + " :" + this->_topic + "\r\n";
+    for (std::set<Client *>::iterator it = this->_members.begin(); it != this->_members.end(); ++it)
+    {
+        send((*it)->getSocket(), notification.c_str(), notification.size(), 0);
+    }
+    std::cout << "Topic changed" << std::endl;
 }
 
 std::string const &Channel::getTopic() const
@@ -202,6 +224,7 @@ std::string Channel::stringMembers(void)
     return names.str();
 }
 
+
 void Channel::setProtectedTopicMode(bool mode)
 {
     _protectedTopicMode = mode;
@@ -211,3 +234,18 @@ bool Channel::getProtectedTopicMode() const
 {
     return _protectedTopicMode;
 }
+
+void Channel::sendTopic(Client &client) 
+{
+    std::string response;
+
+    if (this->_topic.empty()) 
+    { // if no topic is tefined
+        response = ":" + client.getNickName() + " 331 " + client.getNickName() + " " + this->_name + " :No topic is set\r\n";
+    } else { // if topic is defined
+        response = ":" + client.getNickName() + " 332 " + client.getNickName() + " " + this->_name + " :" + this->_topic + "\r\n";
+    }
+    send(client.getSocket(), response.c_str(), response.size(), 0);
+}
+
+
