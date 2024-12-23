@@ -320,4 +320,20 @@ Channel* Server::findChannel(const std::string &channelName) {
     return NULL; // Aucun canal trouvé
 }
 
+Client* Server::findClient(const std::string& nickname) 
+{
+    std::map<int, Client>::iterator it;
+
+    // walk in the map 
+    for (it = clients2.begin(); it != clients2.end(); ++it) 
+    {
+        if (it->second.getNickName() == nickname) 
+        {
+            return &(it->second); // returns a pointer to the Client
+        }
+    }
+    return NULL; // No client found
+}
+
+
 

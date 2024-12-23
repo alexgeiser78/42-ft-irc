@@ -62,6 +62,7 @@ class Server
 	    void        ProccessCommand(int fd, std::string line);
 
 		Channel 	*findChannel(const std::string &channelName);
+		Client*		findClient(const std::string& nickname);
 
 };
 
