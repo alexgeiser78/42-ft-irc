@@ -26,8 +26,8 @@ void handlePrivMsg(Client *client, Server * server)
     //cath args
     std::string receiver = args[0];
     std::string message = args[1];
-    std::cout << "receiver" << receiver << std::endl;
-    std::cout << "message" << message << std::endl;
+    std::cout << "receiver " << receiver << std::endl;
+    std::cout << "message " << message << std::endl;
 
     //check msg
     if (message.empty()) 
