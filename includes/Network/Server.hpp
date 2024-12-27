@@ -41,7 +41,7 @@ class Server
 	    std::string _ServerCreationTime;
 
     public:
-		std::vector<Client *> clients;
+		//std::vector<Client *> clients;
 		std::vector<Channel *> channels;
 	    Server(int port, std::string password);
 	    ~Server();

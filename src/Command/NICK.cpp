@@ -29,17 +29,22 @@ void handleNick(Client *client, Server * server)
 		send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
 		return;
 	}
-	for (size_t i = 0; i < server->clients.size(); i++)
+
+	std::string newNick = client->getArgs()[0];
+
+	std::map<int, Client>::iterator it;
+    for (it = server->getClients().begin(); it != server->getClients().end(); ++it) 
 	{
-		if (server->clients[i]->getNickName() == client->getArgs()[0]) // if the nickname is already taken
+        if (it->second.getNickName() == newNick) 
 		{
-		std::string errorMsg = ERR_NICKNAMEINUSE(client->getNickName(), client->getArgs()[0]);
-			std::cout << errorMsg;
-			send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-			return;
-		}
-	}
-	if (validateNickname(client->getArgs()[0]) == false) // if the nickname is invalid
+            std::string errorMsg = ERR_NICKNAMEINUSE(client->getNickName(), newNick);
+            std::cout << errorMsg;
+            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+            return;
+        }
+    }
+
+	if (!validateNickname(newNick)) // if the nickname is invalid
 	{
 		std::string errorMsg = ERR_ERRONEUSNICKNAME(client->getNickName(), client->getArgs()[0]);
 		std::cout << errorMsg;
