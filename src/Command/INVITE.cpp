@@ -4,6 +4,7 @@
 #include "../../includes/Network/Client.hpp"
 #include "../../includes/Network/Server.hpp"
 
+/*
 static  Channel *getChannel(Server *server, Client *client, std::string args)
 {
     std::cout << "Entro en getChannel" << std::endl;
@@ -25,78 +26,88 @@ static  Channel *getChannel(Server *server, Client *client, std::string args)
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
     }
     return (channel);
-}
+}*/
 
 void handleInvite(Client *client, Server * server) 
 {
     std::cout << "Handling INVITE\n";
     std::vector<std::string> args = client->getArgs();
-    if (args.size() == 0)
-        return ;
-    Channel *channel = NULL;
-    channel = getChannel(server, client, args[args.size() - 1]);
-    if (channel == NULL)
-    {
-        std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(client->getNickName(), args[args.size() - 1]);
-        std::cout << errorMsg;
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
-        return;
-    }
-    if (!channel->isMember(client))
-    {
-        std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(client->getNickName(), args[args.size() - 1]);
-        std::cout << errorMsg;
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
-        return;
-    }
-    if (!channel->isOperator(client))
-    {
-        std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channel->getName());
-        std::cout << errorMsg;
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
-        return;
-    }
-    if (args.size() == 1)
+    if (args.empty()) 
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_P(client->getNickName(), "INVITE");
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
     }
-    std::cout <<"Llego aqui" << std::endl;
-    for (std::vector<std::string>::iterator it = args.begin(); it != args.end() - 1; it++)
+    std::string channelName = args.back();
+
+    Channel *channel = server->findChannel(channelName);
+    if (channel == NULL) 
     {
-        std::cout << "Entra a invitar" << std::endl;
+        std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), channelName);
+        std::cout << errorMsg;
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
+        return;
+    }
+
+    // Check if the member is in the channel
+    if (!channel->isMember(client)) {
+        std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(client->getNickName(), channelName);
+        std::cout << errorMsg;
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
+        return;
+    }
+
+    // check if he is an operator
+    if (!channel->isOperator(client)) 
+    {
+        std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channelName);
+        std::cout << errorMsg;
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
+        return;
+    }
+
+    //
+    for (size_t i = 0; i < args.size() - 1; ++i) 
+    {
+        std::string targetNick = args[i];
         Client *invitee = NULL;
-        for (std::vector<Client *>::iterator itClient = server->clients.begin(); itClient != server->clients.end(); itClient++)
-        {
-            std::cout << "Entra a detectar el nick" << std::endl;
-            if ((*itClient)->getNickName() == *it)
-                invitee = *itClient;
+
+        //search of the client with the nickname
+        for (std::map<int, Client>::iterator itClient = server->getClients().begin(); itClient != server->getClients().end(); ++itClient) {
+            if (itClient->second.getNickName() == targetNick) 
+            {
+                invitee = &(itClient->second);
+                break;
+            }
         }
-        if (invitee == NULL)
+
+        // If the client isn't found
+        if (invitee == NULL) 
         {
-            std::cout << "Entra a n ha encontrado el nick" << std::endl;
-            std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK_P(client->getNickName(), channel->getName(), *it);
+            std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK_P(client->getNickName(), channelName, targetNick);
             std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
         }
-        if (channel->isMember(invitee))
+
+        // if the client is already member of the channel
+        if (channel->isMember(invitee)) 
         {
-            std::cout << "Entra a mirar si el nick ya esta en el canal" << std::endl;
-            std::string errorMsg = PREFIX_SERVER + ERR_USERONCHANNEL(client->getNickName(), invitee->getNickName(), channel->getName());
+            std::string errorMsg = PREFIX_SERVER + ERR_USERONCHANNEL(client->getNickName(), invitee->getNickName(), channelName);
             std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
         }
+
+        // add the client to the channel list
         channel->addInvited(invitee);
-        std::cout << "Invita" << std::endl;
-        std::string rplMsg = PREFIX_SERVER + RPL_INVITING(client->getNickName(), invitee->getNickName(), channel->getName());
-        std::cout << rplMsg;
+
+        // Send confirmation message
+        std::string rplMsg = PREFIX_SERVER + RPL_INVITING(client->getNickName(), invitee->getNickName(), channelName);
         send(client->getSocket(), rplMsg.c_str(), rplMsg.size(), MSG_NOSIGNAL);
-        std::string rpl2Msg = RPL_INVITED(invitee->getNickName(), client->getNickName(), channel->getName());
-        std::cout << rpl2Msg;
+
+        std::string rpl2Msg = RPL_INVITED(invitee->getNickName(), client->getNickName(), channelName);
         send(invitee->getSocket(), rpl2Msg.c_str(), rpl2Msg.size(), MSG_NOSIGNAL);
     }
 }
