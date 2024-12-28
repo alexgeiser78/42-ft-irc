@@ -8,7 +8,7 @@ OBJS = ${SRCS:.c=.o}
 
 NAME = bircd
 
-CFLAGS = -I. -g3 -Wall -Werror
+CFLAGS = -I. -g3 
 LDFLAGS = 
 
 CC = gcc
