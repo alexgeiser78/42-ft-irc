@@ -82,10 +82,11 @@ void Server::ServerInit(int port)
                 }   
         }
     }
+    /*
     for (std::vector<Client *>::iterator it = this->clients.begin(); it != this->clients.end(); it++)
     {
         delete *it;
-    }
+    }*/
     for (std::vector<Channel *>::iterator it = this->channels.begin(); it != this->channels.end(); it++)
     {
         delete *it;
@@ -167,11 +168,11 @@ void Server::CloseFDs()
 
 void Server::AcceptNewClient(void)
 {
-    Client              *client = new Client() ; //Create a new client
+    Client              client; //Create a new client
     int                 clientFd; // File description for socket created when accepting conection
     struct sockaddr_in  clientAddress; //Struc with client address information
     struct pollfd       NewPoll; //Struct pollfd for new socket information
-    socklen_t           length;
+    socklen_t           length = sizeof(clientAddress);
 
     length = sizeof(clientAddress);
     //Accept() bloks until receive a conection and return a file descriptor representing
@@ -194,11 +195,11 @@ void Server::AcceptNewClient(void)
     NewPoll.revents = 0;
 
     //Set the values of client
-    client->setSocket(clientFd);
-    client->setAddress(inet_ntoa(clientAddress.sin_addr));
+    client.setSocket(clientFd);
+    client.setAddress(inet_ntoa(clientAddress.sin_addr));
 
     //Add the new client to the clients vector
-    clients.push_back(client);
+    clients2[clientFd] = client;
 
     //Add NewPoll to the FD vector
     FD.push_back(NewPoll);
@@ -206,31 +207,27 @@ void Server::AcceptNewClient(void)
     std::cout << "Client with fd: " << clientFd << " has been connected successfully" << std::endl;
 }
 
-void    Server::RemoveClient(int fd)
+void Server::RemoveClient(int fd)
 {
-    size_t i;
-
-    i = 0;
-    while(i < FD.size())
+    // Delete the pollfd associated to the client
+    for (size_t i = 0; i < FD.size(); ++i) 
     {
-        if (FD[i].fd == fd)
-        {
+        if (FD[i].fd == fd) {
             FD.erase(FD.begin() + i);
-            break ;
+            break;
         }
-        i++;
     }
-    i = 0;
-    while(i < clients.size())
-    {
-        if (clients[i]->getSocket() == fd)
-        {
-            clients.erase(clients.begin() + i);
-            break ;
-        }
-        i++;
+
+    // Delete the client from the map clients2
+    std::map<int, Client>::iterator it = clients2.find(fd);
+    if (it != clients2.end()) {
+        clients2.erase(it);
+        std::cout << "Client with fd: " << fd << " disconnected and deleted.\n";
+    } else {
+        std::cerr << "Error : Client with fd " << fd << " not found in the clients2 map.\n";
     }
 }
+
 
 void    Server::RecieveData(int fd)
 {
@@ -290,30 +287,34 @@ void    Server::ProccessCommand(int fd, std::string line)
         std::cout << args[i] << " ";
     }
     std::cout << std::endl;
-    Client *client = NULL;
-    for (size_t i = 0; i < clients.size(); i++)
-    {
-        if (clients[i]->getSocket() == fd)
-        {
-            clients[i]->setArgs(args);
-            client = clients[i];
-            break ;
-        }
+
+    std::map<int, Client>::iterator it = clients2.find(fd);
+    if (it == clients2.end()) {
+        std::cerr << "Erreur : Client avec fd " << fd << " introuvable.\n";
+        return;
     }
-    client->setServerCreationTime(_ServerCreationTime);
-    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK"
-    && commandName != "MODE" && commandName != "NICK" && commandName != "PART"
-    && commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER")
-    {
+
+    // Récupération du client et mise à jour des arguments
+    Client& client = it->second;
+    client.setArgs(args);
+    client.setServerCreationTime(_ServerCreationTime);
+
+    // Validation de la commande
+    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK" &&
+        commandName != "MODE" && commandName != "NICK" && commandName != "PART" &&
+        commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER") {
         std::cerr << "Command not found" << std::endl;
-        return ;
+        return;
     }
-    if (!client->isRegistered() && commandName != "NICK" && commandName != "USER")
-    {
+
+    // Vérification de l'inscription du client
+    if (!client.isRegistered() && commandName != "NICK" && commandName != "USER") {
         std::cerr << "Client not registered" << std::endl;
-        return ;
+        return;
     }
-    command.executeCommand(commandName, client, this);
+
+    // Exécution de la commande
+    command.executeCommand(commandName, &client, this);
 }
 
 Channel* Server::findChannel(const std::string &channelName) {
@@ -342,6 +343,11 @@ Client* Server::findClient(const std::string& nickname)
         }
     }
     return NULL; // No client found
+}
+
+std::map<int, Client> &Server::getClients()
+{
+    return clients2;
 }
 
 
