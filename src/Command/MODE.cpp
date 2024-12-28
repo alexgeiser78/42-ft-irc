@@ -12,23 +12,6 @@ k = channel protected by a password
 o = operators management
 l = numbers of users limitation */
 
-static  Channel *getChannel(Server *server, Client *client, std::string args)
-{
-    Channel *channel = NULL;
-    for (std::vector<Channel *>::iterator it = server->channels.begin(); it != server->channels.end(); it++)
-    {
-        if ((*it)->getName() == args)
-            channel = *it;
-    }
-    if (channel == NULL)
-    {
-        std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), channel->getName());
-        std::cout << errorMsg;
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-    }
-    return (channel);
-}
-
 static std::string getModesString(Channel *channel, Client *client)
 {
     std::string modes;
@@ -253,9 +236,13 @@ void handleMode(Client *client, Server * server)
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
-    channel = getChannel(server, client, args[0]);
+    channel = server->findChannel(args[0]);
     if (channel == NULL)
-        return;
+    {
+        std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), args[0]);
+        std::cout << errorMsg;
+        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+    }
     if (args.size() == 1)
     {
         std::string modes = getModesString(channel, client);
