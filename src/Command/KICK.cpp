@@ -22,12 +22,14 @@ static void getChannelsAndUsers(Client *client, std::vector<std::string> &channe
 
 static void kickUsersFromChannel(Server *server, Client *client, std::string channelName, std::vector<std::string> users)
 {
+    std::cout << "Handling kickUsersFromChannel\n";
     Channel *channel = server->findChannel(channelName);
     if (channel == NULL)
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), channelName);
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        return ;
     }
     if (!channel->isOperator(client))
     {
@@ -54,7 +56,7 @@ static void kickUsersFromChannel(Server *server, Client *client, std::string cha
             continue;
         }
         channel->removeMember(user);
-        std::string kickMsg = RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
+        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
         channel->broadcast(NULL, kickMsg);
     }
 }
@@ -94,7 +96,7 @@ static void kickUserFromChannels(Server *server, Client *client, std::vector<std
             continue;
         }
         channel->removeMember(user);
-        std::string kickMsg = RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
+        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
         channel->broadcast(NULL, kickMsg);
     }
 }
@@ -132,7 +134,7 @@ static void kickUsersFromChannels(Server *server, Client *client, std::vector<st
             continue;            
         }
         channel->removeMember(user);
-        std::string kickMsg = RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
+        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
         channel->broadcast(NULL, kickMsg);
     }
 }

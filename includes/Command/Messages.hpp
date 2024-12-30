@@ -39,8 +39,8 @@
 
 //TOPIC
 #define ERR_NEEDMOREPARAMS(command) (std::string(" 461 ") + command + " :Not enough parameters" + ENDL)
-#define ERR_NOSUCHCHANNEL(nickname, channel) ("403 " + nickname + " " + channel + " :No such channel" + ENDL)
-#define ERR_NOTONCHANNEL(nickname, channel) ("442 " + nickname + " " + channel + " :Not on that channel" + ENDL)
+#define ERR_NOSUCHCHANNEL(nickname, channel) (" 403 " + nickname + " " + channel + " :No such channel" + ENDL)
+#define ERR_NOTONCHANNEL(nickname, channel) (" 442 " + nickname + " " + channel + " :Not on that channel" + ENDL)
 #define ERR_TOPICNEEDSCOLON(nickname) (" 461 " + nickname + " TOPIC :Not enough parameters" + ENDL)
 #define ERR_EMPTYTOPIC(nickname) (" 461 " + nickname + " TOPIC :Topic cannot be empty" + ENDL)
 
@@ -59,7 +59,7 @@
 #define ERR_NOSUCHNICK(receiver) (" 401 " + receiver + " :No such nick/channel" + ENDL)
 
 //KICK
-#define RPL_KICK(nick, channel, user, reason) (" :" + nick + " " + channel + " " + user + " :" + reason + ENDL)
+#define RPL_KICK(nick, channel, user, reason) (" KICK " + channel + " " + user + " :" + reason + ENDL)
 
 
 
