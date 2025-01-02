@@ -77,7 +77,7 @@ void handlePrivMsg(Client *client, Server * server)
         }
 
         // Send MSG to all members
-        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message + ENDL;
+        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + client->getLastArg() + ENDL;
         channel->broadcast(client, formattedMsg);
         std::cout << "Message sent to channel " << receiver << ": " << message << "\n";
     }
@@ -99,7 +99,7 @@ void handlePrivMsg(Client *client, Server * server)
         }
 
         // Send MSG to User
-        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message + ENDL;
+        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + client->getLastArg() + ENDL;
         send(targetClient->getSocket(), formattedMsg.c_str(), formattedMsg.size(), 0);
         std::cout << "Message sent to user " << receiver << ": " << message << "\n";
     }

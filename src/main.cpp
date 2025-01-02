@@ -32,6 +32,7 @@ int main (int argc, char **argv)
 
 	catch(const std::exception& e)
     {
+        std::cout << "Entro aqui" << std::endl;
 		server.CloseFDs(); //close the file descriptors
 		std::cerr << e.what() << std::endl;
 	}

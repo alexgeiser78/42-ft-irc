@@ -75,6 +75,20 @@ void Client::setArgs(const std::vector<std::string> &arguments)
 	_args = arguments;
 }
 
+std::string	Client::getLastArg() const
+{
+	return _lastArg;
+}
+
+void	Client::setLastArg(const std::string &arguments)
+{
+    size_t  start = arguments.find(':');
+    if (start == std::string::npos)
+        _lastArg = "";
+    else
+        _lastArg = arguments.substr(start + 1);
+}
+
 //---------------------------Username
 
 void Client::setUsername(std::string const &username)
