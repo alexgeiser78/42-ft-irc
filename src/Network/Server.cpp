@@ -23,6 +23,10 @@ Server::Server(int port, std::string password): _Port(port), _Password(password)
 Server::~Server()
 {
     close(SerSocketFd);
+    // for (std::vector<Channel *>::iterator it = this->channels.begin(); it != this->channels.end(); it++)
+    // {
+    //     delete *it;
+    // }
     std::cout << "Server object destroyed" << std::endl;
 }
 
@@ -91,6 +95,7 @@ void Server::ServerInit(int port)
     {
         delete *it;
     }
+    std::cout << "Entro aqui en serverInit " << std::endl;
     CloseFDs();
 }
 
