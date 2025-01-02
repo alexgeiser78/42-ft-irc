@@ -20,7 +20,8 @@ static void getChannelsAndUsers(Client *client, std::vector<std::string> &channe
     }
 }
 
-static void kickUsersFromChannel(Server *server, Client *client, std::string channelName, std::vector<std::string> users)
+static void kickUsersFromChannel(Server *server, Client *client, std::string channelName,
+std::vector<std::string> users)
 {
     std::cout << "Handling kickUsersFromChannel\n";
     Channel *channel = server->findChannel(channelName);
@@ -56,7 +57,7 @@ static void kickUsersFromChannel(Server *server, Client *client, std::string cha
             continue;
         }
         channel->removeMember(user);
-        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
+        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getLastArg());
         channel->broadcast(NULL, kickMsg);
     }
 }
@@ -96,7 +97,7 @@ static void kickUserFromChannels(Server *server, Client *client, std::vector<std
             continue;
         }
         channel->removeMember(user);
-        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
+        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getLastArg());
         channel->broadcast(NULL, kickMsg);
     }
 }
@@ -134,7 +135,7 @@ static void kickUsersFromChannels(Server *server, Client *client, std::vector<st
             continue;            
         }
         channel->removeMember(user);
-        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getArgs()[2]);
+        std::string kickMsg = PREFIX_SERVER + RPL_KICK(client->getNickName(), channel->getName(), user->getNickName(), client->getLastArg());
         channel->broadcast(NULL, kickMsg);
     }
 }
@@ -149,7 +150,7 @@ void handleKick(Client *client, Server * server)
         std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
-    }
+    }   
     std::vector<std::string> channels;
     std::vector<std::string> users;
     getChannelsAndUsers(client, channels, users);

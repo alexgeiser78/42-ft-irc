@@ -270,6 +270,7 @@ void    Server::ProccessCommand(int fd, std::string line)
     std::string commandName;
     std::istringstream stream(line);
 
+
     stream >> commandName;
     std::vector<std::string> args;
     std::string arg;
@@ -296,6 +297,7 @@ void    Server::ProccessCommand(int fd, std::string line)
 
     // Récupération du client et mise à jour des arguments
     Client& client = it->second;
+    client.setLastArg(line);
     client.setArgs(args);
     client.setServerCreationTime(_ServerCreationTime);
 

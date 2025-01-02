@@ -10,7 +10,9 @@ class Client
 	private:
 		int _socket;
 		std::string	_address;
-		std::vector<std::string>_args; 
+		std::vector<std::string>_args;
+		std::string	_rawArgs;
+		std::string	_lastArg;
 		std::string _nickname;
 		std::string _username;
 		std::string _hostname;
@@ -37,6 +39,9 @@ class Client
 		
 		std::vector<std::string> getArgs() const;
 		void setArgs(const std::vector <std::string> &arguments);
+
+		std::string	getLastArg() const;
+		void	setLastArg(const std::string &arguments);
 		
 		void setUsername(const std::string& username);
     	 std::string const &getUsername() const;

@@ -1,60 +1,44 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: ageiser <marvin@42.fr>                     +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/11/15 12:48:51 by ageiser           #+#    #+#              #
-#    Updated: 2024/11/15 12:48:53 by ageiser          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME = ircserv
 
-BLUE     	= \033[0;34m
-GREEN    	= \033[0;32m
-RED      	= \033[0;31m
-YELLOW   	= \033[0;33m
-NO_COLOR    = \033[m
+SRCS_DIR	=	src
+INCS_DIR	=	includes
+OBJS_DIR	=	.objs
+DEPS_DIR	=	.deps
 
 SRCS = 	$(wildcard ./src/Command/*.cpp) \
 		$(wildcard ./src/Network/*.cpp) \
 		./src/main.cpp
-OBJS = $(SRCS:.cpp=.o)
-DEPS = $(OBJS:.o=.d)
+OBJS	=	$(patsubst $(SRCS_DIR)/%, $(OBJS_DIR)/%, $(SRCS:.cpp=.o))
+DEPS	=	$(patsubst $(SRCS_DIR)/%, $(DEPS_DIR)/%, $(SRCS:.cpp=.d))
 
-NAME = ircserv
+CC	=	c++
+CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 $(addprefix -I, $(INCS_DIR))
+CPPFLAGS	+=	-g -MMD -MP -MF $(DEPS_DIR)/$*.d -fsanitize=address
 
-CC = c++
+RM = rm -rf
+MKDIR		=	mkdir -p
 
-FLAGS = -Wall -Wextra -Werror -std=c++98
+$(OBJS_DIR)/%.o	:	$(SRCS_DIR)/%.cpp
+		${CC} ${CPPFLAGS} -c $< -o $@
 
-HEADER = -I ./includes
+all:	directories $(NAME)
 
-RM = rm -f
+$(NAME):	$(OBJS)
+	$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME)
 
-%.o: %.cpp
-	@$(CC) $(FLAGS) $(HEADER) -c $< -o $@
-	@echo "$(YELLOW)Compiled $< to $@$(NO_COLOR)"
+directories:
+	$(MKDIR)	$(OBJS_DIR)
+	$(MKDIR)	$(DEPS_DIR)
 
-all: $(NAME)
-
-$(NAME): $(OBJS)
-	@$(CC) $(FLAGS) $(HEADER) $(OBJS) -o $(NAME)
-	@echo "$(GREEN)Executable $(NAME) generated$(NO_COLOR)"
+.PHONY: all clean fclean re
 
 clean:
-	@$(RM) $(OBJS) $(DEPS)
-	@echo "$(BLUE)Objects files removed$(NO_COLOR)"
+	$(RM) $(OBJS) $(DEPS)
+	$(RM) $(OBJS_DIR) $(DEPS_DIR)
 
-fclean: clean
-	@$(RM) $(NAME)
-	@echo "$(RED)Executable $(NAME) removed$(NO_COLOR)"
+fclean:	clean
+	$(RM) $(NAME)
 
-re: fclean all
-
-leaks:
-	valgrind --leak-check=full ./$(NAME)
+re:	fclean all
 
 -include $(DEPS)
-
-.PHONY: all clean fclean re leaks
