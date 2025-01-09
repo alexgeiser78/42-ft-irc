@@ -1,4 +1,4 @@
-NAME = ircserv
+NAME	=	ircserv
 
 SRCS_DIR	=	src
 INCS_DIR	=	includes
@@ -13,13 +13,14 @@ DEPS	=	$(patsubst $(SRCS_DIR)/%, $(DEPS_DIR)/%, $(SRCS:.cpp=.d))
 
 CC	=	c++
 CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 $(addprefix -I, $(INCS_DIR))
-CPPFLAGS	+=	-g -MMD -MP -MF $(DEPS_DIR)/$*.d -fsanitize=address
+CPPFLAGS	+=	-g -MMD -MP -fsanitize=address
 
 RM = rm -rf
 MKDIR		=	mkdir -p
 
 $(OBJS_DIR)/%.o	:	$(SRCS_DIR)/%.cpp
-		${CC} ${CPPFLAGS} -c $< -o $@
+	${MKDIR} $(dir $@)
+	${CC} ${CPPFLAGS} -c $< -o $@
 
 all:	directories $(NAME)
 
