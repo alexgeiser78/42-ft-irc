@@ -302,6 +302,7 @@ void    Server::ProccessCommand(int fd, std::string line)
     // Récupération du client et mise à jour des arguments
     Client& client = it->second;
     client.setLastArg(line);
+    client.setRawArg(line);
     client.setArgs(args);
     client.setServerCreationTime(_ServerCreationTime);
 

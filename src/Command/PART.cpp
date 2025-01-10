@@ -5,7 +5,7 @@
 
 void handlePart(Client *client, Server * server) //function to handle the PART command
 {
-    (void)server;
+    // (void)server;
     // (void)client;
     std::cout << "Handling PART\n";
     const std::vector<std::string> &args = client->getArgs(); //retrieves the args
@@ -22,7 +22,8 @@ void handlePart(Client *client, Server * server) //function to handle the PART c
     {
         std::string const &channelName = args[i];
 
-        Channel *channel = Channel::getChannel(channelName);
+        Channel *channel = NULL;
+        channel = server->findChannel(channelName); //find the channel
         if (channel == NULL)
         {
             std::string errorMsg = "ERROR: Channel " + channelName + " does not exist.\n";

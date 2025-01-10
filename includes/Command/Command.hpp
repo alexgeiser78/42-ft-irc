@@ -34,10 +34,10 @@ class Command
         std::map<std::string, void(*)(Client *, Server *)> commands;
 
     public:
-        Command(); //constructor to initiate the map
+        Command();
         ~Command();
 
-        void        executeCommand(const std::string& commandName, Client *client, Server *server);
+        void    executeCommand(const std::string& commandName, Client *client, Server *server);
 };
 
 #endif

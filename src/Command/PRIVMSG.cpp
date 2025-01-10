@@ -5,12 +5,26 @@
 //PRIVMSG <receiver> :<message>
 //<receiver> could be a user or a channel
 
+static std::string getMessage(const std::string& rawArg) 
+{
+    std::stringstream ss(rawArg);
+    std::string word1, word2;
+
+    ss >> word1 >> word2;
+    std::string message;
+    std::getline(ss, message);
+    if (!message.empty() && message[0] == ' ') 
+    {
+        message = message.substr(1);
+    }
+    return message;
+}
+
 void handlePrivMsg(Client *client, Server * server)  
 {
     const std::vector<std::string>& args = client->getArgs();
-    
+    std::string message = getMessage(client->getRawArg());    
 
-    (void)server; 
     std::cout << "Handling PrivMsg\n";
 
     // Print all users on the server
@@ -37,7 +51,7 @@ void handlePrivMsg(Client *client, Server * server)
 
     //cath args
     std::string receiver = args[0];
-    std::string message = args[1];
+    // std::string message = args[1];
     std::cout << "receiver " << receiver << std::endl;
     std::cout << "message " << message << std::endl;
 
@@ -76,7 +90,7 @@ void handlePrivMsg(Client *client, Server * server)
         }
 
         // Send MSG to all members
-        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + client->getLastArg() + ENDL;
+        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message.c_str() + ENDL;
         channel->broadcast(client, formattedMsg);
         std::cout << "Message sent to channel " << receiver << ": " << message << "\n";
     }
@@ -98,7 +112,7 @@ void handlePrivMsg(Client *client, Server * server)
         }
 
         // Send MSG to User
-        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + client->getLastArg() + ENDL;
+        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message.c_str() + ENDL;
         send(targetClient->getSocket(), formattedMsg.c_str(), formattedMsg.size(), 0);
         std::cout << "Message sent to user " << receiver << ": " << message << "\n";
     }

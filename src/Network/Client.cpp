@@ -75,6 +75,16 @@ void Client::setArgs(const std::vector<std::string> &arguments)
 	_args = arguments;
 }
 
+std::string	Client::getRawArg() const
+{
+	return _rawArgs;
+}
+
+void	Client::setRawArg(const std::string &arguments)
+{
+	_rawArgs = arguments;
+}
+
 std::string	Client::getLastArg() const
 {
 	return _lastArg;
