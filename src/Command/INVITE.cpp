@@ -1,32 +1,6 @@
 #include "../../includes/Command/Command.hpp"
 #include "../../includes/Command/Messages.hpp"
-#include "../../includes/Network/Channel.hpp"
-#include "../../includes/Network/Client.hpp"
 #include "../../includes/Network/Server.hpp"
-
-/*
-static  Channel *getChannel(Server *server, Client *client, std::string args)
-{
-    std::cout << "Entro en getChannel" << std::endl;
-    Channel *channel = NULL;
-    std::cout << "Llego aqui" << std::endl;
-    if (server->channels.size() == 0)
-    {
-        return (NULL);
-    }
-    for (std::vector<Channel *>::iterator it = server->channels.begin(); it != server->channels.end(); it++)
-    {
-        if ((*it)->getName() == args)
-            channel = *it;
-    }
-    if (channel == NULL)
-    {
-        std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), channel->getName());
-        std::cout << errorMsg;
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-    }
-    return (channel);
-}*/
 
 void handleInvite(Client *client, Server * server) 
 {

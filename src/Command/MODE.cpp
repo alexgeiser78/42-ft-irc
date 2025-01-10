@@ -1,9 +1,6 @@
 #include "../../includes/Command/Command.hpp"
 #include "../../includes/Command/Messages.hpp"
-#include "../../includes/Network/Channel.hpp"
-#include "../../includes/Network/Client.hpp"
 #include "../../includes/Network/Server.hpp"
-#include <string>
 
 /*
 i = channel on invitation only

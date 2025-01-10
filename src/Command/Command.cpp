@@ -12,6 +12,7 @@ Command::Command() //constructor
     commands["PRIVMSG"] = handlePrivMsg;
     commands["TOPIC"] = handleTopic;
     commands["USER"] = handleUser;
+    commands["PASS"] = handleUser;
 }
 
 Command::~Command() //destructor

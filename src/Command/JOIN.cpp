@@ -1,15 +1,7 @@
 #include "../../includes/Command/Command.hpp"
 #include "../../includes/Command/Messages.hpp"
-#include "../../includes/Network/Channel.hpp"
-#include "../../includes/Network/Client.hpp"
 #include "../../includes/Network/Server.hpp"
-
-#include <iostream>
-#include <string>
-#include <sstream>
 #include <iomanip>   // Para std::setw y std::setfill
-#include <unistd.h>  // Para el envío de sockets y error handling
-#include <cstring>
 #include <errno.h>  // Para errno y strerror
 
 
@@ -124,28 +116,28 @@ void handleJoin(Client *client, Server *server)
     splitParams(client, params);
     for (std::map<std::string, std::string>::iterator it = params.begin(); it != params.end(); it++)
     {
-        for (size_t i = 0; i < server->channels.size(); i++)
+        for (size_t i = 0; i < server->getChannels().size(); i++)
         {
-            if (server->channels[i]->getName() == it->first)
+            if (server->getChannels()[i]->getName() == it->first)
             {
                 flag = 1;
-                if ((!server->channels[i]->getKeyMode() || server->channels[i]->getKey() == it->second)
-                && (!server->channels[i]->getClientLimitMode()
-                    || server->channels[i]->getMembers().size() < server->channels[i]->getClientLimit()))
+                if ((!server->getChannels()[i]->getKeyMode() || server->getChannels()[i]->getKey() == it->second)
+                && (!server->getChannels()[i]->getClientLimitMode()
+                    || server->getChannels()[i]->getMembers().size() < server->getChannels()[i]->getClientLimit()))
                 {
-                    joinChannel(client, server->channels[i]);
+                    joinChannel(client, server->getChannels()[i]);
                     break ;
                 }
-                if (server->channels[i]->getKeyMode() && server->channels[i]->getKey() != it->second)
+                if (server->getChannels()[i]->getKeyMode() && server->getChannels()[i]->getKey() != it->second)
                 {
-                    std::string errorMsg = ERR_BADCHANNELKEY(server->channels[i]->getName());
+                    std::string errorMsg = ERR_BADCHANNELKEY(server->getChannels()[i]->getName());
                     std::cout << errorMsg;
                     send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
                 }
-                if (server->channels[i]->getClientLimitMode()
-                && server->channels[i]->getMembers().size() >= server->channels[i]->getClientLimit())
+                if (server->getChannels()[i]->getClientLimitMode()
+                && server->getChannels()[i]->getMembers().size() >= server->getChannels()[i]->getClientLimit())
                 {
-                    std::string errorMsg = ERR_CHANNELISFULL(server->channels[i]->getName());
+                    std::string errorMsg = ERR_CHANNELISFULL(server->getChannels()[i]->getName());
                     std::cout << errorMsg;
                     send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);}
                 break ;
@@ -155,10 +147,10 @@ void handleJoin(Client *client, Server *server)
         {
             Channel *newChannel = new Channel(it->first);
             newChannel->setKey(it->second);
-            server->channels.push_back(newChannel);
+            server->addChannel(newChannel);
             joinNewChannel(client, newChannel);
         }
-        std::cout << "Channels size: " << server->channels.size() << std::endl;
+        std::cout << "Channels size: " << server->getChannels().size() << std::endl;
     }
 }
 

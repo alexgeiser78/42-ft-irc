@@ -1,6 +1,5 @@
 #include "../../includes/Command/Command.hpp"
-#include "../../includes/Network/Channel.hpp"
-#include "../../includes/Network/Client.hpp"
+#include "../../includes/Network/Server.hpp"
 
 //PART #channel or PART #channel, #channel2
 
