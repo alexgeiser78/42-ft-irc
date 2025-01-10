@@ -1,6 +1,5 @@
 #include "../../includes/Command/Command.hpp"
 #include "../../includes/Command/Messages.hpp"
-#include "../../includes/Network/Channel.hpp"
 #include "../../includes/Network/Server.hpp"
 
 //PRIVMSG <receiver> :<message>

@@ -1,6 +1,5 @@
 #include "../../includes/Network/Server.hpp"
 #include "../../includes/Command/Command.hpp"
-#include "../../includes/Network/Channel.hpp"
 
 bool Server::Signal = false;
 
@@ -307,21 +306,48 @@ void    Server::ProccessCommand(int fd, std::string line)
     client.setServerCreationTime(_ServerCreationTime);
 
     // Validation de la commande
-    if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK" &&
-        commandName != "MODE" && commandName != "NICK" && commandName != "PART" &&
-        commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER") {
-        std::cerr << "Command not found" << std::endl;
-        return;
+    if (commandName == "PASS" && !client.isAuthenticated())
+    {
+        std::string password = args[0];
+        if (password == _Password)
+        {
+            client.setAuthenticated(true);
+            std::cout << "Client with fd: " << fd << " authenticated successfully" << std::endl;
+        }
+        else
+        {
+            std::cerr << "Client with fd: " << fd << " failed to authenticate" << std::endl;
+            return;
+        }
     }
+    if (client.isAuthenticated())
+    {
+        if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK" &&
+            commandName != "MODE" && commandName != "NICK" && commandName != "PART" &&
+            commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER") {
+            std::cerr << "Command not found" << std::endl;
+            return;
+        }
 
-    // Vérification de l'inscription du client
-    if (!client.isRegistered() && commandName != "NICK" && commandName != "USER") {
-        std::cerr << "Client not registered" << std::endl;
-        return;
+        // Vérification de l'inscription du client
+        if (!client.isRegistered() && commandName != "NICK" && commandName != "USER") {
+            std::cerr << "Client not registered" << std::endl;
+            return;
+        }
+
+        // Exécution de la commande
+        command.executeCommand(commandName, &client, this);
     }
+}
 
-    // Exécution de la commande
-    command.executeCommand(commandName, &client, this);
+std::vector<Channel *>   &Server::getChannels(void)
+{
+    return channels;
+}
+
+void	Server::addChannel(Channel *channel)
+{
+    channels.push_back(channel);
 }
 
 Channel* Server::findChannel(const std::string &channelName) {

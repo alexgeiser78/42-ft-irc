@@ -1,7 +1,5 @@
 #include "../../includes/Command/Command.hpp"
 #include "../../includes/Command/Messages.hpp"
-#include "../../includes/Network/Channel.hpp"
-#include "../../includes/Network/Client.hpp"
 #include "../../includes/Network/Server.hpp"
 
 static void getChannelsAndUsers(Client *client, std::vector<std::string> &channels, std::vector<std::string> &users)

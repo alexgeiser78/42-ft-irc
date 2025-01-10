@@ -1,12 +1,12 @@
 #include "../../includes/Network/Client.hpp"
 
 
-Client::Client(void): _socket(-1), _isRegistered(false)
+Client::Client(void): _socket(-1), _isRegistered(false), _isAuthenticated(false)
 {
 	std::cout << " Default Client object created" <<std::endl;
 }
 
-Client::Client(int sock): _socket(sock), _isRegistered(false)
+Client::Client(int sock): _socket(sock), _isRegistered(false), _isAuthenticated(false)
 {
 	std::cout << "Client object created" << std::endl;
 }
@@ -157,6 +157,16 @@ void Client::setRegistered(bool isRegistered)
 bool Client::isRegistered() const 
 {
 	return _isRegistered;
+}
+
+bool Client::isAuthenticated() const
+{
+	return _isAuthenticated;
+}
+
+void Client::setAuthenticated(bool isAuthenticated)
+{
+	_isAuthenticated = isAuthenticated;
 }
 
 //--------------------------Close

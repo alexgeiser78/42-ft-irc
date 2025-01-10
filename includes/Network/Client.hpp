@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <unistd.h> // C librairy !!!!!!
 
 class Client
 {
@@ -20,6 +19,7 @@ class Client
 		std::string _realname;
 		bool 		_isRegistered;
 		std::string  _ServerCreationTime;
+		bool		_isAuthenticated;
 
 
 	public:
@@ -61,6 +61,9 @@ class Client
 		void setRegistered(bool isRegistered);
     	bool isRegistered() const;
 		// void closeClient();
+
+		bool isAuthenticated() const;
+		void setAuthenticated(bool isAuthenticated);
 };
 
 #endif

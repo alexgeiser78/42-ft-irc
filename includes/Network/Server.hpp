@@ -3,11 +3,7 @@
 #define SERVER_HPP
 
 #include <stdexcept> //std::runtime_error
-#include <sys/socket.h> //socket()
 #include <sys/types.h> //socket()
-#include <vector> // std::vector
-#include <iostream>
-#include "Client.hpp"
 #include "../Command/Command.hpp"
 #include "Channel.hpp"
 #include <cstdlib> //std::atoi
@@ -18,16 +14,11 @@
 #include <fcntl.h> //fcntl()
 #include <string> //std::string
 #include <ctime> //time()
-
-
-#include <sstream> //istringstream
-#include <map>
+#include <arpa/inet.h> //inet_ntoa
+#include <cstring> //memset
 
 class Command;
 class Channel;
-
-#include <arpa/inet.h> //inet_ntoa
-#include <cstring> //memset
 
 
 class Server
@@ -39,31 +30,31 @@ class Server
 	    std::vector <struct pollfd> FD; //file descriptor structure
 	    std::string _Password;
 	    std::string _ServerCreationTime;
+		std::vector<Channel *> channels;
 
     public:
 		//std::vector<Client *> clients;
-		std::vector<Channel *> channels;
+		// std::vector<Channel *> channels;
 	    Server(int port, std::string password);
 	    ~Server();
-		void setServerCreationTime(void);
-	    std::string getServerCreationTime(void) const;
-	    void 		SerSocket();
-	    static void SignalHandler(int signum);
-	    void 		ServerInit(int port);
-	    void 		CloseFDs();
-	    static bool Signal;
-	    void        AcceptNewClient(void);
+		void 					setServerCreationTime(void);
+	    std::string 			getServerCreationTime(void) const;
+	    void 					SerSocket();
+	    static void 			SignalHandler(int signum);
+	    void 					ServerInit(int port);
+	    void 					CloseFDs();
+	    static bool 			Signal;
+	    void        			AcceptNewClient(void);
+	    void        			RemoveClient(int fd);
+	    void        			RecieveData(int fd);
+	    void        			ProccessCommand(int fd, std::string line);
 
-	    // Channel* getOrCreateChannel(const std::string& channelName);
+		std::vector<Channel *>	&getChannels(void);
+		void					addChannel(Channel *channel);
 
-
-	    void        RemoveClient(int fd);
-	    void        RecieveData(int fd);
-	    void        ProccessCommand(int fd, std::string line);
-
-		Channel 	*findChannel(const std::string &channelName);
-		Client*		findClient(const std::string& nickname);
-		std::map<int, Client> &getClients();
+		Channel 				*findChannel(const std::string &channelName);
+		Client*					findClient(const std::string& nickname);
+		std::map<int, Client> 	&getClients();
 };
 
 /*HOW WORKS sockaddr_in and in_addr:
