@@ -10,7 +10,6 @@ class Client
 		int _socket;
 		std::string	_address;
 		std::vector<std::string>_args;
-		std::string	_rawArgs;
 		std::string	_lastArg;
 		std::string _nickname;
 		std::string _username;
@@ -60,7 +59,6 @@ class Client
 
 		void setRegistered(bool isRegistered);
     	bool isRegistered() const;
-		// void closeClient();
 
 		bool isAuthenticated() const;
 		void setAuthenticated(bool isAuthenticated);
