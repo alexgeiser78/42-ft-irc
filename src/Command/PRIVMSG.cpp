@@ -5,13 +5,29 @@
 //PRIVMSG <receiver> :<message>
 //<receiver> could be a user or a channel
 
+static std::string getMessage(const std::string& rawArg) 
+{
+    std::stringstream ss(rawArg);
+    std::string word1, word2;
+
+    ss >> word1 >> word2;
+    std::string message;
+    std::getline(ss, message);
+    if (!message.empty() && message[0] == ' ') 
+    {
+        message = message.substr(1);
+    }
+    return message;
+}
+
 void handlePrivMsg(Client *client, Server * server)  
 {
     const std::vector<std::string>& args = client->getArgs();
-    
+    std::string message = getMessage(client->getRawArg());    
 
-    (void)server; 
-    //std::cout << "Handling PrivMsg\n";
+
+    std::cout << "Handling PrivMsg\n";
+
 
     // Print all users on the server
     //std::cout << "Checking clients in server:\n";
@@ -36,70 +52,82 @@ void handlePrivMsg(Client *client, Server * server)
     }
 
     //cath args
-    std::string receiver = args[0];
-    std::string message = args[1];
-    //std::cout << "receiver " << receiver << std::endl;
-    //std::cout << "message " << message << std::endl;
 
-    //check msg
-    if (message.empty()) 
+    std::stringstream ss(args[0]);
+    std::string receiver;
+    std::vector<std::string> receivers;
+    while (std::getline(ss, receiver, ',')) 
     {
-        std::string errorMsg = PREFIX_SERVER + ERR_NOTEXTTOSEND;
-        send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cerr << "Error: No text to send for PRIVMSG\n";
-        return;
+        receivers.push_back(receiver);
     }
 
-    Channel *channel = NULL;
-
-    // check channel
-    if (receiver[0] == '#') //if it's a channel
+    // std::string message = args[1];
+    for (std::vector<std::string>::iterator it = receivers.begin(); it != receivers.end(); ++it)
     {
-        //find channel
-        channel = server->findChannel(receiver);
-        if (!channel) 
-        {
-            std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), receiver);
-            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-            std::cerr << "Error: No such channel " << receiver << "\n";
-            return;
-        }
-    
+        std::string receiver = *it;
+        std::cout << "receiver " << receiver << std::endl;
+        std::cout << "message " << message << std::endl;
 
-        // and check permission
-        if (!channel->isMember(client)) 
+        //check msg
+        if (message.empty()) 
         {
-            std::string errorMsg = PREFIX_SERVER + ERR_CANNOTSENDTOCHAN(receiver);
+            std::string errorMsg = PREFIX_SERVER + ERR_NOTEXTTOSEND;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-            std::cerr << "Error: Cannot send to channel " << receiver << "\n";
+            std::cerr << "Error: No text to send for PRIVMSG\n";
             return;
         }
 
-        // Send MSG to all members
-        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + client->getLastArg() + ENDL;
-        channel->broadcast(client, formattedMsg);
-        std::cout << "Message sent to channel " << receiver << ": " << message << "\n";
-    }
+        Channel *channel = NULL;
 
-    else 
-    { // or it's a user
-        Client *targetClient = server->findClient(receiver);
-        if (!targetClient) //if the user doesn't exist
+        // check channel
+        if (receiver[0] == '#') //if it's a channel
         {
-            std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK(receiver);
-            send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-            std::cerr << "Error: No such nick " << receiver << "\n";
-            return;
+            //find channel
+            channel = server->findChannel(receiver);
+            if (!channel) 
+            {
+                std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), receiver);
+                send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                std::cerr << "Error: No such channel " << receiver << "\n";
+                return;
+            }
+        
+
+            // and check permission
+            if (!channel->isMember(client)) 
+            {
+                std::string errorMsg = PREFIX_SERVER + ERR_CANNOTSENDTOCHAN(receiver);
+                send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                std::cerr << "Error: Cannot send to channel " << receiver << "\n";
+                return;
+            }
+
+            // Send MSG to all members
+            std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message.c_str() + ENDL;
+            channel->broadcast(client, formattedMsg);
+            std::cout << "Message sent to channel " << receiver << ": " << message << "\n";
         }
 
         else 
-        {
-            std::cout << "Found user " << receiver << " to send the message to.\n";
-        }
+        { // or it's a user
+            Client *targetClient = server->findClient(receiver);
+            if (!targetClient) //if the user doesn't exist
+            {
+                std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK(receiver);
+                send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                std::cerr << "Error: No such nick " << receiver << "\n";
+                return;
+            }
 
-        // Send MSG to User
-        std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + client->getLastArg() + ENDL;
-        send(targetClient->getSocket(), formattedMsg.c_str(), formattedMsg.size(), 0);
-        std::cout << "Message sent to user " << receiver << ": " << message << "\n";
+            else 
+            {
+                std::cout << "Found user " << receiver << " to send the message to.\n";
+            }
+
+            // Send MSG to User
+            std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message.c_str() + ENDL;
+            send(targetClient->getSocket(), formattedMsg.c_str(), formattedMsg.size(), 0);
+            std::cout << "Message sent to user " << receiver << ": " << message << "\n";
+        }
     }
 }

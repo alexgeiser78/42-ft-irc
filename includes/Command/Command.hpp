@@ -18,27 +18,29 @@
 
 class Server;
 
-// command functions declaration
-void handleInvite(Client *client, Server *server);
-void handleJoin(Client *client, Server *server);
-void handleKick(Client *client, Server *server);
-void handleMode(Client *client, Server *server);
-void handleNick(Client *client, Server *server);
-void handlePart(Client *client, Server *server);
-void handlePrivMsg(Client *client, Server *server);
-void handleTopic(Client *client, Server *server);
-void handleUser(Client *client, Server *server);
 
-class Command //assiciate a command to a function
+void handleInvite(Client *client, Server * server);
+void handleJoin(Client *client, Server * server);
+void handleKick(Client *client, Server * server);
+void handleMode(Client *client, Server * server);
+void handleNick(Client *client, Server * server);
+void handlePart(Client *client, Server * server);
+void handlePrivMsg(Client *client, Server * server);
+void handleTopic(Client *client, Server * server);
+void handleUser(Client *client, Server * server);
+
+
+class Command
 {
     private:
         std::map<std::string, void(*)(Client *, Server *)> commands;
-        //assoc container, key is the command given by the user [INVITE], value is a pointer to the function that will handle the command
+
     public:
-        Command(); //constructor to initiate the map
+        Command();
         ~Command();
 
-        void        executeCommand(const std::string& commandName, Client *client, Server *server); //execute the command
+        void    executeCommand(const std::string& commandName, Client *client, Server *server);
+
 };
 
 #endif

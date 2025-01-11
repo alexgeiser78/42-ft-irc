@@ -302,6 +302,7 @@ void    Server::ProccessCommand(int fd, std::string line)
     // client catch
     Client& client = it->second;
     client.setLastArg(line);
+    client.setRawArg(line);
     client.setArgs(args);
     client.setServerCreationTime(_ServerCreationTime);
 

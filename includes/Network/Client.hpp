@@ -10,7 +10,7 @@ class Client
 		int _socket;
 		std::string	_address;
 		std::vector<std::string>_args;
-		std::string	_rawArgs;
+		std::string _rawArgs;
 		std::string	_lastArg;
 		std::string _nickname;
 		std::string _username;
@@ -18,7 +18,7 @@ class Client
 		std::string _servername;
 		std::string _realname;
 		bool 		_isRegistered;
-		std::string  _ServerCreationTime;
+		std::string	_ServerCreationTime;
 		bool		_isAuthenticated;
 
 
@@ -40,6 +40,9 @@ class Client
 		std::vector<std::string> getArgs() const;
 		void 		setArgs(const std::vector <std::string> &arguments);
 
+		std::string	getRawArg() const;
+		void	setRawArg(const std::string &arguments);
+
 		std::string	getLastArg() const;
 		void		setLastArg(const std::string &arguments);
 		
@@ -58,8 +61,10 @@ class Client
         void	setServerCreationTime(std::string  time);
         std::string	getServerCreationTime(void) const;
 
-		void	setRegistered(bool isRegistered);
-    	bool	isRegistered() const;
+
+		void setRegistered(bool isRegistered);
+    	bool isRegistered() const;
+
 
 		bool	isAuthenticated() const;
 		void	setAuthenticated(bool isAuthenticated);
