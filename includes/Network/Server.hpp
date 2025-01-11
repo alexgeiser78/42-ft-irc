@@ -24,17 +24,15 @@ class Channel;
 class Server
 {
     private:
-		int _Port;
+		int 	_Port;
 		std::map<int, Client> clients2;
-		int SerSocketFd; //server socket file descriptor
+		int 	SerSocketFd; //server socket file descriptor
 	    std::vector <struct pollfd> FD; //file descriptor structure
 	    std::string _Password;
 	    std::string _ServerCreationTime;
 		std::vector<Channel *> channels;
 
     public:
-		//std::vector<Client *> clients;
-		// std::vector<Channel *> channels;
 	    Server(int port, std::string password);
 	    ~Server();
 		void 					setServerCreationTime(void);

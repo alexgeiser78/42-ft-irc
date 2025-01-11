@@ -21,19 +21,19 @@ static void getChannelsAndUsers(Client *client, std::vector<std::string> &channe
 static void kickUsersFromChannel(Server *server, Client *client, std::string channelName,
 std::vector<std::string> users)
 {
-    std::cout << "Handling kickUsersFromChannel\n";
+    //std::cout << "Handling kickUsersFromChannel\n";
     Channel *channel = server->findChannel(channelName);
     if (channel == NULL)
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), channelName);
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return ;
     }
     if (!channel->isOperator(client))
     {
         std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channel->getName());
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
@@ -43,14 +43,14 @@ std::vector<std::string> users)
         if (user == NULL)
         {
             std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK_P(client->getNickName(), channelName, *it);
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
         }
         if (!channel->isMember(user))
         {
             std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(user->getNickName(), channelName);
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
         }
@@ -66,7 +66,7 @@ static void kickUserFromChannels(Server *server, Client *client, std::vector<std
     if (user == NULL)
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK(client->getNickName());
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return ;        
     }
@@ -76,21 +76,21 @@ static void kickUserFromChannels(Server *server, Client *client, std::vector<std
         if (channel == NULL)
         {
             std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), channel->getName());
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             continue;
         }
         if (!channel->isOperator(client))
         {
             std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channel->getName());
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             continue;           
         }
         if (!channel->isMember(user))
         {
             std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(user->getNickName(), channel->getName());
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
         }
@@ -114,21 +114,21 @@ static void kickUsersFromChannels(Server *server, Client *client, std::vector<st
         if (channel == NULL || user == NULL)
         {
             std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK(client->getNickName());
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue ;             
         }
         if(!channel->isOperator(client))
         {
             std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channel->getName());
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             continue;              
         }
         if (!channel->isMember(user))
         {
             std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(user->getNickName(), channel->getName());
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;            
         }
@@ -140,20 +140,19 @@ static void kickUsersFromChannels(Server *server, Client *client, std::vector<st
 
 void handleKick(Client *client, Server * server)  
 {
-    std::cout << "Handling KICK\n";
-    std::cout << "llego aqui 1" << std::endl;
+    //std::cout << "Handling KICK\n";
     if (client->getArgs().size() < 3)
     {
         std::string errorMsg = ERR_NEEDMOREPARAMS_P(client->getNickName(), "KICK");
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }   
     std::vector<std::string> channels;
     std::vector<std::string> users;
     getChannelsAndUsers(client, channels, users);
-    std::cout << "Channels size: " << channels.size() << std::endl;
-    std::cout << "Users size: " << users.size() << std::endl;
+    //std::cout << "Channels size: " << channels.size() << std::endl;
+    //std::cout << "Users size: " << users.size() << std::endl;
     if (channels.size() == 1 && users.size() > 1)
         kickUsersFromChannel(server, client, channels[0], users);
     else if (channels.size() > 1 && users.size() == 1)

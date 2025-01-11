@@ -25,10 +25,12 @@ void handlePrivMsg(Client *client, Server * server)
     const std::vector<std::string>& args = client->getArgs();
     std::string message = getMessage(client->getRawArg());    
 
+
     std::cout << "Handling PrivMsg\n";
 
+
     // Print all users on the server
-    std::cout << "Checking clients in server:\n";
+    //std::cout << "Checking clients in server:\n";
     
     
     std::map<int, Client>& clients = server->getClients();  // Get the client2 map
@@ -50,6 +52,7 @@ void handlePrivMsg(Client *client, Server * server)
     }
 
     //cath args
+
     std::stringstream ss(args[0]);
     std::string receiver;
     std::vector<std::string> receivers;

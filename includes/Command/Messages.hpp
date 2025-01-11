@@ -31,7 +31,6 @@
 #define RPL_CHANNELMODEIS(nick, channel, modes) (" 324 " + nick + " " + channel + " " + modes + ENDL)
 
 //INVITE
-
 #define ERR_USERONCHANNEL(nick, nickname, channel) (" 443 " + nick + " " + nickname + " " + channel + " :is already on channel" + ENDL)
 #define RPL_INVITING(nick, nickname, channel) (" 341 " + nick + " " + nickname + " " + channel + ENDL)
 #define RPL_INVITED(nick, nickname, channel) (nick + " :" + nickname + " INVITE to " + channel + ENDL)
@@ -49,7 +48,6 @@
 #define RPL_YOURHOST(nickname) (nickname + " :Your host is " + SERVER_NAME + ", running version " + SERVER_VERSION + ENDL)
 #define RPL_CREATED(nickname) (nickname + " :This server was created " + client->getServerCreationTime() + ENDL)
 #define RPL_MYINFO(nickname) (nickname + " " + SERVER_VERSION + " " + CHANNEL_MODES + " " + PARAM_MODES + ENDL)
-//#define ERR_UNKNOWNCOMMAND(nickname, command) (" 421 " + nickname + " " + command + " :Unknown command" + ENDL)
 
 //PRIVMSG
 #define ERR_NORECIPIENT(command) (std::string(" 411 ") + command + " :No recipient given" + ENDL)

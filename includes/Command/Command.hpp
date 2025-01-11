@@ -18,6 +18,7 @@
 
 class Server;
 
+
 void handleInvite(Client *client, Server * server);
 void handleJoin(Client *client, Server * server);
 void handleKick(Client *client, Server * server);
@@ -27,6 +28,7 @@ void handlePart(Client *client, Server * server);
 void handlePrivMsg(Client *client, Server * server);
 void handleTopic(Client *client, Server * server);
 void handleUser(Client *client, Server * server);
+
 
 class Command
 {
@@ -38,6 +40,7 @@ class Command
         ~Command();
 
         void    executeCommand(const std::string& commandName, Client *client, Server *server);
+
 };
 
 #endif

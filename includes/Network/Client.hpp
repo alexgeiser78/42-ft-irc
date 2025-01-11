@@ -35,37 +35,39 @@ class Client
 		void		setAddress(std::string address);
 
 		std::string getNickName() const;
-		void setNickName(const std::string &newNick);
+		void 		setNickName(const std::string &newNick);
 		
 		std::vector<std::string> getArgs() const;
-		void setArgs(const std::vector <std::string> &arguments);
+		void 		setArgs(const std::vector <std::string> &arguments);
 
 		std::string	getRawArg() const;
 		void	setRawArg(const std::string &arguments);
 
 		std::string	getLastArg() const;
-		void	setLastArg(const std::string &arguments);
+		void		setLastArg(const std::string &arguments);
 		
-		void setUsername(const std::string& username);
-    	 std::string const &getUsername() const;
+		void		setUsername(const std::string& username);
+    	std::string const &getUsername() const;
 
-    	void setHostname(const std::string& hostname);
+    	void	setHostname(const std::string& hostname);
     	std::string const &getHostname() const;
 
-    	void setServername(const std::string& servername);
+    	void	setServername(const std::string& servername);
     	std::string const &getServername() const;
 
-    	void setRealname(const std::string& realname);
+    	void	setRealname(const std::string& realname);
     	std::string const &getRealname() const;
 
-        void        setServerCreationTime(std::string  time);
-        std::string  getServerCreationTime(void) const;
+        void	setServerCreationTime(std::string  time);
+        std::string	getServerCreationTime(void) const;
+
 
 		void setRegistered(bool isRegistered);
     	bool isRegistered() const;
 
-		bool isAuthenticated() const;
-		void setAuthenticated(bool isAuthenticated);
+
+		bool	isAuthenticated() const;
+		void	setAuthenticated(bool isAuthenticated);
 };
 
 #endif

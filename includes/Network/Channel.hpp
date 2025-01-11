@@ -29,49 +29,51 @@ class Channel
 		~Channel();
 
 		std::string const &getName();
-		bool addMember(Client *client);
-		void removeMember(Client *client);
-		void broadcast(Client *sender, const std::string &message);
+		bool	addMember(Client *client);
+		void	removeMember(Client *client);
+		void	broadcast(Client *sender, const std::string &message);
+
 
 		static Channel *getChannel(std::string const &channelName);
 		bool isMember(Client *client) const;
 
 		std::set<Client*> &getMembers();
 
-		void setKey(std::string const &key);
+		void 	setKey(std::string const &key);
 		std::string const &getKey() const;
 
-		void setClienLimitMode(bool mode);
-		bool getClientLimitMode() const;
+		void 	setClienLimitMode(bool mode);
+		bool	getClientLimitMode() const;
 
-		void setClientLimit(size_t limit);
-		size_t getClientLimit() const;
+		void	setClientLimit(size_t limit);
+		size_t	getClientLimit() const;
 
 		bool	addOperator(Client *client);
 		bool	isOperator(Client *client) const;
 		bool	isOperator(const Client &client) const;
 		bool	removeOperator(Client *client);
 
-		void setKeyMode(bool mode);
-		bool getKeyMode() const;
+		void	setKeyMode(bool mode);
+		bool	getKeyMode() const;
 
 		void 	setTopic(Client &client, const std::string &newTopic);
 		std::string const &getTopic() const;
 
-		void addInvited(Client *client);
-		bool isInvited(Client *client) const;
+		void	addInvited(Client *client);
+		bool	isInvited(Client *client) const;
 		std::set<Client *> getInvited(void) const;
 
-		void setInviteOnlyMode(bool mode);
-		bool getInviteOnlyMode() const;
+		void	setInviteOnlyMode(bool mode);
+		bool	getInviteOnlyMode() const;
 		std::string stringMembers(void);
 
 
-		void setProtectedTopicMode(bool mode);
-		bool getProtectedTopicMode() const;
+		void	setProtectedTopicMode(bool mode);
+		bool	getProtectedTopicMode() const;
+
 
 		void sendTopic(Client &client);
-		// bool 	isOperator(const Client &client) const;
+
 
 };
 

@@ -73,12 +73,12 @@ void Server::ServerInit(int port)
                 {
                 if (FD[i].fd == SerSocketFd)  //.fd comes from poll.h
 					{
-                    std::cout << "Accepting new client function" << std::endl;
+                    //std::cout << "Accepting new client function" << std::endl;
                     AcceptNewClient(); //new connexion
                     }
                 else
                     {
-                    std::cout << "Receiving new data function" << std::endl;
+                    //std::cout << "Receiving new data function" << std::endl;
                     // ReceiveNewData(FD[i].fd); //data from a connected client
                     RecieveData(FD[i].fd);
                     }
@@ -94,7 +94,7 @@ void Server::ServerInit(int port)
     {
         delete *it;
     }
-    std::cout << "Entro aqui en serverInit " << std::endl;
+    //std::cout << "Entro aqui en serverInit " << std::endl;
     CloseFDs();
 }
 
@@ -283,7 +283,7 @@ void    Server::ProccessCommand(int fd, std::string line)
         args.push_back(arg);
     }
 
-    commandName = toUpperCase(commandName); // test
+    commandName = toUpperCase(commandName);
     std::cout << "Processed command: " << commandName << std::endl;
 
     std::cout << "Arguments: ";
@@ -295,18 +295,18 @@ void    Server::ProccessCommand(int fd, std::string line)
 
     std::map<int, Client>::iterator it = clients2.find(fd);
     if (it == clients2.end()) {
-        std::cerr << "Erreur : Client avec fd " << fd << " introuvable.\n";
+        std::cerr << "Error : Client with fd " << fd << " not found.\n";
         return;
     }
 
-    // Récupération du client et mise à jour des arguments
+    // client catch
     Client& client = it->second;
     client.setLastArg(line);
     client.setRawArg(line);
     client.setArgs(args);
     client.setServerCreationTime(_ServerCreationTime);
 
-    // Validation de la commande
+    // command validation
     if (commandName == "PASS" && !client.isAuthenticated())
     {
         std::string password = args[0];
@@ -330,13 +330,13 @@ void    Server::ProccessCommand(int fd, std::string line)
             return;
         }
 
-        // Vérification de l'inscription du client
+        // client inscritpoin verification
         if (!client.isRegistered() && commandName != "NICK" && commandName != "USER") {
             std::cerr << "Client not registered" << std::endl;
             return;
         }
 
-        // Exécution de la commande
+        // command execution
         command.executeCommand(commandName, &client, this);
     }
 }
@@ -352,16 +352,15 @@ void	Server::addChannel(Channel *channel)
 }
 
 Channel* Server::findChannel(const std::string &channelName) {
-    // On suppose que _channels est un std::vector<Channel*> ou similaire
     for (size_t i = 0; i < this->channels.size(); ++i) 
     {
         Channel* channel = this->channels[i];
         if (channel->getName() == channelName) 
         {
-            return channel; // Le canal a été trouvé
+            return channel; // channel found
         }
     }
-    return NULL; // Aucun canal trouvé
+    return NULL; // channel not found
 }
 
 Client* Server::findClient(const std::string& nickname) 

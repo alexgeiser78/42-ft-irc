@@ -7,16 +7,18 @@
 void handleUser(Client *client, Server * server) 
 {
     (void)server; 
-    std::cout << "Handling USER\n";
+    //std::cout << "Handling USER\n";
     const std::vector<std::string>& args = client->getArgs();
     
     // argprint
+    /*
     std::cout << "Argumentos: ";
     for (size_t i = 0; i < args.size(); ++i) 
     {
         std::cout << args[i] << " ";
     }
     std::cout << std::endl;
+    */
 
     if (client->isRegistered())
     {
@@ -55,15 +57,15 @@ void handleUser(Client *client, Server * server)
         client->setRegistered(true);
         std::string successMsg1 = RPL_WELCOME(client->getNickName(), client->getUsername(), client->getHostname());
         send(client->getSocket(), successMsg1.c_str(), successMsg1.size(), 0);
-        std::cout << successMsg1;
+        //std::cout << successMsg1;
         std::string successMsg2 = RPL_YOURHOST(client->getNickName());
-        std::cout << successMsg2;
+        //std::cout << successMsg2;
         send(client->getSocket(), successMsg2.c_str(), successMsg2.size(), 0);
         std::string successMsg3 = RPL_CREATED(client->getNickName());
-        std::cout << successMsg3;
+        //std::cout << successMsg3;
         send(client->getSocket(), successMsg3.c_str(), successMsg3.size(), 0);
         std::string successMsg4 = RPL_MYINFO(client->getNickName());
-        std::cout << successMsg4;
+        //std::cout << successMsg4;
         send(client->getSocket(), successMsg4.c_str(), successMsg4.size(), 0);
     }
     return;

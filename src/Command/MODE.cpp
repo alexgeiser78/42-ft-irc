@@ -92,7 +92,7 @@ static size_t getNeededParams(std::string mode)
 
 void    setOperator(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
 {
-    std::cout << "Setting operator, param: " << *itParams << std::endl;
+    //std::cout << "Setting operator, param: " << *itParams << std::endl;
     Client *newOperator = NULL;
     for (std::set<Client*>::iterator it = channel->getMembers().begin(); it != channel->getMembers().end(); it++)
     {
@@ -102,7 +102,7 @@ void    setOperator(Client *client, Channel *channel, std::vector<std::string>::
     if (newOperator == NULL)
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK_P(client->getNickName(), channel->getName(), *itParams);
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
@@ -128,7 +128,7 @@ void    setKey(Client *client, Channel *channel, std::vector<std::string>::itera
         if (channel->getKeyMode())
         {
             std::string errorMsg = PREFIX_SERVER + ERR_KEYSET(client->getNickName(), channel->getName());
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             return;
         }
@@ -144,14 +144,14 @@ void    setKey(Client *client, Channel *channel, std::vector<std::string>::itera
 
 void    setClientLimit(Client *client, Channel *channel, std::vector<std::string>::iterator itParams, int operation)
 {
-    std::cout << "Setting client limit, param: " << *itParams << std::endl;
+    //std::cout << "Setting client limit, param: " << *itParams << std::endl;
     size_t limit = 0;
     std::stringstream ss(*itParams);
     ss >> limit;
     if (ss.fail())
     {
         std::string errorMsg = PREFIX_SERVER + ERR_UNKNOWNMODE_PARAM(client->getNickName(), channel->getName(), *itParams);
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
@@ -172,7 +172,7 @@ void    setProtectedTopicMode(Client *client, Channel *channel, std::vector<std:
     (void)itParams;
     (void)client;
     (void)channel;
-    std::cout << "Setting protected topic mode, param: " << *itParams << std::endl;
+    //std::cout << "Setting protected topic mode, param: " << *itParams << std::endl;
     if (operation)
         channel->setProtectedTopicMode(true);
     else
@@ -184,7 +184,7 @@ void    setInviteOnlyMode(Client *client, Channel *channel, std::vector<std::str
     (void)itParams;
     (void)client;
     (void)channel;
-    std::cout << "Setting invite only mode, param: " << *itParams << std::endl;
+    //std::cout << "Setting invite only mode, param: " << *itParams << std::endl;
     if (operation)
         channel->setInviteOnlyMode(true);
     else
@@ -215,7 +215,7 @@ void    changeModes(Channel *channel, Client *client, std::vector<std::string> a
         else
         {
             std::string errorMsg = PREFIX_SERVER + ERR_UNKNOWNMODE(client->getNickName(), channel->getName(), key);
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         }
     }
@@ -223,13 +223,13 @@ void    changeModes(Channel *channel, Client *client, std::vector<std::string> a
 
 void handleMode(Client *client, Server * server)  
 {
-    std::cout << "Handling MODE\n";
+    //std::cout << "Handling MODE\n";
     Channel *channel = NULL;
     std::vector<std::string> args = client->getArgs();
     if (args.size() == 0)
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_P(client->getNickName(), "MODE");
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
@@ -237,14 +237,14 @@ void handleMode(Client *client, Server * server)
     if (channel == NULL)
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), args[0]);
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
     }
     if (args.size() == 1)
     {
         std::string modes = getModesString(channel, client);
         std::string rplMsg = PREFIX_SERVER + RPL_CHANNELMODEIS(client->getNickName(), channel->getName(), modes);
-        std::cout << rplMsg;
+        //std::cout << rplMsg;
         send(client->getSocket(), rplMsg.c_str(), rplMsg.size(), 0);
         return;
     }
@@ -252,14 +252,14 @@ void handleMode(Client *client, Server * server)
     if (args.size() - 2 < neededParams)
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_P(client->getNickName(), "MODE");
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
     }
     if (!channel->isOperator(client))
     {
         std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channel->getName());
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
         return;
     }
