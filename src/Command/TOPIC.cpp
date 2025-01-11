@@ -11,9 +11,6 @@
 //-request: TOPIC <channel> :<new_topic>
 //-answer: :<nickname>!<user>@<host> TOPIC <channel> :<new_topic>
 
-
-
-
 void handleTopic(Client *client, Server * server) 
 {
      //std::cout << "Handling TOPIC\n"; 
@@ -92,30 +89,3 @@ void handleTopic(Client *client, Server * server)
     //std::cout << "Topic chandeg to " << newTopic << std::endl;
 
 }
-/*
-void Channel::setTopic(Client &client, const std::string &newTopic)
-{
-    // Check if the channel is protected (+t) and if the client is an operator
-    if (this->_protectedTopicMode && !this->isOperator(client))
-    {
-        std::string errorMsg = "482 " + client.getNickName() + " " + this->_name + " :You're not a channel operator\r\n";
-        send(client.getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        return;
-    }
-
-    // Define the topic
-    this->_topic = newTopic;
-
-    // Notify all users
-    std::string notification = ":" + client.getNickName() + " TOPIC " + this->_name + " :" + this->_topic + "\r\n";
-    for (std::set<Client *>::iterator it = this->_members.begin(); it != this->_members.end(); ++it)
-    {
-        send((*it)->getSocket(), notification.c_str(), notification.size(), 0);
-    }
-    std::cout << "Topic changed" << std::endl;
-}
-*/
-// bool Channel::isOperator(const Client &client) const
-// {
-//     return this->_operators.find(const_cast<Client*>(&client)) != this->_operator.end();
-// }

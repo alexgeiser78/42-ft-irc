@@ -278,8 +278,6 @@ nc localhost 8912
 |->PRIVMSG ageiser :Hello //only ageiser has to receive the message ok
 
 
-setTopic???
-
 
 
 
