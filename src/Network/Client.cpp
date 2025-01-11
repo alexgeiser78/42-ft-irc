@@ -169,19 +169,6 @@ void Client::setAuthenticated(bool isAuthenticated)
 	_isAuthenticated = isAuthenticated;
 }
 
-//--------------------------Close
-
-// void Client::closeClient()
-// {
-//     if (_socket >= 0) 
-// 	{
-//         std::cout << "Closing client socket: " << _socket << std::endl;
-//         close(_socket); // Close the socket using the system call
-//         _socket = -1; // Set the socket to an invalid value after closing
-//     }
-// 	else 
-//         std::cerr << "Socket already closed or invalid." << std::endl;
-// }
 
 
 

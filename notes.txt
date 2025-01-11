@@ -238,7 +238,7 @@ make ok
 no select ok
 poll has to be called before every accept, read, recv ?
 errno isn't used after a new poll() attempt ?
-fcntl(fd, F_SETFL, O_NONBLOCK) only usefull on MAC ok
+fcntl(fd, F_SETFL, O_NONBLOCK) //line 126 from server.cpp
 
 2.a partial commands
 nc localhost 8912 //connection ok
@@ -278,7 +278,7 @@ nc localhost 8912
 |->PRIVMSG ageiser :Hello //only ageiser has to receive the message ok
 
 
-
+setTopic???
 
 
 

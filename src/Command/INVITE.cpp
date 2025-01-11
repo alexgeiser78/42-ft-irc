@@ -4,12 +4,12 @@
 
 void handleInvite(Client *client, Server * server) 
 {
-    std::cout << "Handling INVITE\n";
+    //std::cout << "Handling INVITE\n";
     std::vector<std::string> args = client->getArgs();
     if (args.empty()) 
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NEEDMOREPARAMS_P(client->getNickName(), "INVITE");
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
     }
@@ -19,7 +19,7 @@ void handleInvite(Client *client, Server * server)
     if (channel == NULL) 
     {
         std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), channelName);
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
     }
@@ -27,7 +27,7 @@ void handleInvite(Client *client, Server * server)
     // Check if the member is in the channel
     if (!channel->isMember(client)) {
         std::string errorMsg = PREFIX_SERVER + ERR_NOTONCHANNEL(client->getNickName(), channelName);
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
     }
@@ -36,7 +36,7 @@ void handleInvite(Client *client, Server * server)
     if (!channel->isOperator(client)) 
     {
         std::string errorMsg = PREFIX_SERVER + ERR_CHANOPRIVSNEEDED(client->getNickName(), channelName);
-        std::cout << errorMsg;
+        //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
         return;
     }
@@ -60,7 +60,7 @@ void handleInvite(Client *client, Server * server)
         if (invitee == NULL) 
         {
             std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK_P(client->getNickName(), channelName, targetNick);
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
         }
@@ -69,7 +69,7 @@ void handleInvite(Client *client, Server * server)
         if (channel->isMember(invitee)) 
         {
             std::string errorMsg = PREFIX_SERVER + ERR_USERONCHANNEL(client->getNickName(), invitee->getNickName(), channelName);
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), MSG_NOSIGNAL);
             continue;
         }

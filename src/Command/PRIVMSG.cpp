@@ -11,10 +11,10 @@ void handlePrivMsg(Client *client, Server * server)
     
 
     (void)server; 
-    std::cout << "Handling PrivMsg\n";
+    //std::cout << "Handling PrivMsg\n";
 
     // Print all users on the server
-    std::cout << "Checking clients in server:\n";
+    //std::cout << "Checking clients in server:\n";
     
     
     std::map<int, Client>& clients = server->getClients();  // Get the client2 map
@@ -38,8 +38,8 @@ void handlePrivMsg(Client *client, Server * server)
     //cath args
     std::string receiver = args[0];
     std::string message = args[1];
-    std::cout << "receiver " << receiver << std::endl;
-    std::cout << "message " << message << std::endl;
+    //std::cout << "receiver " << receiver << std::endl;
+    //std::cout << "message " << message << std::endl;
 
     //check msg
     if (message.empty()) 

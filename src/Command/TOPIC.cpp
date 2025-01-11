@@ -16,7 +16,7 @@
 
 void handleTopic(Client *client, Server * server) 
 {
-     std::cout << "Handling TOPIC\n"; 
+     //std::cout << "Handling TOPIC\n"; 
      
      const std::vector<std::string> &args = client->getArgs();
 
@@ -31,7 +31,7 @@ void handleTopic(Client *client, Server * server)
 
 
     const std::string &channelName = args[0];
-    std::cout << channelName <<std::endl;
+    //std::cout << channelName <<std::endl;
 
     // search the channel via the server
     Channel *channel = server->findChannel(channelName);
@@ -48,7 +48,7 @@ void handleTopic(Client *client, Server * server)
     {
         std::string errorMsg = ERR_NOTONCHANNEL(client->getNickName(), channelName);
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cout << "Error: Client is not a member of the channel\n";
+        //std::cout << "Error: Client is not a member of the channel\n";
         return;
     }
 
@@ -56,7 +56,7 @@ void handleTopic(Client *client, Server * server)
     if (args.size() == 1)
     {
         channel->sendTopic(*client);
-        std::cout << "Topic sent to client" << std::endl;
+        //std::cout << "Topic sent to client" << std::endl;
         return;
     }
 
@@ -89,7 +89,7 @@ void handleTopic(Client *client, Server * server)
     }
 
     channel->setTopic(*client, newTopic);
-    std::cout << "Topic chandeg to " << newTopic << std::endl;
+    //std::cout << "Topic chandeg to " << newTopic << std::endl;
 
 }
 /*

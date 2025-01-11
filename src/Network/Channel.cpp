@@ -96,11 +96,6 @@ bool Channel::getClientLimitMode() const
     return _clientLimitMode;
 }
 
-// std::set<Client*> &Channel::getMembers() const
-// {
-//     return _members;
-// }
-
 void Channel::setClientLimit(size_t limit)
 {
     _clientLimit = limit;
@@ -174,7 +169,7 @@ void Channel::setTopic(Client &client, const std::string &newTopic)
     {
         send((*it)->getSocket(), notification.c_str(), notification.size(), 0);
     }
-    std::cout << "Topic changed" << std::endl;
+    //std::cout << "Topic changed" << std::endl;
 }
 
 std::string const &Channel::getTopic() const
@@ -242,7 +237,9 @@ void Channel::sendTopic(Client &client)
     if (this->_topic.empty()) 
     { // if no topic is tefined
         response = ":" + client.getNickName() + " 331 " + client.getNickName() + " " + this->_name + " :No topic is set\r\n";
-    } else { // if topic is defined
+    } 
+    else // if topic is defined
+    { 
         response = ":" + client.getNickName() + " 332 " + client.getNickName() + " " + this->_name + " :" + this->_topic + "\r\n";
     }
     send(client.getSocket(), response.c_str(), response.size(), 0);

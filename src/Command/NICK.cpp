@@ -19,13 +19,13 @@ static	bool validateNickname(const std::string &nickname)
 
 void handleNick(Client *client, Server * server) 
 { 
-    std::cout << "Handling NICK\n";
-	std::cout << "Client Nickname: " << client->getNickName() << "\n";
-	std::cout << "Client Args: " << client->getArgs()[0] << "\n";
+    //std::cout << "Handling NICK\n";
+	//std::cout << "Client Nickname: " << client->getNickName() << "\n";
+	//std::cout << "Client Args: " << client->getArgs()[0] << "\n";
 	if (client->getArgs().size() != 1 || client->getArgs()[0].empty()) // Nick receives only one arg 
 	{
 		std::string errorMsg = ERR_NONICKNAMEGIVEN(client->getNickName());
-		std::cout << errorMsg;
+		//std::cout << errorMsg;
 		send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
 		return;
 	}
@@ -38,7 +38,7 @@ void handleNick(Client *client, Server * server)
         if (it->second.getNickName() == newNick) 
 		{
             std::string errorMsg = ERR_NICKNAMEINUSE(client->getNickName(), newNick);
-            std::cout << errorMsg;
+            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             return;
         }
@@ -47,12 +47,12 @@ void handleNick(Client *client, Server * server)
 	if (!validateNickname(newNick)) // if the nickname is invalid
 	{
 		std::string errorMsg = ERR_ERRONEUSNICKNAME(client->getNickName(), client->getArgs()[0]);
-		std::cout << errorMsg;
+		//std::cout << errorMsg;
 		send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
 		return;
 	}
     std::string successMsg = RPL_NICK(client->getNickName(), client->getArgs()[0]);
-	std::cout << successMsg;
+	//std::cout << successMsg;
 	client->setNickName(client->getArgs()[0]);// reset the NickName
     send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
 	return;
