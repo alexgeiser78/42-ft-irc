@@ -227,3 +227,59 @@ Client Commands channel operator
 Client Commands channel operator
 
 With both nc and the reference IRC client, check that a regular user does not have privileges to do channel operator actions. Then test with an operator. All the channel operation commands should be tested (remove one point for each feature that is not working).
+
+EVAL HELP:
+
+1
+Makefile ok
+make ok
+-Wall -Wextra -Werror ok
+1 x poll ?
+no select ok
+poll has to be called before every accept, read, recv ?
+errno isn't used after a new poll() attempt ?
+fcntl(fd, F_SETFL, O_NONBLOCK) only usefull on MAC ok
+
+2.a partial commands
+nc localhost 8912 //connection ok
+|-> JOIN #channel 
+|-> PRIVMSG #channel :Hello World //the line has to be treated only once enter is pushed ok
+
+2.b unexpected disconnection
+nc localhost 8912
+|-> NICK testuser
+|-> ctrl+c   //the server has to see the disconnection and frre the ressources ok
+             //the others connections must not be affected ok
+			 //reconnect without issue ok
+
+2.c interrupted commands with nc
+nc localhost 8912
+PRIVMSG #channel :Incomple ctrl+D //the command has to be canceled !!!
+
+2.d stop an active client
+nc localhost 8912
+|-> JOIN #channel
+|-> ctrl+z //must suspend the client
+open a new client and close it
+reopen the client on hold with "fg" //the messages received duriind the hold period has to be treated ???
+
+3 authentification and user management
+nc localhost 8912
+|->NICK testuser
+|->USER username hostname servername :Real Name //the server has to record the change and sand the appropriate message ok
+
+3.1 join and msg to one room
+nc localhost 8912
+|-> JOIN #channel
+|-> PRIVMSG #channel :Hello, World! //join the channel and send the message to the users of the channel ok
+
+3.2 private message
+nc localhost 8912
+|->PRIVMSG ageiser :Hello //only ageiser has to receive the message ok
+
+
+
+
+
+
+
