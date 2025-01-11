@@ -234,11 +234,11 @@ EVAL HELP:
 Makefile ok
 make ok
 -Wall -Wextra -Werror ok
-1 x poll ?
+1 x poll //line 63 of server.cpp ok
 no select ok
-poll has to be called before every accept, read, recv ?
-errno isn't used after a new poll() attempt ?
-fcntl(fd, F_SETFL, O_NONBLOCK) //line 126 from server.cpp
+poll has to be called before every accept, read, recv //line 72 of server.cpp
+errno isn't used after a new poll() attempt ok
+fcntl(fd, F_SETFL, O_NONBLOCK) //line 126 from server.cpp ok
 
 2.a partial commands
 nc localhost 8912 //connection ok
