@@ -8,7 +8,6 @@ Command::Command() //constructor
     commands["KICK"] = handleKick;
     commands["MODE"] = handleMode;
     commands["NICK"] = handleNick;
-    commands["PART"] = handlePart;
     commands["PRIVMSG"] = handlePrivMsg;
     commands["TOPIC"] = handleTopic;
     commands["USER"] = handleUser;

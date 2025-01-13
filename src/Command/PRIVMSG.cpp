@@ -89,7 +89,7 @@ void handlePrivMsg(Client *client, Server * server)
                 std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), receiver);
                 send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
                 std::cerr << "Error: No such channel " << receiver << "\n";
-                return;
+                continue;
             }
         
 
@@ -99,7 +99,7 @@ void handlePrivMsg(Client *client, Server * server)
                 std::string errorMsg = PREFIX_SERVER + ERR_CANNOTSENDTOCHAN(receiver);
                 send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
                 std::cerr << "Error: Cannot send to channel " << receiver << "\n";
-                return;
+                continue;
             }
 
             // Send MSG to all members
@@ -116,7 +116,7 @@ void handlePrivMsg(Client *client, Server * server)
                 std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHNICK(receiver);
                 send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
                 std::cerr << "Error: No such nick " << receiver << "\n";
-                return;
+                continue;
             }
 
             else 

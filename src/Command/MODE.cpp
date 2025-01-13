@@ -239,6 +239,7 @@ void handleMode(Client *client, Server * server)
         std::string errorMsg = PREFIX_SERVER + ERR_NOSUCHCHANNEL(client->getNickName(), args[0]);
         //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+        return;
     }
     if (args.size() == 1)
     {

@@ -20,6 +20,7 @@ class Client
 		bool 		_isRegistered;
 		std::string	_ServerCreationTime;
 		bool		_isAuthenticated;
+		std::string _buffer;
 
 
 	public:
@@ -68,6 +69,9 @@ class Client
 
 		bool	isAuthenticated() const;
 		void	setAuthenticated(bool isAuthenticated);
+
+		std::string const &getBuffer() const;
+		void	setBuffer(std::string const &buffer);
 };
 
 #endif

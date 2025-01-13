@@ -1,12 +1,12 @@
 #include "../../includes/Network/Client.hpp"
 
 
-Client::Client(void): _socket(-1), _isRegistered(false), _isAuthenticated(false)
+Client::Client(void): _socket(-1), _isRegistered(false), _isAuthenticated(false), _buffer("")
 {
 	std::cout << " Default Client object created" <<std::endl;
 }
 
-Client::Client(int sock): _socket(sock), _isRegistered(false), _isAuthenticated(false)
+Client::Client(int sock): _socket(sock), _isRegistered(false), _isAuthenticated(false), _buffer("")
 {
 	std::cout << "Client object created" << std::endl;
 }
@@ -179,6 +179,12 @@ void Client::setAuthenticated(bool isAuthenticated)
 	_isAuthenticated = isAuthenticated;
 }
 
+std::string const &Client::getBuffer() const
+{
+	return _buffer;
+}
 
-
-
+void	Client::setBuffer(std::string const &buffer)
+{
+	_buffer = _buffer + buffer;
+}

@@ -213,6 +213,12 @@ void Server::AcceptNewClient(void)
 
 void Server::RemoveClient(int fd)
 {
+    // Delete client from channels
+    for (size_t i = 0; i < this->channels.size(); i++)
+    {
+        if (this->channels[i]->isMember(&(clients2[fd])))
+            this->channels[i]->removeMember(&(clients2[fd]));
+    }
     // Delete the pollfd associated to the client
     for (size_t i = 0; i < FD.size(); ++i) 
     {
@@ -253,16 +259,23 @@ void    Server::RecieveData(int fd)
     else
     {
         buffer[readBytes] = '\0';
-        std::cout << "Client with fd: " << fd << " sent the message: "  << buffer << std::endl;
-        std::istringstream stream(buffer);
-        std::string line;
+        // std::cout << "Client with fd: " << fd << " sent the message: "  << buffer << std::endl;
+        clients2[fd].setBuffer(buffer);
+        std::string toProccess = clients2[fd].getBuffer();
+        std::cout << "Client with fd: " << fd << " sent the message: "  << toProccess << std::endl;
 
-        while(std::getline(stream, line, '\n'))
+        if (toProccess.size() > 1  && toProccess[toProccess.size() - 1] == '\n')
         {
-            // std::cout << "*******Command: " << commandName << std::endl;
-            if (!line.empty() && line[line.length() - 1] == '\r')
-                line.erase(line.length() - 1);
-            ProccessCommand(fd, line);
+            std::cout << "2   Client with fd: " << fd << " sent the message: "  << toProccess << std::endl;
+            std::istringstream stream(toProccess);
+            std::string line;
+            while(std::getline(stream, line, '\n'))
+            {
+                // std::cout << "*******Command: " << commandName << std::endl;
+                if (!line.empty() && line[line.length() - 1] == '\r')
+                    line.erase(line.length() - 1);
+                ProccessCommand(fd, line);
+            }
         }
     }
     return ;
@@ -292,8 +305,9 @@ void    Server::ProccessCommand(int fd, std::string line)
         std::cout << args[i] << " ";
     }
     std::cout << std::endl;
-
+    std::cout << "Llego aqui" << std::endl;
     std::map<int, Client>::iterator it = clients2.find(fd);
+    std::cout << "Llego aqui" << std::endl;
     if (it == clients2.end()) {
         std::cerr << "Error : Client with fd " << fd << " not found.\n";
         return;
@@ -324,7 +338,7 @@ void    Server::ProccessCommand(int fd, std::string line)
     if (client.isAuthenticated())
     {
         if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK" &&
-            commandName != "MODE" && commandName != "NICK" && commandName != "PART" &&
+            commandName != "MODE" && commandName != "NICK" &&
             commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER") {
             std::cerr << "Command not found" << std::endl;
             return;

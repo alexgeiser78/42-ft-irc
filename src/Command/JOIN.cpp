@@ -46,8 +46,10 @@ static  void  splitParams(Client *client, std::map<std::string, std::string> &pa
 
 void    joinChannel(Client *client, Channel *channel)
 {
+    std::cout << "*****Joining channel\n";
     if (channel->isMember(client))
     {
+        std::cout << "Entro en el condicional isMemeber\n";
         std::string errorMsg = "JOIN :Already in channel\r\n";
         //std::cout << errorMsg;
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
@@ -55,18 +57,20 @@ void    joinChannel(Client *client, Channel *channel)
     }
     if (channel->getInviteOnlyMode())
     {
+        std::cout << "Entro en el condicional isInviteOnlyMode\n";
         if (channel->isInvited(client) == false)
         {
-            //std::cout << "Client not invited\n";
             std::string errorMsg = ERR_INVITEONLYCHAN(channel->getName());
-            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             return;
         }
     }
+    std::cout << "Llego aqui 1\n";
     channel->getMembers().insert(client);
+    std::cout << "Llego aqui 2\n";
     std::string successMsg = RPL_JOINMSG(client->getNickName(), client->getUsername(),
     client->getHostname(), channel->getName());
+    std::cout << "Llego aqui 3\n";
     std::cout << successMsg;
     send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
     std::string topicMsg;
@@ -74,13 +78,14 @@ void    joinChannel(Client *client, Channel *channel)
         topicMsg = PREFIX_SERVER + RPL_NOTOPIC(client->getNickName(), channel->getName());
     else
         topicMsg = PREFIX_SERVER + RPL_TOPIC(client->getNickName(), channel->getName(), channel->getTopic());
-    //std::cout << topicMsg;
+    std::cout << "Llego aqui 4\n";
     send(client->getSocket(), topicMsg.c_str(), topicMsg.size(), 0);
     std::string names = channel->stringMembers();
     std::string namesMsg = PREFIX_SERVER +  RPL_NAMREPLY(channel->getName(), client->getNickName(), names);
-    //std::cout << namesMsg;
     send(client->getSocket(), namesMsg.c_str(), namesMsg.size(), 0);
+    std::cout << "Llego aqui 5\n";
     channel->broadcast(client, namesMsg);
+    std::cout << "Llego aqui 6\n";
     return;
 }
 
@@ -110,46 +115,55 @@ void handleJoin(Client *client, Server *server)
 {
     //std::cout << "*****Handling JOIN command\n";
     std::cout << server << std::endl;
-    int flag = 0;
     std::map<std::string, std::string> params;
     splitParams(client, params);
+    std::cout << "salgo de splitParams" << std::endl;
     for (std::map<std::string, std::string>::iterator it = params.begin(); it != params.end(); it++)
     {
-        for (size_t i = 0; i < server->getChannels().size(); i++)
+        Channel *channel = server->findChannel(it->first);
+        if (channel == NULL || channel->getMembers().empty())
         {
-            if (server->getChannels()[i]->getName() == it->first)
-            {
-                flag = 1;
-                if ((!server->getChannels()[i]->getKeyMode() || server->getChannels()[i]->getKey() == it->second)
-                && (!server->getChannels()[i]->getClientLimitMode()
-                    || server->getChannels()[i]->getMembers().size() < server->getChannels()[i]->getClientLimit()))
-                {
-                    joinChannel(client, server->getChannels()[i]);
-                    break ;
-                }
-                if (server->getChannels()[i]->getKeyMode() && server->getChannels()[i]->getKey() != it->second)
-                {
-                    std::string errorMsg = ERR_BADCHANNELKEY(server->getChannels()[i]->getName());
-                    //std::cout << errorMsg;
-                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-                }
-                if (server->getChannels()[i]->getClientLimitMode()
-                && server->getChannels()[i]->getMembers().size() >= server->getChannels()[i]->getClientLimit())
-                {
-                    std::string errorMsg = ERR_CHANNELISFULL(server->getChannels()[i]->getName());
-                    //std::cout << errorMsg;
-                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);}
-                break ;
-            }
-        }
-        if (flag == 0)
-        {
+            std::cout << "entro en channel == NULL" << std::endl;
             Channel *newChannel = new Channel(it->first);
             newChannel->setKey(it->second);
             server->addChannel(newChannel);
             joinNewChannel(client, newChannel);
+            continue ;
         }
-        //std::cout << "Channels size: " << server->getChannels().size() << std::endl;
+        else if (channel->getMembers().empty())
+        {
+            joinNewChannel(client, channel);
+            continue ;
+        }
+        else
+        {
+            std::cout << "entro en channel != NULL" << std::endl;
+            if ((channel->getKeyMode() && channel->getKey() != it->second)
+            || (channel->getClientLimitMode() && channel->getMembers().size() >= channel->getClientLimit())
+            || (channel->getInviteOnlyMode() && channel->isInvited(client) == false))
+            {
+                if (channel->getKeyMode() && channel->getKey() != it->second)
+                {
+                    std::string errorMsg = ERR_BADCHANNELKEY(channel->getName());
+                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                }
+                if (channel->getClientLimitMode() && channel->getMembers().size() >= channel->getClientLimit())
+                {
+                    std::string errorMsg = ERR_CHANNELISFULL(channel->getName());
+                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                }
+                if (channel->getInviteOnlyMode() && channel->isInvited(client) == false)
+                {
+                    std::string errorMsg = ERR_INVITEONLYCHAN(channel->getName());
+                    send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
+                }
+                continue ;
+            }
+            else
+            {
+                joinChannel(client, channel);
+            }
+        }
     }
 }
 
