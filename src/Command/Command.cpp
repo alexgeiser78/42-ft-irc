@@ -1,6 +1,6 @@
 #include "../../includes/Command/Command.hpp"
 
-Command::Command() //constructor
+Command::Command()
 {
     std::cout << "Command object created" << std::endl;
     commands["INVITE"] = handleInvite;
@@ -13,7 +13,7 @@ Command::Command() //constructor
     commands["USER"] = handleUser;
 }
 
-Command::~Command() //destructor
+Command::~Command()
 {
     std::cout << "Command object destroyed" << std::endl;
 }

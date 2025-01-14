@@ -22,10 +22,6 @@ Server::Server(int port, std::string password): _Port(port), _Password(password)
 Server::~Server()
 {
     close(SerSocketFd);
-    // for (std::vector<Channel *>::iterator it = this->channels.begin(); it != this->channels.end(); it++)
-    // {
-    //     delete *it;
-    // }
     std::cout << "Server object destroyed" << std::endl;
 }
 
@@ -85,11 +81,6 @@ void Server::ServerInit(int port)
                 }   
         }
     }
-    /*
-    for (std::vector<Client *>::iterator it = this->clients.begin(); it != this->clients.end(); it++)
-    {
-        delete *it;
-    }*/
     for (std::vector<Channel *>::iterator it = this->channels.begin(); it != this->channels.end(); it++)
     {
         delete *it;
@@ -267,12 +258,12 @@ void    Server::RecieveData(int fd)
         // std::cout << "Client with fd: " << fd << " sent the message: "  << buffer << std::endl;
         clients2[fd].setBuffer(buffer);
         std::string toProccess = clients2[fd].getBuffer();
-        std::cout << "Client with fd: " << fd << " sent the message: "  << toProccess << std::endl;
+        // std::cout << "Client with fd: " << fd << " sent the message: "  << toProccess << std::endl;
 
         if (toProccess.size() > 1  && toProccess[toProccess.size() - 1] == '\n')
         {
             clients2[fd].cleanBuffer();
-            std::cout << "2   Client with fd: " << fd << " sent the message: "  << toProccess << std::endl;
+            // std::cout << "2   Client with fd: " << fd << " sent the message: "  << toProccess << std::endl;
             std::istringstream stream(toProccess);
             std::string line;
             while(std::getline(stream, line, '\n'))
@@ -304,17 +295,15 @@ void    Server::ProccessCommand(int fd, std::string line)
     }
 
     commandName = toUpperCase(commandName);
-    std::cout << "Processed command: " << commandName << std::endl;
+    // std::cout << "Processed command: " << commandName << std::endl;
 
-    std::cout << "Arguments: ";
+    // std::cout << "Arguments: ";
     for (size_t i = 0; i < args.size(); i++)
     {
         std::cout << args[i] << " ";
     }
-    std::cout << std::endl;
-    std::cout << "Llego aqui" << std::endl;
+    std::cout << std::endl;;
     std::map<int, Client>::iterator it = clients2.find(fd);
-    std::cout << "Llego aqui" << std::endl;
     if (it == clients2.end()) {
         std::cerr << "Error : Client with fd " << fd << " not found.\n";
         return;
@@ -347,13 +336,13 @@ void    Server::ProccessCommand(int fd, std::string line)
         if (commandName != "INVITE" && commandName != "JOIN" && commandName != "KICK" &&
             commandName != "MODE" && commandName != "NICK" &&
             commandName != "PRIVMSG" && commandName != "TOPIC" && commandName != "USER") {
-            std::cerr << "Command not found" << std::endl;
+            // std::cerr << "Command not found" << std::endl;
             return;
         }
 
         // client inscritpoin verification
         if (!client.isRegistered() && commandName != "NICK" && commandName != "USER") {
-            std::cerr << "Client not registered" << std::endl;
+            // std::cerr << "Client not registered" << std::endl;
             return;
         }
 

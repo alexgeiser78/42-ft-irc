@@ -19,13 +19,9 @@ static	bool validateNickname(const std::string &nickname)
 
 void handleNick(Client *client, Server * server) 
 { 
-    //std::cout << "Handling NICK\n";
-	//std::cout << "Client Nickname: " << client->getNickName() << "\n";
-	//std::cout << "Client Args: " << client->getArgs()[0] << "\n";
 	if (client->getArgs().size() != 1 || client->getArgs()[0].empty()) // Nick receives only one arg 
 	{
 		std::string errorMsg = ERR_NONICKNAMEGIVEN(client->getNickName());
-		//std::cout << errorMsg;
 		send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
 		return;
 	}
@@ -38,7 +34,6 @@ void handleNick(Client *client, Server * server)
         if (it->second.getNickName() == newNick) 
 		{
             std::string errorMsg = ERR_NICKNAMEINUSE(client->getNickName(), newNick);
-            //std::cout << errorMsg;
             send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
             return;
         }
@@ -47,12 +42,10 @@ void handleNick(Client *client, Server * server)
 	if (!validateNickname(newNick)) // if the nickname is invalid
 	{
 		std::string errorMsg = ERR_ERRONEUSNICKNAME(client->getNickName(), client->getArgs()[0]);
-		//std::cout << errorMsg;
 		send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
 		return;
 	}
     std::string successMsg = RPL_NICK(client->getNickName(), client->getArgs()[0]);
-	//std::cout << successMsg;
 	client->setNickName(client->getArgs()[0]);// reset the NickName
     send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
 	client->setNickSet(true);
@@ -61,15 +54,11 @@ void handleNick(Client *client, Server * server)
 		client->setRegistered(true);
         std::string successMsg1 = RPL_WELCOME(client->getNickName(), client->getUsername(), client->getHostname());
         send(client->getSocket(), successMsg1.c_str(), successMsg1.size(), 0);
-        //std::cout << successMsg1;
         std::string successMsg2 = RPL_YOURHOST(client->getNickName());
-        //std::cout << successMsg2;
         send(client->getSocket(), successMsg2.c_str(), successMsg2.size(), 0);
         std::string successMsg3 = RPL_CREATED(client->getNickName());
-        //std::cout << successMsg3;
         send(client->getSocket(), successMsg3.c_str(), successMsg3.size(), 0);
         std::string successMsg4 = RPL_MYINFO(client->getNickName());
-        //std::cout << successMsg4;
         send(client->getSocket(), successMsg4.c_str(), successMsg4.size(), 0);
 	}
 	return;

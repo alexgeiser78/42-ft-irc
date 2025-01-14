@@ -12,9 +12,7 @@
 //-answer: :<nickname>!<user>@<host> TOPIC <channel> :<new_topic>
 
 void handleTopic(Client *client, Server * server) 
-{
-     //std::cout << "Handling TOPIC\n"; 
-     
+{    
      const std::vector<std::string> &args = client->getArgs();
 
     // Check the args
@@ -22,13 +20,11 @@ void handleTopic(Client *client, Server * server)
     {
         std::string errorMsg = ERR_NEEDMOREPARAMS("TOPIC");
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cout << "Error: Missing channel name for TOPIC command\n";
         return;
     }
 
 
     const std::string &channelName = args[0];
-    //std::cout << channelName <<std::endl;
 
     // search the channel via the server
     Channel *channel = server->findChannel(channelName); 
@@ -36,21 +32,14 @@ void handleTopic(Client *client, Server * server)
     {
         std::string errorMsg = ERR_NOSUCHCHANNEL(client->getNickName(), channelName);
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cout << "Error: No such channel" << std::endl;
         return;
     }
-    // if (args.size() == 1)
-    // {
-    //     channel->sendTopic(*client);
-    //     //std::cout << "Topic sent to client" << std::endl;
-    //     return;
-    // }
+
     std::string newTopic = client->getLastArg();
     if (channel->getProtectedTopicMode() && !channel->isOperator(client))
     {
         std::string errorMsg = ERR_CHANOPRIVSNEEDED(client->getNickName(), channelName);
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        std::cout << "Error: Client is not an operator of the channel\n";
         return;
     }
     // Check if the client is a member of the channel
@@ -58,7 +47,6 @@ void handleTopic(Client *client, Server * server)
     {
         std::string errorMsg = ERR_NOTONCHANNEL(client->getNickName(), channelName);
         send(client->getSocket(), errorMsg.c_str(), errorMsg.size(), 0);
-        //std::cout << "Error: Client is not a member of the channel\n";
         return;
     }
 
@@ -66,12 +54,8 @@ void handleTopic(Client *client, Server * server)
     if (args.size() == 1)
     {
         channel->sendTopic(*client);
-        //std::cout << "Topic sent to client" << std::endl;
         return;
     }
-
-    // Check if the topic starts with ':'
-    // std::string newTopic = args[1];
 
     // Ensure that there is no space between ':' and the topic content
     if (newTopic.empty()) 

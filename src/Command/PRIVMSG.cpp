@@ -24,18 +24,8 @@ void handlePrivMsg(Client *client, Server * server)
 {
     const std::vector<std::string>& args = client->getArgs();
     std::string message = getMessage(client->getRawArg());    
-
-
-    std::cout << "Handling PrivMsg\n";
-
-
-    // Print all users on the server
-    //std::cout << "Checking clients in server:\n";
-    
     
     std::map<int, Client>& clients = server->getClients();  // Get the client2 map
-    
-    std::cout << "Number of clients in server: " << clients.size() << "\n";
     
     for (std::map<int, Client>::iterator it = clients.begin(); it != clients.end(); ++it) 
     {
@@ -61,12 +51,9 @@ void handlePrivMsg(Client *client, Server * server)
         receivers.push_back(receiver);
     }
 
-    // std::string message = args[1];
     for (std::vector<std::string>::iterator it = receivers.begin(); it != receivers.end(); ++it)
     {
         std::string receiver = *it;
-        std::cout << "receiver " << receiver << std::endl;
-        std::cout << "message " << message << std::endl;
 
         //check msg
         if (message.empty()) 
@@ -105,7 +92,6 @@ void handlePrivMsg(Client *client, Server * server)
             // Send MSG to all members
             std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message.c_str() + ENDL;
             channel->broadcast(client, formattedMsg);
-            std::cout << "Message sent to channel " << receiver << ": " << message << "\n";
         }
 
         else 
@@ -119,15 +105,15 @@ void handlePrivMsg(Client *client, Server * server)
                 continue;
             }
 
-            else 
-            {
-                std::cout << "Found user " << receiver << " to send the message to.\n";
-            }
+            // else 
+            // {
+            //     std::cout << "Found user " << receiver << " to send the message to.\n";
+            // }
 
             // Send MSG to User
             std::string formattedMsg = ":" + client->getNickName() + " PRIVMSG " + receiver + " :" + message.c_str() + ENDL;
             send(targetClient->getSocket(), formattedMsg.c_str(), formattedMsg.size(), 0);
-            std::cout << "Message sent to user " << receiver << ": " << message << "\n";
+            // std::cout << "Message sent to user " << receiver << ": " << message << "\n";
         }
     }
 }

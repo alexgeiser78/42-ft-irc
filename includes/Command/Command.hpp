@@ -4,9 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <sys/socket.h> //send() recv()
+#include <sys/socket.h>
 #include "../Network/Client.hpp"
-#include <cctype> //std::isalnum
+#include <cctype>
 #include <algorithm>
 
 #define SERVER_VERSION "ircserv-1.0"
