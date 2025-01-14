@@ -1,12 +1,14 @@
 #include "../../includes/Network/Client.hpp"
 
 
-Client::Client(void): _socket(-1), _isRegistered(false), _isAuthenticated(false), _buffer("")
+Client::Client(void): _socket(-1), _isRegistered(false), _isAuthenticated(false), _buffer(""),
+	_nickIsSet(false), _userIsSet(false)
 {
 	std::cout << " Default Client object created" <<std::endl;
 }
 
-Client::Client(int sock): _socket(sock), _isRegistered(false), _isAuthenticated(false), _buffer("")
+Client::Client(int sock): _socket(sock), _isRegistered(false), _isAuthenticated(false), _buffer(""),
+	_nickIsSet(false), _userIsSet(false)
 {
 	std::cout << "Client object created" << std::endl;
 }
@@ -187,4 +189,29 @@ std::string const &Client::getBuffer() const
 void	Client::setBuffer(std::string const &buffer)
 {
 	_buffer = _buffer + buffer;
+}
+
+void	Client::cleanBuffer(void)
+{
+	_buffer = "";
+}
+
+bool	Client::isNickSet() const
+{
+	return _nickIsSet;
+}
+
+void	Client::setNickSet(bool isSet)
+{
+	_nickIsSet = isSet;
+}
+
+bool	Client::isUserSet() const
+{
+	return _userIsSet;
+}
+
+void	Client::setUserSet(bool isSet)
+{
+	_userIsSet = isSet;
 }

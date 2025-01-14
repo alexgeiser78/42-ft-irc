@@ -218,6 +218,11 @@ void Server::RemoveClient(int fd)
     {
         if (this->channels[i]->isMember(&(clients2[fd])))
             this->channels[i]->removeMember(&(clients2[fd]));
+        if (this->channels[i]->getMembers().size() == 0)
+        {
+            delete this->channels[i];
+            this->channels.erase(this->channels.begin() + i);
+        }
     }
     // Delete the pollfd associated to the client
     for (size_t i = 0; i < FD.size(); ++i) 
@@ -266,6 +271,7 @@ void    Server::RecieveData(int fd)
 
         if (toProccess.size() > 1  && toProccess[toProccess.size() - 1] == '\n')
         {
+            clients2[fd].cleanBuffer();
             std::cout << "2   Client with fd: " << fd << " sent the message: "  << toProccess << std::endl;
             std::istringstream stream(toProccess);
             std::string line;
@@ -275,6 +281,7 @@ void    Server::RecieveData(int fd)
                 if (!line.empty() && line[line.length() - 1] == '\r')
                     line.erase(line.length() - 1);
                 ProccessCommand(fd, line);
+                // clients2[fd].setBuffer("");
             }
         }
     }

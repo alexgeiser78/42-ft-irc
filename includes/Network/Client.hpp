@@ -21,6 +21,8 @@ class Client
 		std::string	_ServerCreationTime;
 		bool		_isAuthenticated;
 		std::string _buffer;
+		bool		_nickIsSet;
+		bool		_userIsSet;
 
 
 	public:
@@ -72,6 +74,13 @@ class Client
 
 		std::string const &getBuffer() const;
 		void	setBuffer(std::string const &buffer);
+		void	cleanBuffer(void);
+
+		bool	isNickSet() const;
+		void	setNickSet(bool isSet);
+
+		bool	isUserSet() const;
+		void	setUserSet(bool isSet);
 };
 
 #endif

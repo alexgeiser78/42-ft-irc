@@ -47,12 +47,13 @@ void handleUser(Client *client, Server * server)
     client->setHostname(hostname);
     client->setServername(servername);
     client->setRealname(realname);
+    client->setUserSet(true);
 
     // std::string successMsg = "USER command processed successfully. Welcome, " + username + "!\n";
     // send(client->getSocket(), successMsg.c_str(), successMsg.size(), 0);
     // std::cout << "Client " << client->getSocket() << ": USER command processed successfully\n";
     // std::cout << "In USER, before conditional, client is registered: " << client->isRegistered() << std::endl;
-    if (!client->isRegistered() && !client->getNickName().empty())
+    if (!client->isRegistered() && client->isNickSet())
     {
         client->setRegistered(true);
         std::string successMsg1 = RPL_WELCOME(client->getNickName(), client->getUsername(), client->getHostname());
