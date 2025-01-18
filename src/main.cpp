@@ -27,7 +27,8 @@ int main (int argc, char **argv)
     {
         signal(SIGINT, Server::SignalHandler); //catch the signal (ctrl + c)
 		signal(SIGQUIT, Server::SignalHandler); //catch the signal (ctrl + \)
-		server.ServerInit(port); //initialize the server
+		signal(SIGTSTP, Server::SignalHandler); //catch the signal (ctrl + z)
+        server.ServerInit(port); //initialize the server
     }
 
 	catch(const std::exception& e)
